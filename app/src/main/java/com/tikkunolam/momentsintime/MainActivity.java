@@ -21,46 +21,60 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
+        //inflates the activity's corresponding layout
         setContentView(R.layout.activity_main);
 
+        //set the ActionBar to the toolbar we created
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        //set the action bar to the toolbar we created
         setSupportActionBar(mToolbar);
+
+        //set up the ViewPager for the TabLayout
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         mPagerAdapter = new PagerAdapter(getSupportFragmentManager(), MainActivity.this);
         mViewPager.setAdapter(mPagerAdapter);
+
+        //set up the TabLayout
         mTabLayout = (TabLayout) findViewById(R.id.tabLayout);
         setupTabLayout();
     }
 
-    private void setupTabLayout(){
-        //sets all the properties and behavior of the tab layout
+    private void setupTabLayout() {
+        //sets all the properties and behavior of the TabLayout
+
+        //bind the TabLayout to the ViewPager
         mTabLayout.setupWithViewPager(mViewPager);
-        /**
-         * add an OnTabSelectedListener to the TabLayout to handle the color changes and
-         * other dynamic effects when tabbing about
-         **/
     }
-    private class PagerAdapter extends FragmentPagerAdapter{
+    private class PagerAdapter extends FragmentPagerAdapter {
+        //binds fragments to ViewPager for the TabLayout
+
+        private Context mContext;
+        
+        //number of tabs
         private int mNumOfTabs = 2;
+
+        //titles for the tabs
         private String[] tabTitles = new String[] {
                 getResources().getString(R.string.community), getResources().getString(R.string.my_moments)};
-        private Context mContext;
 
-        private PagerAdapter(FragmentManager fm, Context context){
-            super(fm);
+        //constructor
+        private PagerAdapter(FragmentManager fragmentManager, Context context) {
+            super(fragmentManager);
             mContext = context;
         }
 
         @Override
-        public Fragment getItem(int position){
-            switch(position){
+        public Fragment getItem(int position) {
+            //returns a fragment based on TabLayout position
+
+            switch(position) {
                 case 0:
-                    //TODO: return community fragment
+                    //return the fragment for the "Community" tab
                     return CommunityFragment.newInstance();
                 case 1:
-                    //TODO: return my moments fragment
+                    //return the fragment for the "My Moments" tab
                     return MyMomentsFragment.newInstance();
                 default:
                     return null;
