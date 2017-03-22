@@ -2,6 +2,10 @@
 *.apk
 *.ap_
 
+# Idea files. Makes the project ide independent
+.idea/*
+*.iml
+
 # Files for the ART/Dalvik VM
 *.dex
 
