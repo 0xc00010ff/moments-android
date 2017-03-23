@@ -4,8 +4,8 @@
       <root url="jar://$USER_HOME$/Work/Moments In Time/moments-android/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/25.1.1/annotations.zip!/" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="jar://$USER_HOME$/Work/Moments In Time/moments-android/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/25.1.1/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/Work/Moments In Time/moments-android/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/25.1.1/res" />
+      <root url="file://$USER_HOME$/.android/build-cache/fbef5faf8c98a3c0ab7b4df975b05cb5b72fcdf1/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/fbef5faf8c98a3c0ab7b4df975b05cb5b72fcdf1/output/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

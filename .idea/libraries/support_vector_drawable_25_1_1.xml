@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="support-vector-drawable-25.1.1">
     <CLASSES>
-      <root url="jar://$USER_HOME$/Work/Moments In Time/moments-android/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/25.1.1/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/Work/Moments In Time/moments-android/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/25.1.1/res" />
+      <root url="file://$USER_HOME$/.android/build-cache/5a3d65fdc30af4f17a3325718528408dbf0fd92a/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/5a3d65fdc30af4f17a3325718528408dbf0fd92a/output/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

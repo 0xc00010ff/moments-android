@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$USER_HOME$/Work/Moments In Time/moments-android/app/app.iml" filepath="$USER_HOME$/Work/Moments In Time/moments-android/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/moments-android.iml" filepath="$PROJECT_DIR$/moments-android.iml" />
       <module fileurl="file://$USER_HOME$/Work/Moments In Time/moments-android/moments-android.iml" filepath="$USER_HOME$/Work/Moments In Time/moments-android/moments-android.iml" />
     </modules>
   </component>
