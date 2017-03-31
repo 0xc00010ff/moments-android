@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        //inflates the activity's corresponding layout
+        //inflate the activity's corresponding layout
         setContentView(R.layout.activity_main);
 
         //set the ActionBar to the toolbar we created
@@ -42,13 +42,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupTabLayout() {
-        //sets all the properties and behavior of the TabLayout
+        //set all the properties and behavior of the TabLayout
 
         //bind the TabLayout to the ViewPager
         mTabLayout.setupWithViewPager(mViewPager);
     }
+
     private class PagerAdapter extends FragmentPagerAdapter {
-        //binds fragments to ViewPager for the TabLayout
+        //bind fragments to ViewPager for the TabLayout
 
         private Context mContext;
         
@@ -61,13 +62,15 @@ public class MainActivity extends AppCompatActivity {
 
         //constructor
         private PagerAdapter(FragmentManager fragmentManager, Context context) {
+
             super(fragmentManager);
             mContext = context;
+
         }
 
         @Override
         public Fragment getItem(int position) {
-            //returns a fragment based on TabLayout position
+            //return a fragment based on TabLayout position
 
             switch(position) {
                 case 0:
@@ -80,14 +83,19 @@ public class MainActivity extends AppCompatActivity {
                     return null;
             }
         }
+
         @Override
         public int getCount(){
+
             return mNumOfTabs;
         }
+
         @Override
         public CharSequence getPageTitle(int position) {
+
             // return tab title based on item position
             return tabTitles[position];
+
         }
     }
 }

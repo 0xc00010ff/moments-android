@@ -4,8 +4,8 @@
       <root url="jar://$USER_HOME$/Work/Moments In Time/moments-android/app/build/intermediates/exploded-aar/com.android.support.test/rules/0.5/annotations.zip!/" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="jar://$USER_HOME$/.android/build-cache/2bfa592a14188265e771e0fe56b9315bf3426d10/output/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.android/build-cache/2bfa592a14188265e771e0fe56b9315bf3426d10/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/f3f91d60db4000b2568b3329c818922def3a411d/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/f3f91d60db4000b2568b3329c818922def3a411d/output/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
