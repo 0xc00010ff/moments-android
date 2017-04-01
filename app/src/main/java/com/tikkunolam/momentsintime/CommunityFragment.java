@@ -40,6 +40,9 @@ public class CommunityFragment extends Fragment {
     // ArrayList of Video objects
     ArrayList<Video> mVideoList = new ArrayList<>();
 
+    // callback for the activity to handle business when a video is clicked
+    OnCommunityInteractionListener activityCallback;
+
     public CommunityFragment() {
 
         // required empty public constructor
@@ -94,7 +97,12 @@ public class CommunityFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {
+
         super.onAttach(context);
+
+        // get the reference to the activity for the callback
+        activityCallback = (OnCommunityInteractionListener) context;
+
     }
 
     @Override
@@ -134,8 +142,19 @@ public class CommunityFragment extends Fragment {
 
         }
 
-        // add the listener to the RecyclerView items.
-        // will probably invoke interface onVideoClick method
+        // add the RecyclerItemClickListener to the RecyclerView items.
+        communityRecyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getContext(), communityRecyclerView,
+                        new RecyclerItemClickListener.OnItemClickListener() {
+                            // what's to be done when a cell is clicked
+                            @Override
+                            public void onItemClick(View view, int position) {
+                                // tell the Activity what Video was selected
+                                activityCallback.onVideoSelect(mVideoList.get(position));
+                            }
+                        }
+                )
+        );
 
     }
 
@@ -283,6 +302,12 @@ public class CommunityFragment extends Fragment {
             }
 
         }
+
+    }
+
+    public interface OnCommunityInteractionListener {
+
+        void onVideoSelect(Video video);
 
     }
 

@@ -1,6 +1,7 @@
 package com.tikkunolam.momentsintime;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
@@ -11,7 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+    implements CommunityFragment.OnCommunityInteractionListener {
 
     //ui references
     Toolbar mToolbar;
@@ -46,6 +48,20 @@ public class MainActivity extends AppCompatActivity {
 
         //bind the TabLayout to the ViewPager
         mTabLayout.setupWithViewPager(mViewPager);
+    }
+
+    // the callback method that will be called when Videos are selected
+    public void onVideoSelect(Video video) {
+        // open a new Activity to view the Video
+
+        // create the Intent
+        Intent videoIntent = new Intent(getBaseContext(), VideoViewActivity.class);
+        // add the Parcelable Video to it
+        videoIntent.putExtra("video", video);
+        // open the activity
+        startActivity(videoIntent);
+
+
     }
 
     private class PagerAdapter extends FragmentPagerAdapter {
