@@ -4,10 +4,13 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -118,8 +121,9 @@ public class CommunityFragment extends Fragment {
         if(isDeviceATablet()) {
 
             // apply a GridLayoutManager to the RecyclerView, making it a grid of 3 columns
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 3);
-            communityRecyclerView.setLayoutManager(gridLayoutManager);
+            StaggeredGridLayoutManager staggeredGridLayoutManager =
+                    new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+            communityRecyclerView.setLayoutManager(staggeredGridLayoutManager);
 
         }
         else {
@@ -197,8 +201,20 @@ public class CommunityFragment extends Fragment {
             // set the text in the videoNameTextView from the video
             holder.videoNameTextView.setText(video.getName());
 
-            // set the description
-            holder.videoDescriptionTextView.setText(video.getDescription());
+            // if there is a description set it, otherwise delete the view
+            //if the view is deleted the constraints for the shareTextView
+            String description = video.getDescription();
+
+            if(!description.equals("")) {
+
+                holder.videoDescriptionTextView.setText(description);
+
+            }
+            else {
+
+                holder.videoDescriptionTextView.setVisibility(View.GONE);
+
+            }
 
             // use Picasso to fill the videoPreviewImageView from the video's picture url
             Picasso.with(mContext).load(video.getPictureUrl()).into(holder.videoPreviewImageView);
