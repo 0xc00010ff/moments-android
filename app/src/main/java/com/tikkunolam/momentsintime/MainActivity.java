@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity
         // open the activity
         startActivity(videoIntent);
 
-
     }
 
     private class PagerAdapter extends FragmentPagerAdapter {

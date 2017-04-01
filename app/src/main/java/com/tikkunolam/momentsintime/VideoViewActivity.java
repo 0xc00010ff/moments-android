@@ -30,7 +30,6 @@ public class VideoViewActivity extends AppCompatActivity {
         // take the Video out of the extras bundle
         video = getIntent().getExtras().getParcelable("video");
 
-
         // set up the Video
         setUpVideoView(video);
 

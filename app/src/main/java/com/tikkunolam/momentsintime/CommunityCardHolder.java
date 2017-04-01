@@ -34,7 +34,6 @@ public class CommunityCardHolder extends RecyclerView.ViewHolder{
         videoDescriptionTextView = (TextView) view.findViewById(R.id.video_description_textView);
         shareTextView = (TextView) view.findViewById(R.id.share_textView);
 
-
     }
 
 }
