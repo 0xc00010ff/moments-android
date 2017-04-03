@@ -37,8 +37,9 @@ public class CommunityFragment extends Fragment {
 
     // adapter for the RecyclerView
     RecyclerAdapter mRecyclerAdapter;
-    // ArrayList of Video objects
-    ArrayList<Video> mVideoList = new ArrayList<>();
+
+    // VideoList model
+    VideoList mVideoList = new VideoList();
 
     // callback for the activity to handle business when a video is clicked
     OnCommunityInteractionListener activityCallback;
@@ -91,7 +92,7 @@ public class CommunityFragment extends Fragment {
 
         // create and execute a new asynchronous task to fill the mVideoList
         AsyncFetchCommunityVideos asyncFetchCommunityVideos = new AsyncFetchCommunityVideos();
-        asyncFetchCommunityVideos.execute();
+        asyncFetchCommunityVideos.execute(mVideoList);
 
     }
 
@@ -150,7 +151,7 @@ public class CommunityFragment extends Fragment {
                             @Override
                             public void onItemClick(View view, int position) {
                                 // tell the Activity what Video was selected
-                                activityCallback.onVideoSelect(mVideoList.get(position));
+                                activityCallback.onVideoSelect(mVideoList.getVideoList().get(position));
                             }
                         }
                 )
@@ -193,21 +194,21 @@ public class CommunityFragment extends Fragment {
         int mResource;
 
         // the list of Videos
-        ArrayList<Video> mVideoList;
+        VideoList mVideoList;
 
 
-        public RecyclerAdapter(Context context, int resource, ArrayList<Video> videos) {
+        public RecyclerAdapter(Context context, int resource, VideoList videoList) {
 
             mContext = context;
             mResource = resource;
-            mVideoList = videos;
+            mVideoList = videoList;
 
         }
 
         public int getItemCount() {
             // return the number of items to fill the RecyclerView
 
-            return mVideoList.size();
+            return mVideoList.getVideoList().size();
 
         }
 
@@ -215,13 +216,17 @@ public class CommunityFragment extends Fragment {
             // fill the views contained in the holder with their intended values
 
             // get the video corresponding to the list position
-            Video video = mVideoList.get(position);
+            Video video = mVideoList.getVideoList().get(position);
+
+            // use Picasso to fill the videoPreviewImageView from the video's picture url
+            // fill this before the rest so the loading doesn't look silly
+            Picasso.with(mContext).load(video.getPictureUrl()).into(holder.videoPreviewImageView);
 
             // set the text in the videoNameTextView from the video
             holder.videoNameTextView.setText(video.getName());
 
             // if there is a description set it, otherwise delete the view
-            //if the view is deleted the constraints for the shareTextView
+            // if the view is deleted the constraints for the shareTextView
             String description = video.getDescription();
 
             if(!description.equals("")) {
@@ -234,9 +239,6 @@ public class CommunityFragment extends Fragment {
                 holder.videoDescriptionTextView.setVisibility(View.GONE);
 
             }
-
-            // use Picasso to fill the videoPreviewImageView from the video's picture url
-            Picasso.with(mContext).load(video.getPictureUrl()).into(holder.videoPreviewImageView);
 
         }
 
@@ -256,50 +258,32 @@ public class CommunityFragment extends Fragment {
 
     }
 
-    public class AsyncFetchCommunityVideos extends AsyncTask<Void, Void, ArrayList<Video>> {
+    public class AsyncFetchCommunityVideos extends AsyncTask<VideoList, Void, Void> {
         /**
-         * class for making asynchronous network calls
-         * makes calls through the VimeoNetworkingSingleton
-         * fills the mVideoList
+         * class for making asynchronous update to the mVideoList
+         * just updates the underlying list of Videos by fetching the Community Videos
+         * then the adapter is notified of the change
          */
 
-        protected ArrayList<Video> doInBackground(Void... ignoreThis) {
+        protected Void doInBackground(VideoList... videoList) {
             // run this task in the background
-            // the Void argument is required by the class but has no use in this context
 
-            // get networking instance
-            VimeoNetworkingSingleton networking = VimeoNetworkingSingleton.getInstance();
 
-            // fetch the community videos
-            ArrayList<Video> fetchedVideos = networking.getCommunityVideos();
+            // fetch the community videos to update the VideoList
+            videoList[0].getCommunityVideos();
 
-            return fetchedVideos;
+            //passes nothing to onPostExecute, but an argument is needed
+            return null;
 
         }
 
-        protected void onPostExecute(ArrayList<Video> fetchedVideos) {
+        protected void onPostExecute(Void ignoreThis) {
             // execute on the UI thread when the background task completes
+            // Void argument is necessary, but not used
 
-            if(fetchedVideos != null) {
-                // update the RecyclerView's contents
 
-                // clear the Video list
-                mVideoList.clear();
-
-                // fill the Video list with the new data
-                mVideoList.addAll(fetchedVideos);
-
-                // notify the adapter to update the RecyclerView's contents
-                mRecyclerAdapter.notifyDataSetChanged();
-
-            }
-
-            else {
-                // the networker couldn't fetch the videos
-                // maybe do something about it
-
-                Log.d(TAG, "didn't fetch the videos");
-            }
+            // notify the adapter the VideoList has changed
+            mRecyclerAdapter.notifyDataSetChanged();
 
         }
 
