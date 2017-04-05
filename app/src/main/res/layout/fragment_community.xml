@@ -1,7 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--CommunityFragment will inflate this for < 600dp screen width-->
+
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/community_frameLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.tikkunolam.momentsintime.CommunityFragment">
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/community_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="8dp">
+
+    </android.support.v7.widget.RecyclerView>
 
 </FrameLayout>

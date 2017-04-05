@@ -1,6 +1,7 @@
 package com.tikkunolam.momentsintime;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
@@ -11,7 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+    implements CommunityFragment.OnCommunityInteractionListener {
 
     //ui references
     Toolbar mToolbar;
@@ -24,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        //inflates the activity's corresponding layout
+        //inflate the activity's corresponding layout
         setContentView(R.layout.activity_main);
 
         //set the ActionBar to the toolbar we created
@@ -42,13 +44,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupTabLayout() {
-        //sets all the properties and behavior of the TabLayout
+        //set all the properties and behavior of the TabLayout
 
         //bind the TabLayout to the ViewPager
         mTabLayout.setupWithViewPager(mViewPager);
     }
+
+    // the callback method that will be called when Videos are selected
+    public void onVideoSelect(Video video) {
+        // open a new Activity to view the Video
+
+        // create the Intent
+        Intent videoIntent = new Intent(getBaseContext(), VideoViewActivity.class);
+        // add the Parcelable Video to it
+        videoIntent.putExtra("video", video);
+        // open the activity
+        startActivity(videoIntent);
+
+    }
+
     private class PagerAdapter extends FragmentPagerAdapter {
-        //binds fragments to ViewPager for the TabLayout
+        //bind fragments to ViewPager for the TabLayout
 
         private Context mContext;
         
@@ -61,13 +77,15 @@ public class MainActivity extends AppCompatActivity {
 
         //constructor
         private PagerAdapter(FragmentManager fragmentManager, Context context) {
+
             super(fragmentManager);
             mContext = context;
+
         }
 
         @Override
         public Fragment getItem(int position) {
-            //returns a fragment based on TabLayout position
+            //return a fragment based on TabLayout position
 
             switch(position) {
                 case 0:
@@ -80,14 +98,19 @@ public class MainActivity extends AppCompatActivity {
                     return null;
             }
         }
+
         @Override
         public int getCount(){
+
             return mNumOfTabs;
         }
+
         @Override
         public CharSequence getPageTitle(int position) {
+
             // return tab title based on item position
             return tabTitles[position];
+
         }
     }
 }
