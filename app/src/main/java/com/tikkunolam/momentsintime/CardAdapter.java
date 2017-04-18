@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import com.squareup.picasso.Picasso;
 
-public class CardAdapter extends RecyclerView.Adapter<CommunityCardHolder> {
+public class CardAdapter extends RecyclerView.Adapter<MomentCardHolder> {
     // Adapter for populating the RecyclerView on phones
 
     Context mContext;
@@ -17,40 +17,40 @@ public class CardAdapter extends RecyclerView.Adapter<CommunityCardHolder> {
     int mResource;
 
     // the list of Videos
-    VideoList mVideoList;
+    MomentList mMomentList;
 
 
-    public CardAdapter(Context context, int resource, VideoList videoList) {
+    public CardAdapter(Context context, int resource, MomentList momentList) {
 
         mContext = context;
         mResource = resource;
-        mVideoList = videoList;
+        mMomentList = momentList;
 
     }
 
     public int getItemCount() {
         // return the number of items to fill the RecyclerView
 
-        return mVideoList.getVideoList().size();
+        return mMomentList.getMomentList().size();
 
     }
 
-    public void onBindViewHolder(CommunityCardHolder holder, int position) {
+    public void onBindViewHolder(MomentCardHolder holder, int position) {
         // fill the views contained in the holder with their intended values
 
-        // get the video corresponding to the list position
-        Video video = mVideoList.getVideoList().get(position);
+        // get the moment corresponding to the list position
+        Moment moment = mMomentList.getMomentList().get(position);
 
-        // use Picasso to fill the videoPreviewImageView from the video's picture url
+        // use Picasso to fill the videoPreviewImageView from the moment's picture url
         // fill this before the rest so the loading doesn't look silly
-        Picasso.with(mContext).load(video.getPictureUrl()).into(holder.videoPreviewImageView);
+        Picasso.with(mContext).load(moment.getPictureUrl()).into(holder.videoPreviewImageView);
 
-        // set the text in the videoNameTextView from the video
-        holder.videoNameTextView.setText(video.getName());
+        // set the text in the videoNameTextView from the moment
+        holder.videoNameTextView.setText(moment.getName());
 
         // if there is a description set it, otherwise delete the view
         // if the view is deleted the constraints for the shareTextView
-        String description = video.getDescription();
+        String description = moment.getDescription();
 
         if(!description.equals("")) {
 
@@ -65,7 +65,7 @@ public class CardAdapter extends RecyclerView.Adapter<CommunityCardHolder> {
 
     }
 
-    public CommunityCardHolder onCreateViewHolder(ViewGroup parent, int viewType){
+    public MomentCardHolder onCreateViewHolder(ViewGroup parent, int viewType){
         /**
          * get the view from the ViewGroup and create and return a Holder with it
          * passes the Holder it creates to onBindViewHolder ^
@@ -73,9 +73,9 @@ public class CardAdapter extends RecyclerView.Adapter<CommunityCardHolder> {
 
         View itemView = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.community_card, parent, false);
+                .inflate(R.layout.moment_card, parent, false);
 
-        return new CommunityCardHolder(itemView);
+        return new MomentCardHolder(itemView);
 
     }
 

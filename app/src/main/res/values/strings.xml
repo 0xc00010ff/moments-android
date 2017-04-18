@@ -23,7 +23,7 @@
     <!--STRINGS THAT HELP WITH COORDINATION-->
 
     <!--intent extra arguments-->
-    <string name="video_extra">video</string>
+    <string name="video_extra">moment</string>
     <string name="video_uri_extra">videoUri</string>
 
 

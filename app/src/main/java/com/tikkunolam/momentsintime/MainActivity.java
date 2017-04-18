@@ -4,14 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 
 public class MainActivity extends AppCompatActivity
     implements CommunityFragment.OnCommunityInteractionListener {
@@ -61,13 +59,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     // the callback method that will be called when Videos are selected
-    public void onVideoSelect(Video video) {
-        // open a new Activity to view the Video
+    public void onVideoSelect(Moment moment) {
+        // open a new Activity to view the Moment
 
         // create the Intent
         Intent videoIntent = new Intent(getBaseContext(), VideoViewActivity.class);
-        // add the Parcelable Video to it
-        videoIntent.putExtra(videoExtra, video);
+        // add the Parcelable Moment to it
+        videoIntent.putExtra(videoExtra, moment);
         // open the activity
         startActivity(videoIntent);
 

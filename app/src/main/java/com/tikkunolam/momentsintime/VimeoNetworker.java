@@ -68,11 +68,11 @@ public class VimeoNetworker {
      * INSTANCE METHODS
      */
 
-    public ArrayList<Video> getCommunityVideos() {
+    public ArrayList<Moment> getCommunityMoments() {
         // fetches the list of Videos for the CommunityFragment
 
         OkHttpClient client = new OkHttpClient();
-        ArrayList<Video> videos = new ArrayList<>();
+        ArrayList<Moment> moments = new ArrayList<>();
         Response response = null;
 
         try {
@@ -93,8 +93,8 @@ public class VimeoNetworker {
             // convert the String to a JSONObject
             JSONObject jsonResponse = new JSONObject(responseString);
 
-            // pass the JSONObject to the method that creates the Video list
-            videos = jsonToVideoList(jsonResponse);
+            // pass the JSONObject to the method that creates the Moment list
+            moments = jsonToMomentList(jsonResponse);
 
         }
 
@@ -127,14 +127,14 @@ public class VimeoNetworker {
 
         }
 
-        // return the Video list
+        // return the Moment list
         // might be null from an exception. check for this where it's called
-        return videos;
+        return moments;
 
     }
 
     public void uploadVideo(Uri uri, Context context) {
-        // upload a video to Vimeo using the UploadService
+        // upload a moment to Vimeo using the UploadService
 
         // start the UploadService and pass it the videoUri
         Intent uploadIntent = new Intent(context, UploadService.class);
@@ -143,23 +143,23 @@ public class VimeoNetworker {
 
     }
 
-    public ArrayList<Video> jsonToVideoList(JSONObject jsonResponse) {
-        // parse the json to create an ArrayList<Video>
-        // will throw out all of the crap except for what creates my Video object
+    public ArrayList<Moment> jsonToMomentList(JSONObject jsonResponse) {
+        // parse the json to create an ArrayList<Moment>
+        // will throw out all of the crap except for what creates my Moment object
 
-        // reference so the Video list can be returned outside of the try block
-        ArrayList<Video> videos = new ArrayList<Video>();
+        // reference so the Moment list can be returned outside of the try block
+        ArrayList<Moment> moments = new ArrayList<Moment>();
 
         try{
-            // try to parse the JSON to create the Video list
+            // try to parse the JSON to create the Moment list
 
             // get the array of JSONObjects corresponding to Videos
             JSONArray jsonArray = jsonResponse.getJSONArray("data");
 
-            // for every JSONObject in the array, create a Video and add it to the list
+            // for every JSONObject in the array, create a Moment and add it to the list
             for(int i = 0; i < jsonArray.length(); i++) {
 
-                // get the Video
+                // get the Moment
                 JSONObject jsonVideoObject = jsonArray.getJSONObject(i);
 
                 // get the attributes that are one level deep
@@ -187,15 +187,11 @@ public class VimeoNetworker {
                 // get the url
                 String pictureUrl = picture.getString("link");
 
-                // get the width and height. may prove to be unnecessary
-                int width = Integer.parseInt(jsonVideoObject.getString("width"));
-                int height = Integer.parseInt(jsonVideoObject.getString("height"));
+                // create the Moment how God intended
+                Moment moment = new Moment(name, description, uri, url, pictureUrl);
 
-                // create the Video how God intended
-                Video video = new Video(name, description, uri, url, pictureUrl, width, height);
-
-                // add it to the Video list
-                videos.add(video);
+                // add it to the Moment list
+                moments.add(moment);
             }
         }
         catch(JSONException exception) {
@@ -208,7 +204,7 @@ public class VimeoNetworker {
 
         // return the list
         // may be null. should check for that where it's called
-        return videos;
+        return moments;
     }
 
 }

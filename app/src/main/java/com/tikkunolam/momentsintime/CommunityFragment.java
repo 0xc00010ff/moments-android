@@ -1,31 +1,19 @@
 package com.tikkunolam.momentsintime;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
-import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-
-import static android.R.attr.resource;
-import static android.content.ContentValues.TAG;
 import static android.media.CamcorderProfile.get;
 
 
@@ -38,10 +26,10 @@ public class CommunityFragment extends Fragment {
     // adapter for the RecyclerView
     CardAdapter mRecyclerAdapter;
 
-    // VideoList model
-    VideoList mVideoList;
+    // MomentList model
+    MomentList mMomentList;
 
-    // callback for the activity to handle business when a video is clicked
+    // callback for the activity to handle business when a moment is clicked
     OnCommunityInteractionListener activityCallback;
 
     public CommunityFragment() {
@@ -90,9 +78,9 @@ public class CommunityFragment extends Fragment {
 
         super.onActivityCreated(savedInstanceState);
 
-        // create and execute a new asynchronous task to fill the mVideoList
+        // create and execute a new asynchronous task to fill the mMomentList
         AsyncFetchCommunityVideos asyncFetchCommunityVideos = new AsyncFetchCommunityVideos();
-        asyncFetchCommunityVideos.execute(mVideoList);
+        asyncFetchCommunityVideos.execute(mMomentList);
 
     }
 
@@ -104,8 +92,8 @@ public class CommunityFragment extends Fragment {
         // get the reference to the activity for the callback
         activityCallback = (OnCommunityInteractionListener) context;
 
-        // set the VideoList
-        mVideoList = new VideoList(getActivity().getApplicationContext());
+        // set the MomentList
+        mMomentList = new MomentList(getActivity().getApplicationContext());
 
     }
 
@@ -124,7 +112,7 @@ public class CommunityFragment extends Fragment {
          */
 
         // get the RecyclerAdapter
-        mRecyclerAdapter = new CardAdapter(getContext(), R.id.community_cardView, mVideoList);
+        mRecyclerAdapter = new CardAdapter(getContext(), R.id.community_cardView, mMomentList);
 
         // set the adapter on the RecyclerView
         communityRecyclerView.setAdapter(mRecyclerAdapter);
@@ -153,8 +141,8 @@ public class CommunityFragment extends Fragment {
                             // what's to be done when a cell is clicked
                             @Override
                             public void onItemClick(View view, int position) {
-                                // tell the Activity what Video was selected
-                                activityCallback.onVideoSelect(mVideoList.getVideoList().get(position));
+                                // tell the Activity what Moment was selected
+                                activityCallback.onVideoSelect(mMomentList.getMomentList().get(position));
                             }
                         }
                 )
@@ -188,19 +176,19 @@ public class CommunityFragment extends Fragment {
     }
 
 
-    public class AsyncFetchCommunityVideos extends AsyncTask<VideoList, Void, Void> {
+    public class AsyncFetchCommunityVideos extends AsyncTask<MomentList, Void, Void> {
         /**
-         * class for making asynchronous update to the mVideoList
+         * class for making asynchronous update to the mMomentList
          * just updates the underlying list of Videos by fetching the Community Videos
          * then the adapter is notified of the change
          */
 
-        protected Void doInBackground(VideoList... videoList) {
+        protected Void doInBackground(MomentList... momentList) {
             // run this task in the background
 
 
-            // fetch the community videos to update the VideoList
-            videoList[0].getCommunityVideos();
+            // fetch the community videos to update the MomentList
+            momentList[0].getCommunityMoments();
 
             //passes nothing to onPostExecute, but an argument is needed
             return null;
@@ -212,7 +200,7 @@ public class CommunityFragment extends Fragment {
             // Void argument is necessary, but not used
 
 
-            // notify the adapter the VideoList has changed
+            // notify the adapter the MomentList has changed
             mRecyclerAdapter.notifyDataSetChanged();
 
         }
@@ -221,7 +209,7 @@ public class CommunityFragment extends Fragment {
 
     public interface OnCommunityInteractionListener {
 
-        void onVideoSelect(Video video);
+        void onVideoSelect(Moment moment);
 
     }
 
