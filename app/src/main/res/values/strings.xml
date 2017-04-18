@@ -1,8 +1,31 @@
 <resources>
     <string name="app_name">Moments In Time</string>
 
+    <!--API DETAILS-->
+
+    <!--strings for individual configuration-->
+    <string name="api_access_token">77426b1811ace383f683e3e9525c3105</string>
+
+    <!--string for api interaction-->
+    <string name="api_base_address">https://api.vimeo.com</string>
+    <string name="api_version">application/vnd.vimeo.*+json;version=3.2</string>
+    <string name="video_fetch_uri">/me/videos</string>
+
+
+    <!--UI STRINGS-->
+
     <!--strings for tabLayout-->
     <string name="community">COMMUNITY</string>
     <string name="my_moments">MY MOMENTS</string>
+
+
+
+    <!--STRINGS THAT HELP WITH COORDINATION-->
+
+    <!--intent extra arguments-->
+    <string name="video_extra">video</string>
+    <string name="video_uri_extra">videoUri</string>
+
+
 
 </resources>

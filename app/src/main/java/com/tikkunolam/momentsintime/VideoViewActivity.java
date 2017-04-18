@@ -12,6 +12,9 @@ public class VideoViewActivity extends AppCompatActivity {
     // the video that was passed in
     Video video;
 
+    // strings for intent extra arguments
+    String videoExtra = (String) getResources().getText(R.string.video_extra);
+
     // ui references
     VideoView videoView;
 
@@ -28,7 +31,7 @@ public class VideoViewActivity extends AppCompatActivity {
         videoView = (VideoView) findViewById(R.id.videoView);
 
         // take the Video out of the extras bundle
-        video = getIntent().getExtras().getParcelable("video");
+        video = getIntent().getExtras().getParcelable(videoExtra);
 
         // set up the Video
         setUpVideoView(video);

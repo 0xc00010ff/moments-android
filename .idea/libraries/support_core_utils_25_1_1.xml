@@ -1,8 +1,5 @@
 <component name="libraryTable">
   <library name="support-core-utils-25.1.1">
-    <ANNOTATIONS>
-      <root url="jar://$USER_HOME$/Work/Moments In Time/moments-android/app/build/intermediates/exploded-aar/com.android.support/support-core-utils/25.1.1/annotations.zip!/" />
-    </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$USER_HOME$/.android/build-cache/ec35e535c24f9c89ec791fc4f3ea72640d04b008/output/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.android/build-cache/ec35e535c24f9c89ec791fc4f3ea72640d04b008/output/res" />

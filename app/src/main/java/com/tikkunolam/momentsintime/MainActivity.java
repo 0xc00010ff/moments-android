@@ -11,11 +11,18 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 
 public class MainActivity extends AppCompatActivity
     implements CommunityFragment.OnCommunityInteractionListener {
 
-    //ui references
+    // tag for logging purposes
+    private final String TAG = "MainActivity";
+
+    // strings for intent extra arguments
+    String videoExtra;
+
+    // ui references
     Toolbar mToolbar;
     ViewPager mViewPager;
     PagerAdapter mPagerAdapter;
@@ -28,6 +35,9 @@ public class MainActivity extends AppCompatActivity
 
         //inflate the activity's corresponding layout
         setContentView(R.layout.activity_main);
+
+        // get the string resource for the outgoing intent extra
+        videoExtra = getResources().getString(R.string.video_extra);
 
         //set the ActionBar to the toolbar we created
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -57,7 +67,7 @@ public class MainActivity extends AppCompatActivity
         // create the Intent
         Intent videoIntent = new Intent(getBaseContext(), VideoViewActivity.class);
         // add the Parcelable Video to it
-        videoIntent.putExtra("video", video);
+        videoIntent.putExtra(videoExtra, video);
         // open the activity
         startActivity(videoIntent);
 

@@ -1,6 +1,8 @@
 package com.tikkunolam.momentsintime;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -12,20 +14,13 @@ import org.json.JSONArray;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
-
-import static android.R.string.ok;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
-import static android.os.Build.VERSION_CODES.M;
 
 /**
  * OKHTTP NETWORKING CLASS FOR API CALLS
- * IMPLEMENTED AS A SINGLETON -- ONLY ONE INSTANCE MAY EXIST
  */
 
-public class VimeoNetworkingSingleton {
+public class VimeoNetworker {
 
     /**
      * INSTANCE VARIABLES
@@ -34,44 +29,39 @@ public class VimeoNetworkingSingleton {
     // tag for logging
     private final String TAG = "Networking";
 
-    // static instance
-    private static VimeoNetworkingSingleton instance = null;
+    // strings for intent extra arguments/parameters
+    String videoUriExtra;
 
     // app access token for authenticating requests
-    private String mAccessToken = "c3867c80fcfb0b0c177f012d841fd1c3";
+    private String mAccessToken;
 
     // base api address
-    private final String apiAddress = "https://api.vimeo.com";
+    private String mApiAddress;
 
     // this is the string for both fetching and uploading. Difference is in the request type.
-    private final String videoFetchUri = "/me/videos";
+    private String mVideoFetchUri;
 
     // to be included in headers to let Vimeo know what version of the API we expect
-    private final String apiVersion = "application/vnd.vimeo.*+json;version=3.2";
+    private String mApiVersion;
 
     /**
      * CONSTRUCTORS
      */
 
-    private VimeoNetworkingSingleton() {
-        // private constructor can only be called by the getInstance() method
+    public VimeoNetworker(Context applicationContext) {
+        // takes the ApplicationContext to retrieve strings from resources
 
-    }
+        // set all the api information from the application context
+        mAccessToken = applicationContext.getString(R.string.api_access_token);
+        mApiAddress = applicationContext.getString(R.string.api_base_address);
+        mVideoFetchUri = applicationContext.getString(R.string.video_fetch_uri);
+        mApiVersion = applicationContext.getString(R.string.api_version);
 
-    /**
-     * STATIC METHODS
-     */
+        // set the intent extras' argument names
+        videoUriExtra = applicationContext.getString(R.string.video_uri_extra);
 
-    public static VimeoNetworkingSingleton getInstance(){
-        // returns the instance, or creates and returns one if one doesn't exist
 
-        if(instance == null){
 
-            instance = new VimeoNetworkingSingleton();
-
-        }
-
-        return instance;
     }
 
     /**
@@ -90,7 +80,7 @@ public class VimeoNetworkingSingleton {
 
             // build the request
             Request request = new Request.Builder()
-                    .url(apiAddress + videoFetchUri)
+                    .url(mApiAddress + mVideoFetchUri)
                     .addHeader("Authorization", "Bearer " + mAccessToken)
                     .build();
 
@@ -143,9 +133,13 @@ public class VimeoNetworkingSingleton {
 
     }
 
-    public void uploadVideo() {
-        // upload a video to Vimeo
-        // will accept a uri link to the file
+    public void uploadVideo(Uri uri, Context context) {
+        // upload a video to Vimeo using the UploadService
+
+        // start the UploadService and pass it the videoUri
+        Intent uploadIntent = new Intent(context, UploadService.class);
+        uploadIntent.putExtra(videoUriExtra, uri);
+        context.startService(uploadIntent);
 
     }
 

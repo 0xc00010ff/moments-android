@@ -1,6 +1,8 @@
 package com.tikkunolam.momentsintime;
 
 
+import android.content.Context;
+
 import java.util.ArrayList;
 
 public class VideoList {
@@ -10,17 +12,17 @@ public class VideoList {
      */
 
     private ArrayList<Video> videos;
-    private VimeoNetworkingSingleton vimeoNetworkingSingleton;
+    private VimeoNetworker vimeoNetworker;
 
     /**
      * CONSTRUCTORS
      */
 
-    public VideoList() {
+    public VideoList(Context applicationContext) {
+        // takes a context argument only to pass to networker so it can access resources
 
         videos = new ArrayList<>();
-        vimeoNetworkingSingleton = VimeoNetworkingSingleton.getInstance();
-
+        vimeoNetworker = new VimeoNetworker(applicationContext);
     }
 
     /**
@@ -38,7 +40,7 @@ public class VideoList {
     public void getCommunityVideos() {
         // update the videos list by fetching the Community Videos list
 
-        videos = vimeoNetworkingSingleton.getCommunityVideos();
+        videos = vimeoNetworker.getCommunityVideos();
 
 
     }
