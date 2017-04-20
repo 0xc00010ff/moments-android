@@ -11,8 +11,8 @@ public class MomentList {
      * INSTANCE VARIABLES
      */
 
-    private ArrayList<Moment> moments;
-    private VimeoNetworker vimeoNetworker;
+    private ArrayList<Moment> mMoments;
+    private VimeoNetworker mVimeoNetworker;
 
     /**
      * CONSTRUCTORS
@@ -21,8 +21,8 @@ public class MomentList {
     public MomentList(Context applicationContext) {
         // takes a context argument only to pass to networker so it can access resources
 
-        moments = new ArrayList<>();
-        vimeoNetworker = new VimeoNetworker(applicationContext);
+        mMoments = new ArrayList<>();
+        mVimeoNetworker = new VimeoNetworker(applicationContext);
 
     }
 
@@ -33,7 +33,7 @@ public class MomentList {
     public ArrayList<Moment> getMomentList() {
         // just return the moment list. useless for now as all methods will return the list.
 
-        return moments;
+        return mMoments;
 
     }
 
@@ -41,7 +41,13 @@ public class MomentList {
     public void getCommunityMoments() {
         // update the moments list by fetching the Community Videos list
 
-        moments = vimeoNetworker.getCommunityMoments();
+        mMoments = mVimeoNetworker.getCommunityMoments();
+
+
+    }
+
+    public void getMyMoments() {
+        // update the moments list
 
 
     }

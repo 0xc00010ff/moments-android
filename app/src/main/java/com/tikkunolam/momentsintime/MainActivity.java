@@ -12,7 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 public class MainActivity extends AppCompatActivity
-    implements CommunityFragment.OnCommunityInteractionListener {
+    implements CardInteractionListener {
 
     // tag for logging purposes
     private final String TAG = "MainActivity";
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     // the callback method that will be called when Videos are selected
-    public void onVideoSelect(Moment moment) {
+    public void onMomentSelect(Moment moment) {
         // open a new Activity to view the Moment
 
         // create the Intent

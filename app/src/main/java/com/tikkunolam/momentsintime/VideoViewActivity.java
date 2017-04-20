@@ -11,7 +11,7 @@ public class VideoViewActivity extends AppCompatActivity {
     Moment moment;
 
     // strings for intent extra arguments
-    String videoExtra = (String) getResources().getText(R.string.video_extra);
+    String videoExtra;
 
     // ui references
     VideoView videoView;
@@ -24,6 +24,9 @@ public class VideoViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_video_view);
+
+        // fetch the string for Intent Extra argument from resources
+        videoExtra = (String) getResources().getText(R.string.video_extra);
 
         // get the VideoView
         videoView = (VideoView) findViewById(R.id.videoView);

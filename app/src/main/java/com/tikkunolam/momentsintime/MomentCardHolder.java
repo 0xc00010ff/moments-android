@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 public class MomentCardHolder extends RecyclerView.ViewHolder{
     /**
-     * this class is a holder for the views that compose the Community RecyclerView
+     * this class is a holder for the moment_cards that compose the Community RecyclerView
      * it holds references to the views which will be filled dynamically
     **/
 
