@@ -1,7 +1,5 @@
 package com.tikkunolam.momentsintime;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.VideoView;
@@ -9,8 +7,11 @@ import android.widget.MediaController;
 
 public class VideoViewActivity extends AppCompatActivity {
 
-    // the video that was passed in
-    Video video;
+    // the moment that was passed in
+    Moment moment;
+
+    // strings for intent extra arguments
+    String videoExtra;
 
     // ui references
     VideoView videoView;
@@ -24,16 +25,19 @@ public class VideoViewActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_video_view);
 
+        // fetch the string for Intent Extra argument from resources
+        videoExtra = (String) getResources().getText(R.string.video_extra);
+
         // get the VideoView
         videoView = (VideoView) findViewById(R.id.videoView);
 
-        // take the Video out of the extras bundle
-        video = getIntent().getExtras().getParcelable("video");
+        // take the Moment out of the extras bundle
+        moment = getIntent().getExtras().getParcelable(videoExtra);
 
-        // set up the Video
-        setUpVideoView(video);
+        // set up the Moment
+        setUpVideoView(moment);
 
-        // start the video
+        // start the moment
         videoView.start();
 
 
@@ -41,10 +45,10 @@ public class VideoViewActivity extends AppCompatActivity {
 
     }
 
-    private void setUpVideoView(Video video) {
+    private void setUpVideoView(Moment moment) {
 
-        // get the video path
-        String url = video.getUrl();
+        // get the moment path
+        String url = moment.getVideoUrl();
 
         // set the VideoView's path
         videoView.setVideoPath(url);

@@ -1,6 +1,8 @@
 package com.tikkunolam.momentsintime;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -12,20 +14,13 @@ import org.json.JSONArray;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
-
-import static android.R.string.ok;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
-import static android.os.Build.VERSION_CODES.M;
 
 /**
  * OKHTTP NETWORKING CLASS FOR API CALLS
- * IMPLEMENTED AS A SINGLETON -- ONLY ONE INSTANCE MAY EXIST
  */
 
-public class VimeoNetworkingSingleton {
+public class VimeoNetworker {
 
     /**
      * INSTANCE VARIABLES
@@ -34,55 +29,50 @@ public class VimeoNetworkingSingleton {
     // tag for logging
     private final String TAG = "Networking";
 
-    // static instance
-    private static VimeoNetworkingSingleton instance = null;
+    // strings for intent extra arguments/parameters
+    String videoUriExtra;
 
     // app access token for authenticating requests
-    private String mAccessToken = "c3867c80fcfb0b0c177f012d841fd1c3";
+    private String mAccessToken;
 
     // base api address
-    private final String apiAddress = "https://api.vimeo.com";
+    private String mApiAddress;
 
     // this is the string for both fetching and uploading. Difference is in the request type.
-    private final String videoFetchUri = "/me/videos";
+    private String mVideoFetchUri;
 
     // to be included in headers to let Vimeo know what version of the API we expect
-    private final String apiVersion = "application/vnd.vimeo.*+json;version=3.2";
+    private String mApiVersion;
 
     /**
      * CONSTRUCTORS
      */
 
-    private VimeoNetworkingSingleton() {
-        // private constructor can only be called by the getInstance() method
+    public VimeoNetworker(Context applicationContext) {
+        // takes the ApplicationContext to retrieve strings from resources
 
-    }
+        // set all the api information from the application context
+        mAccessToken = applicationContext.getString(R.string.api_access_token);
+        mApiAddress = applicationContext.getString(R.string.api_base_address);
+        mVideoFetchUri = applicationContext.getString(R.string.video_fetch_uri);
+        mApiVersion = applicationContext.getString(R.string.api_version);
 
-    /**
-     * STATIC METHODS
-     */
+        // set the intent extras' argument names
+        videoUriExtra = applicationContext.getString(R.string.video_uri_extra);
 
-    public static VimeoNetworkingSingleton getInstance(){
-        // returns the instance, or creates and returns one if one doesn't exist
 
-        if(instance == null){
 
-            instance = new VimeoNetworkingSingleton();
-
-        }
-
-        return instance;
     }
 
     /**
      * INSTANCE METHODS
      */
 
-    public ArrayList<Video> getCommunityVideos() {
+    public ArrayList<Moment> getCommunityMoments() {
         // fetches the list of Videos for the CommunityFragment
 
         OkHttpClient client = new OkHttpClient();
-        ArrayList<Video> videos = new ArrayList<>();
+        ArrayList<Moment> moments = new ArrayList<>();
         Response response = null;
 
         try {
@@ -90,7 +80,7 @@ public class VimeoNetworkingSingleton {
 
             // build the request
             Request request = new Request.Builder()
-                    .url(apiAddress + videoFetchUri)
+                    .url(mApiAddress + mVideoFetchUri)
                     .addHeader("Authorization", "Bearer " + mAccessToken)
                     .build();
 
@@ -103,8 +93,8 @@ public class VimeoNetworkingSingleton {
             // convert the String to a JSONObject
             JSONObject jsonResponse = new JSONObject(responseString);
 
-            // pass the JSONObject to the method that creates the Video list
-            videos = jsonToVideoList(jsonResponse);
+            // pass the JSONObject to the method that creates the Moment list
+            moments = jsonToMomentList(jsonResponse);
 
         }
 
@@ -137,35 +127,39 @@ public class VimeoNetworkingSingleton {
 
         }
 
-        // return the Video list
+        // return the Moment list
         // might be null from an exception. check for this where it's called
-        return videos;
+        return moments;
 
     }
 
-    public void uploadVideo() {
-        // upload a video to Vimeo
-        // will accept a uri link to the file
+    public void uploadVideo(Uri uri, Context context) {
+        // upload a moment to Vimeo using the UploadService
+
+        // start the UploadService and pass it the videoUri
+        Intent uploadIntent = new Intent(context, UploadService.class);
+        uploadIntent.putExtra(videoUriExtra, uri);
+        context.startService(uploadIntent);
 
     }
 
-    public ArrayList<Video> jsonToVideoList(JSONObject jsonResponse) {
-        // parse the json to create an ArrayList<Video>
-        // will throw out all of the crap except for what creates my Video object
+    public ArrayList<Moment> jsonToMomentList(JSONObject jsonResponse) {
+        // parse the json to create an ArrayList<Moment>
+        // will throw out all of the crap except for what creates my Moment object
 
-        // reference so the Video list can be returned outside of the try block
-        ArrayList<Video> videos = new ArrayList<Video>();
+        // reference so the Moment list can be returned outside of the try block
+        ArrayList<Moment> moments = new ArrayList<Moment>();
 
         try{
-            // try to parse the JSON to create the Video list
+            // try to parse the JSON to create the Moment list
 
             // get the array of JSONObjects corresponding to Videos
             JSONArray jsonArray = jsonResponse.getJSONArray("data");
 
-            // for every JSONObject in the array, create a Video and add it to the list
+            // for every JSONObject in the array, create a Moment and add it to the list
             for(int i = 0; i < jsonArray.length(); i++) {
 
-                // get the Video
+                // get the Moment
                 JSONObject jsonVideoObject = jsonArray.getJSONObject(i);
 
                 // get the attributes that are one level deep
@@ -193,15 +187,11 @@ public class VimeoNetworkingSingleton {
                 // get the url
                 String pictureUrl = picture.getString("link");
 
-                // get the width and height. may prove to be unnecessary
-                int width = Integer.parseInt(jsonVideoObject.getString("width"));
-                int height = Integer.parseInt(jsonVideoObject.getString("height"));
+                // create the Moment how God intended
+                Moment moment = new Moment(name, description, uri, url, pictureUrl);
 
-                // create the Video how God intended
-                Video video = new Video(name, description, uri, url, pictureUrl, width, height);
-
-                // add it to the Video list
-                videos.add(video);
+                // add it to the Moment list
+                moments.add(moment);
             }
         }
         catch(JSONException exception) {
@@ -214,7 +204,7 @@ public class VimeoNetworkingSingleton {
 
         // return the list
         // may be null. should check for that where it's called
-        return videos;
+        return moments;
     }
 
 }

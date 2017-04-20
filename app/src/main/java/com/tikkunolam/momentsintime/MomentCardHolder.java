@@ -6,25 +6,25 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class CommunityCardHolder extends RecyclerView.ViewHolder{
+public class MomentCardHolder extends RecyclerView.ViewHolder{
     /**
-     * this class is a holder for the views that compose the Community RecyclerView
+     * this class is a holder for the moment_cards that compose the Community RecyclerView
      * it holds references to the views which will be filled dynamically
     **/
 
-    // the ImageView for the video preview
+    // the ImageView for the moment preview
     ImageView videoPreviewImageView;
 
-    // the textView for the video name
+    // the textView for the moment name
     TextView videoNameTextView;
 
-    // the TextView for the video description
+    // the TextView for the moment description
     TextView videoDescriptionTextView;
 
     // the TextView for the share link
     TextView shareTextView;
 
-    public CommunityCardHolder(View view) {
+    public MomentCardHolder(View view) {
         //fill the holder views with those from the view argument
 
         super(view);

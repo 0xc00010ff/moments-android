@@ -1,34 +1,191 @@
 package com.tikkunolam.momentsintime;
 
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 
 public class MyMomentsFragment extends Fragment {
 
+    // tag for logging purposes
+    private final String TAG = "My Moments Fragment";
+
+    // list of Moments
+    private MomentList mMomentList;
+
+    // callback for the activity to handle business when a Moment is clicked
+    CardInteractionListener mActivityCallback;
+
+    // CardAdapter for the RecyclerView
+    CardAdapter mCardAdapter;
+
+    // fragment identifier for the adapter
+    int mIdentifier = 2;
+
+    // ui references
+    RelativeLayout mMyMomentsRelativeLayout;
+    LinearLayout mNoMomentsLinearLayout;
+    RecyclerView mMyMomentsRecyclerView;
+
     public MyMomentsFragment() {
-        // Required empty public constructor
+
+        // required empty public constructor
+
     }
 
     public static MyMomentsFragment newInstance() {
+
         MyMomentsFragment fragment = new MyMomentsFragment();
+
         return fragment;
+
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_moments, container, false);
+
+        //inflate the fragment's view
+        View entireView = inflater.inflate(R.layout.fragment_my_moments, container, false);
+
+        // get the RelativeLayout to retrieve the child views
+        mMyMomentsRelativeLayout = (RelativeLayout) entireView;
+
+        // get the view to show when there are no moments. it's set to hidden for now
+        mNoMomentsLinearLayout = (LinearLayout) mMyMomentsRelativeLayout.findViewById(R.id.no_moments_linearLayout);
+
+        // get the RecyclerView
+        mMyMomentsRecyclerView = (RecyclerView) mMyMomentsRelativeLayout.findViewById(R.id.my_moments_recyclerView);
+
+        // create a new MomentList
+        mMomentList = new MomentList(getActivity().getApplicationContext());
+
+        // set up the RecyclerView
+        setUpRecyclerView();
+
+        // inflate the layout for this fragment and return it
+        return entireView;
+
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+
+        super.onActivityCreated(savedInstanceState);
+
+        // create a new asynchronous task to fill the mMomentList
+        AsyncFetchMyMoments asyncFetchMyMoments = new AsyncFetchMyMoments();
+        asyncFetchMyMoments.execute(mMomentList);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+
+        super.onAttach(context);
+
+        // get the reference to the activity for the callback
+        mActivityCallback = (CardInteractionListener) context;
+
+    }
+
+    public void setUpRecyclerView(){
+        /**
+         * SET UP THE RECYCLERVIEW
+         * set the adapter on it
+         * determine if the device is a tablet and choose between two LayoutManagers
+         * add whatever decorations to the RecyclerView
+         * set whatever item listeners
+         */
+
+        // get the RecyclerAdapter
+        mCardAdapter = new CardAdapter(getContext(), R.id.community_cardView, mMomentList, mIdentifier);
+
+        // set the adapter on the RecyclerView
+        mMyMomentsRecyclerView.setAdapter(mCardAdapter);
+
+        // choose and set LayoutManager based on device
+        if(DeviceManager.isDeviceATablet(getActivity())) {
+
+            // apply a GridLayoutManager to the RecyclerView, making it a grid of 3 columns
+            StaggeredGridLayoutManager staggeredGridLayoutManager =
+                    new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+            mMyMomentsRecyclerView.setLayoutManager(staggeredGridLayoutManager);
+
+        }
+        else {
+
+            //apply a LinearLayoutManager to the RecyclerView, making it a vertical list
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+            mMyMomentsRecyclerView.setLayoutManager(linearLayoutManager);
+
+        }
+
+        // add the RecyclerItemClickListener to the RecyclerView items.
+        mMyMomentsRecyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getContext(), mMyMomentsRecyclerView,
+                        new RecyclerItemClickListener.OnItemClickListener() {
+                            // what's to be done when a cell is clicked
+                            @Override
+                            public void onItemClick(View view, int position) {
+                                // tell the Activity what Moment was selected
+                                mActivityCallback.onMomentSelect(mMomentList.getMomentList().get(position));
+                            }
+                        }
+                )
+        );
+
+    }
+
+    public class AsyncFetchMyMoments extends AsyncTask<MomentList, Void, Void> {
+        /**
+         * class for making asynchronous update to the mMomentList
+         * just updates the underlying list of Videos by fetching the Community Videos
+         * then the adapter is notified of the change
+         */
+
+        protected Void doInBackground(MomentList... momentList) {
+            // run this task in the background
+
+
+            // fetch the community videos to update the MomentList
+            momentList[0].getMyMoments();
+
+            //passes nothing to onPostExecute, but an argument is needed
+            return null;
+
+        }
+
+        protected void onPostExecute(Void ignoreThis) {
+            // execute on the UI thread when the background task completes
+            // Void argument is necessary, but not used
+
+
+            // notify the adapter the MomentList has changed
+            mCardAdapter.updateDataSet();
+            mCardAdapter.notifyDataSetChanged();
+
+            // if there are still no Moments, display the no_moments layout
+            mNoMomentsLinearLayout.setVisibility(View.VISIBLE);
+
+        }
+
     }
 
 }

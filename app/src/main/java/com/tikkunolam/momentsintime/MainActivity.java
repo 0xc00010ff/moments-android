@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,9 +12,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 public class MainActivity extends AppCompatActivity
-    implements CommunityFragment.OnCommunityInteractionListener {
+    implements CardInteractionListener {
 
-    //ui references
+    // tag for logging purposes
+    private final String TAG = "MainActivity";
+
+    // strings for intent extra arguments
+    String videoExtra;
+
+    // ui references
     Toolbar mToolbar;
     ViewPager mViewPager;
     PagerAdapter mPagerAdapter;
@@ -28,6 +33,9 @@ public class MainActivity extends AppCompatActivity
 
         //inflate the activity's corresponding layout
         setContentView(R.layout.activity_main);
+
+        // get the string resource for the outgoing intent extra
+        videoExtra = getResources().getString(R.string.video_extra);
 
         //set the ActionBar to the toolbar we created
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -51,13 +59,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     // the callback method that will be called when Videos are selected
-    public void onVideoSelect(Video video) {
-        // open a new Activity to view the Video
+    public void onMomentSelect(Moment moment) {
+        // open a new Activity to view the Moment
 
         // create the Intent
         Intent videoIntent = new Intent(getBaseContext(), VideoViewActivity.class);
-        // add the Parcelable Video to it
-        videoIntent.putExtra("video", video);
+        // add the Parcelable Moment to it
+        videoIntent.putExtra(videoExtra, moment);
         // open the activity
         startActivity(videoIntent);
 
