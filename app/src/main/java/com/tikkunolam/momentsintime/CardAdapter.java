@@ -65,14 +65,14 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 MomentCardHolder momentCardHolder = (MomentCardHolder) holder;
 
-                // get the moment corresponding to the list position
+                // get the mMoment corresponding to the list position
                 Moment moment = (Moment) mDynamicList.get(position);
 
-                // use Picasso to fill the videoPreviewImageView from the moment's picture url
+                // use Picasso to fill the videoPreviewImageView from the mMoment's picture url
                 // fill this before the rest so the loading doesn't look silly
                 Picasso.with(mContext).load(moment.getPictureUrl()).into(momentCardHolder.videoPreviewImageView);
 
-                // set the text in the videoNameTextView from the moment
+                // set the text in the videoNameTextView from the mMoment
                 momentCardHolder.videoNameTextView.setText(moment.getName());
 
                 // if there is a description set it, otherwise delete the view
@@ -188,10 +188,10 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void addMomentPrompts() {
         // adds Strings to the dynamic list to notify the adapter to fill the RecyclerView with moment_prompts
 
-        // add a String at the third position, if possible
-        if(mDynamicList.size() > 2) {
+        // add a String at the seventh position, if possible
+        if(mDynamicList.size() > 7) {
 
-            mDynamicList.add(2, "PROMPT");
+            mDynamicList.add(7, "PROMPT");
 
         }
 

@@ -31,7 +31,7 @@ public class MomentList {
      */
 
     public ArrayList<Moment> getMomentList() {
-        // just return the moment list. useless for now as all methods will return the list.
+        // just return the mMoment list. useless for now as all methods will return the list.
 
         return mMoments;
 

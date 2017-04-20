@@ -24,7 +24,7 @@ import org.json.JSONObject;
 
 
 public class UploadService extends IntentService {
-    // this service runs in the background and uploads a moment to Vimeo
+    // this service runs in the background and uploads a mMoment to Vimeo
 
     /**
      * INSTANCE VARIABLES
@@ -51,7 +51,7 @@ public class UploadService extends IntentService {
     // API endpoint for the upload ticket. query to learn more about upload
     String uploadTicketUri;
 
-    // secure upload URL. url to which the moment data is sent
+    // secure upload URL. url to which the mMoment data is sent
     String uploadLink;
 
 
@@ -74,7 +74,7 @@ public class UploadService extends IntentService {
         // do the upload work
         // probably send incremental progress update for a progress bar
 
-        // the uri for the local moment file
+        // the uri for the local mMoment file
         Uri uri = intent.getParcelableExtra(videoUriExtra);
 
         // create a file from the uri
@@ -139,7 +139,7 @@ public class UploadService extends IntentService {
     }
 
     protected void uploadVideo(File videoFile) {
-        //upload the moment
+        //upload the mMoment
 
         // get the length in bytes of the file
         double fileSize = videoFile.length();

@@ -4,7 +4,7 @@
     <!--API DETAILS-->
 
     <!--strings for individual configuration-->
-    <string name="api_access_token">77426b1811ace383f683e3e9525c3105</string>
+    <string name="api_access_token">7f737b3dd51c6b895f084f4cd03df2dd</string>
 
     <!--string for api interaction-->
     <string name="api_base_address">https://api.vimeo.com</string>
@@ -34,7 +34,6 @@
     <!--intent extra arguments-->
     <string name="video_extra">moment</string>
     <string name="video_uri_extra">videoUri</string>
-
 
 
 </resources>

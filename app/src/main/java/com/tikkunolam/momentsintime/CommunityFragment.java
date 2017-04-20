@@ -30,7 +30,7 @@ public class CommunityFragment extends Fragment {
     // list of Moments
     MomentList mMomentList;
 
-    // callback for the activity to handle business when a moment is clicked
+    // callback for the activity to handle business when a mMoment is clicked
     CardInteractionListener mActivityCallback;
 
     public CommunityFragment() {

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.io.IOException;
 
@@ -133,8 +134,66 @@ public class VimeoNetworker {
 
     }
 
+    public String getPlayableVideo(String videoUri) {
+        // takes the uri from a mMoment and fetches the video playback url
+
+        OkHttpClient client = new OkHttpClient();
+        Response response = null;
+
+        try {
+
+            // build the request
+            Request request = new Request.Builder()
+                    .url(mApiAddress + "/me" + videoUri)
+                    .addHeader("Authorization", "Bearer " + mAccessToken)
+                    .build();
+
+            // make the call and receive the response
+            response = client.newCall(request).execute();
+
+            // convert the body to a String
+            String responseString = response.body().string();
+
+            // convert the String to a JSONObject
+            JSONObject jsonResponse = new JSONObject(responseString);
+
+            // get the video data
+            JSONArray jsonArray = jsonResponse.getJSONArray("files");
+
+            // fetch the first video
+            JSONObject jsonVideo = jsonArray.getJSONObject(0);
+
+            String videoUrl = jsonVideo.getString("link");
+
+            return videoUrl;
+
+        }
+
+        catch(IOException exception) {
+
+            Log.e(TAG, "getPlayableVideo" + exception.toString());
+
+            return null;
+
+        }
+
+        catch(JSONException exception) {
+
+            Log.e(TAG, "getPlayableVideo" + exception.toString());
+
+            return null;
+
+        }
+
+        finally {
+
+            response.body().close();
+
+        }
+    }
+
     public void uploadVideo(Uri uri, Context context) {
-        // upload a moment to Vimeo using the UploadService
+        // upload a mMoment to Vimeo using the UploadService
 
         // start the UploadService and pass it the videoUri
         Intent uploadIntent = new Intent(context, UploadService.class);
@@ -205,6 +264,7 @@ public class VimeoNetworker {
         // return the list
         // may be null. should check for that where it's called
         return moments;
+
     }
 
 }

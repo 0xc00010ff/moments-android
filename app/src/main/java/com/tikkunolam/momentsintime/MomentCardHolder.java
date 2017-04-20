@@ -12,13 +12,13 @@ public class MomentCardHolder extends RecyclerView.ViewHolder{
      * it holds references to the views which will be filled dynamically
     **/
 
-    // the ImageView for the moment preview
+    // the ImageView for the mMoment preview
     ImageView videoPreviewImageView;
 
-    // the textView for the moment name
+    // the textView for the mMoment name
     TextView videoNameTextView;
 
-    // the TextView for the moment description
+    // the TextView for the mMoment description
     TextView videoDescriptionTextView;
 
     // the TextView for the share link

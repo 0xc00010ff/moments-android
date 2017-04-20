@@ -11,10 +11,10 @@ public class Moment implements Parcelable {
      * INSTANCE VARIABLES
      */
 
-    // the name of the moment
+    // the name of the mMoment
     public String name;
 
-    // the description of the moment
+    // the description of the mMoment
     public String description;
 
     // the person being interviewed. likely will change to a Person object
