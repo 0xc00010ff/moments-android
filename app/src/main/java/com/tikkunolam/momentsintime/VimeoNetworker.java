@@ -160,8 +160,8 @@ public class VimeoNetworker {
             // get the video data
             JSONArray jsonArray = jsonResponse.getJSONArray("files");
 
-            // fetch the first video
-            JSONObject jsonVideo = jsonArray.getJSONObject(0);
+            // fetch the highest quality video
+            JSONObject jsonVideo = fetchHighestQualityVideo(jsonArray);
 
             String videoUrl = jsonVideo.getString("link");
 
@@ -264,6 +264,58 @@ public class VimeoNetworker {
         // return the list
         // may be null. should check for that where it's called
         return moments;
+
+    }
+
+    public JSONObject fetchHighestQualityVideo(JSONArray jsonArray) {
+        // loop through the JSONArray and find the highest quality video
+
+        JSONObject highestQualityVideo = null;
+
+        try {
+
+            // maintain the index of the video with the highest quality
+            int highest = 0;
+
+            // the current highest quality value
+            int currentHigh = 0;
+
+            for(int i = 0; i < jsonArray.length(); i++) {
+
+                // get the video object
+                JSONObject video = jsonArray.getJSONObject(i);
+
+                if(video.has("height")) {
+
+                    // get the video's quality
+                    int videoQuality = video.getInt("height");
+
+                    // if it has the highest quality so far, update highest with its index
+                    if(videoQuality >= currentHigh) {
+
+                        currentHigh = videoQuality;
+                        highest = i;
+
+                    }
+
+                }
+
+            }
+
+            // set the highestQualityVideo to be returned
+            highestQualityVideo = jsonArray.getJSONObject(highest);
+
+        }
+
+        catch(JSONException jsonException) {
+
+            Log.e(TAG, "fetchHighestQualityVideo " + jsonException);
+
+        }
+
+        // return the highest quality video
+        return highestQualityVideo;
+
 
     }
 

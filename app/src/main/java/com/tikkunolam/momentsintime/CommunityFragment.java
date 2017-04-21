@@ -30,8 +30,8 @@ public class CommunityFragment extends Fragment {
     // list of Moments
     MomentList mMomentList;
 
-    // callback for the activity to handle business when a mMoment is clicked
-    CardInteractionListener mActivityCallback;
+    // callback for the activity to handle fragment business
+    FragmentInteractionListener mActivityCallback;
 
     public CommunityFragment() {
 
@@ -94,7 +94,7 @@ public class CommunityFragment extends Fragment {
         super.onAttach(context);
 
         // get the reference to the activity for the callback
-        mActivityCallback = (CardInteractionListener) context;
+        mActivityCallback = (FragmentInteractionListener) context;
 
     }
 

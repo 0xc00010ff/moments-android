@@ -4,15 +4,18 @@ package com.tikkunolam.momentsintime;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 
 public class MyMomentsFragment extends Fragment {
@@ -23,8 +26,8 @@ public class MyMomentsFragment extends Fragment {
     // list of Moments
     private MomentList mMomentList;
 
-    // callback for the activity to handle business when a Moment is clicked
-    CardInteractionListener mActivityCallback;
+    // callback for the activity to handle fragment business
+    FragmentInteractionListener mActivityCallback;
 
     // CardAdapter for the RecyclerView
     CardAdapter mCardAdapter;
@@ -36,6 +39,9 @@ public class MyMomentsFragment extends Fragment {
     RelativeLayout mMyMomentsRelativeLayout;
     LinearLayout mNoMomentsLinearLayout;
     RecyclerView mMyMomentsRecyclerView;
+    TextView mMakeAMomentTextView;
+    FloatingActionButton mFloatingActionButton;
+
 
     public MyMomentsFragment() {
 
@@ -71,6 +77,34 @@ public class MyMomentsFragment extends Fragment {
         // get the view to show when there are no moments. it's set to hidden for now
         mNoMomentsLinearLayout = (LinearLayout) mMyMomentsRelativeLayout.findViewById(R.id.no_moments_linearLayout);
 
+        // get the Make a Moment prompt and set an OnClickListener on it
+        mMakeAMomentTextView = (TextView) mNoMomentsLinearLayout.findViewById(R.id.make_a_moment_textView);
+
+        mMakeAMomentTextView.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+
+                Log.d(TAG, "CLICK!!!!!!!!");
+                mActivityCallback.onNewMomentClick();
+
+            }
+
+        });
+
+        // get the FloatingActionButton and set an OnClickListener on it
+        mFloatingActionButton = (FloatingActionButton) mMyMomentsRelativeLayout.findViewById(R.id.floatingActionButton);
+
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                // when the fab is clicked tell the MainActivity to load the MakeAMomentActivity
+
+                mActivityCallback.onNewMomentClick();
+
+            }
+
+        });
+
         // get the RecyclerView
         mMyMomentsRecyclerView = (RecyclerView) mMyMomentsRelativeLayout.findViewById(R.id.my_moments_recyclerView);
 
@@ -101,7 +135,7 @@ public class MyMomentsFragment extends Fragment {
         super.onAttach(context);
 
         // get the reference to the activity for the callback
-        mActivityCallback = (CardInteractionListener) context;
+        mActivityCallback = (FragmentInteractionListener) context;
 
     }
 

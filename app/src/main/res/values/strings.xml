@@ -28,6 +28,18 @@
     <string name="no_moments_cont">Even if you\'re not ready to film, you can create the plans for an interview now.</string>
     <string name="make_a_moment">Let\'s make a moment</string>
 
+    <!--strings for the MakeAMomentActivity-->
+    <string name="interviewing">Interviewing</string>
+    <string name="interviewing_prompt">Select a special person to interview</string>
+    <string name="description">Description</string>
+    <string name="description_prompt">Add a title and description</string>
+    <string name="video">Video</string>
+    <string name="video_prompt">Start filming</string>
+    <string name="video_or"> or </string>
+    <string name="upload_prompt">upload a video</string>
+    <string name="notes">Notes</string>
+    <string name="notes_prompt">Add a new note</string>
+
 
     <!--STRINGS THAT HELP WITH COORDINATION-->
 
