@@ -29,8 +29,8 @@ public class MyMomentsFragment extends Fragment {
     // callback for the activity to handle fragment business
     FragmentInteractionListener mActivityCallback;
 
-    // CardAdapter for the RecyclerView
-    CardAdapter mCardAdapter;
+    // MomentCardAdapter for the RecyclerView
+    MomentCardAdapter mMomentCardAdapter;
 
     // fragment identifier for the adapter
     int mIdentifier = 2;
@@ -149,10 +149,10 @@ public class MyMomentsFragment extends Fragment {
          */
 
         // get the RecyclerAdapter
-        mCardAdapter = new CardAdapter(getContext(), R.id.community_cardView, mMomentList, mIdentifier);
+        mMomentCardAdapter = new MomentCardAdapter(getContext(), R.id.community_cardView, mMomentList, mIdentifier);
 
         // set the adapter on the RecyclerView
-        mMyMomentsRecyclerView.setAdapter(mCardAdapter);
+        mMyMomentsRecyclerView.setAdapter(mMomentCardAdapter);
 
         // choose and set LayoutManager based on device
         if(DeviceManager.isDeviceATablet(getActivity())) {
@@ -212,8 +212,8 @@ public class MyMomentsFragment extends Fragment {
 
 
             // notify the adapter the MomentList has changed
-            mCardAdapter.updateDataSet();
-            mCardAdapter.notifyDataSetChanged();
+            mMomentCardAdapter.updateDataSet();
+            mMomentCardAdapter.notifyDataSetChanged();
 
             // if there are still no Moments, display the no_moments layout
             mNoMomentsLinearLayout.setVisibility(View.VISIBLE);

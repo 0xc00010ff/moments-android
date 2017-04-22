@@ -3,6 +3,8 @@ package com.tikkunolam.momentsintime;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+
 import static android.R.attr.width;
 
 public class Moment implements Parcelable {
@@ -28,6 +30,9 @@ public class Moment implements Parcelable {
 
     // the url of the video thumbnail
     public String pictureUrl;
+
+    // list of notes on the Moment
+    ArrayList<String> notes;
 
 
     // if the video is available (relevant after uploading)
@@ -58,6 +63,8 @@ public class Moment implements Parcelable {
     // empty constructor for Moment creation by user
     public Moment() {
 
+        notes = new ArrayList<>();
+
     }
 
     // the constructor for generating Moments from Vimeo results
@@ -85,6 +92,7 @@ public class Moment implements Parcelable {
         videoUri = in.readString();
         videoUrl = in.readString();
         pictureUrl = in.readString();
+        notes = in.readArrayList(String.class.getClassLoader());
 
     }
 
@@ -106,6 +114,7 @@ public class Moment implements Parcelable {
         out.writeString(videoUri);
         out.writeString(videoUrl);
         out.writeString(pictureUrl);
+        out.writeStringList(notes);
 
     }
 
@@ -155,6 +164,12 @@ public class Moment implements Parcelable {
 
     }
 
+    public ArrayList<String> getNotes() {
+
+        return notes;
+
+    }
+
     // setters
 
     public void setName(String name) {
@@ -190,6 +205,12 @@ public class Moment implements Parcelable {
     public void setPictureUrl(String pictureUrl) {
 
         this.pictureUrl = pictureUrl;
+
+    }
+
+    public void addNote(String note) {
+
+        notes.add(note);
 
     }
 

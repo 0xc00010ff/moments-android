@@ -22,7 +22,7 @@ public class CommunityFragment extends Fragment {
     RecyclerView mCommunityRecyclerView;
 
     // adapter for the RecyclerView
-    CardAdapter mCardAdapter;
+    MomentCardAdapter mMomentCardAdapter;
 
     // fragment identifier for the adapter
     int mIdentifier = 1;
@@ -113,10 +113,10 @@ public class CommunityFragment extends Fragment {
          */
 
         // get the RecyclerAdapter
-        mCardAdapter = new CardAdapter(getContext(), R.id.community_cardView, mMomentList, mIdentifier);
+        mMomentCardAdapter = new MomentCardAdapter(getContext(), R.id.community_cardView, mMomentList, mIdentifier);
 
         // set the adapter on the RecyclerView
-        mCommunityRecyclerView.setAdapter(mCardAdapter);
+        mCommunityRecyclerView.setAdapter(mMomentCardAdapter);
 
         // choose and set LayoutManager based on device
         if(DeviceManager.isDeviceATablet(getActivity())) {
@@ -177,8 +177,8 @@ public class CommunityFragment extends Fragment {
 
 
             // notify the adapter the MomentList has changed
-            mCardAdapter.updateDataSet();
-            mCardAdapter.notifyDataSetChanged();
+            mMomentCardAdapter.updateDataSet();
+            mMomentCardAdapter.notifyDataSetChanged();
 
         }
 

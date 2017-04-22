@@ -14,8 +14,8 @@ import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
 
-public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    // Adapter for populating the RecyclerView on phones
+public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    // Adapter for populating the RecyclerViews with moment_cards
 
     Context mContext;
 
@@ -36,7 +36,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     final int PROMPT = 2;
 
 
-    public CardAdapter(Context context, int resource, MomentList momentList, int fragmentIdentifier) {
+    public MomentCardAdapter(Context context, int resource, MomentList momentList, int fragmentIdentifier) {
 
         mContext = context;
         mResource = resource;
