@@ -15,13 +15,16 @@ public class MakeAMomentActivity extends AppCompatActivity {
     // tag for logging purposes
     final String TAG = "MakeAMomentActivity";
 
-    // adapter for the RecyclerView
-    NoteCardAdapter mNoteCardAdapter;
-
     // ui references
     Toolbar mToolbar;
-    CoordinatorLayout makeAMomentCoordinatorLayout;
-    RecyclerView noteCardRecyclerView;
+    RecyclerView mRecyclerView;
+
+    // adapter for the RecyclerView that fills the whole Activity
+    MakeAMomentAdapter mMakeAMomentAdapter;
+
+    // a Moment to be filled by the user or loaded from disk
+    Moment mMoment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,32 +36,20 @@ public class MakeAMomentActivity extends AppCompatActivity {
         mToolbar = (Toolbar) findViewById(R.id.make_a_moment_toolbar);
         setSupportActionBar(mToolbar);
 
-        // get the main CoordinatorLayout
-        makeAMomentCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.make_a_moment_coordinatorLayout);
+        // get the RecyclerView. this holds everything in this activity but the toolbar
+        mRecyclerView = (RecyclerView) findViewById(R.id.make_a_moment_recyclerView);
 
-        // get the RecyclerView for the notes
-        noteCardRecyclerView = (RecyclerView) findViewById(R.id.note_card_recyclerView);
+        // make a new Moment. to be filled with values from disk, or by the user
+        mMoment = new Moment();
 
-        /**
-         * I'M GOING TO FAKE THIS FOR NOW I'LL CHANGE IT WHEN IT COMES DOWN TO IT
-         */
-        // make a fake moment and add a bunch of notes to it to see what's up
-        Moment fakeMoment = new Moment();
-        fakeMoment.addNote("hahahahahahahahahahahahahaha");
-        fakeMoment.addNote("whatuuuuuuuuuuuuuuuuuuuuupppppppppppp");
-        fakeMoment.addNote("throw me on the top");
-        fakeMoment.addNote("hahahahahahahahahahahahahaha");
-        fakeMoment.addNote("whatuuuuuuuuuuuuuuuuuuuuupppppppppppp");
-        fakeMoment.addNote("throw me on the top");
-        fakeMoment.addNote("hahahahahahahahahahahahahaha");
-        fakeMoment.addNote("whatuuuuuuuuuuuuuuuuuuuuupppppppppppp");
-        fakeMoment.addNote("throw me on the top");
+        // make the mMakeAMomentAdapter and set it on the RecyclerView
+        mMakeAMomentAdapter = new MakeAMomentAdapter(this, mMoment);
+        mRecyclerView.setAdapter(mMakeAMomentAdapter);
 
-        // create the adapter and set it on the RecyclerView
-        mNoteCardAdapter = new NoteCardAdapter(getBaseContext(), R.id.note_cardView, fakeMoment.getNotes());
-        noteCardRecyclerView.setAdapter(mNoteCardAdapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getBaseContext());
-        noteCardRecyclerView.setLayoutManager(linearLayoutManager);
+        // set a LinearLayoutManager on the mRecyclerView
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+
 
     }
 
