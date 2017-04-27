@@ -7,6 +7,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 
@@ -173,6 +174,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     public void onInterviewingPromptClick() {
         // deal with acquiring an interviewee, adding it to the Moment, and refreshing the Adapter
 
+        Log.d(TAG, "opening the InterviewingActivity");
 
     }
 
@@ -180,24 +182,28 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     public void onDescriptionPromptClick() {
         // deal with acquiring a description/title, adding it to the Moment, and refreshing the Adapter
 
+        Log.d(TAG, "opening the DescriptionActivity");
 
     }
 
     public void onVideoPromptClick() {
         // deal with loading a FilmVideoIntent, adding the localVideoUri to the Moment, and refreshing
 
+        Log.d(TAG, "expressing a video Intent");
 
     }
 
     public void onUploadPromptClick() {
         // deal with loading a FindVideoIntent, adding the localVideoUri to the Moment, and refreshing
 
+        Log.d(TAG, "expressing a fetch video Intent");
 
     }
 
     public void onNotesPromptClick() {
         // deal with acquiring a new note, adding it to the Moment, and refreshing the Adapter
 
+        Log.d(TAG, "loading a NoteActivity");
 
     }
 

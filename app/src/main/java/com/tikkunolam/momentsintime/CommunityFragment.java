@@ -168,9 +168,9 @@ public class CommunityFragment extends Fragment {
                             public void onItemClick(View view, int position) {
                                 // tell the Activity what Moment was selected
 
-                                // to account for having added the moment_prompt add 1 to position
+                                // to account for having added the moment_prompt subtract 1 from position
                                 // if the position is > 7 (the index of the moment_prompt)
-                                if(position > 7) position++;
+                                if(position > 7) position--;
 
                                 // tell the Activity
                                 mActivityCallback.onMomentSelect(mMomentList.getMomentList().get(position));

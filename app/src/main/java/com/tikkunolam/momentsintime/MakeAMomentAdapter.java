@@ -8,10 +8,7 @@ import android.view.ViewGroup;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 
 import java.util.ArrayList;
-import java.util.zip.Inflater;
-
-import static android.os.Build.VERSION_CODES.M;
-import static okhttp3.internal.Internal.instance;
+import java.util.HashMap;
 
 public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     /**
@@ -171,8 +168,8 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 // retrieve the prompt string from the SectionPrompt object
                 String prompt = sectionPrompt.getSectionPrompt();
 
-                // set the SectionPromptHolder's sectionPromptTextView value
-                sectionPromptHolder.sectionPromptTextView.setText(prompt);
+                // set the SectionPromptHolder's mSectionPromptTextView value
+                sectionPromptHolder.setText(prompt);
 
                 break;
 
