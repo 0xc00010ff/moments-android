@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.io.IOException;
 
@@ -41,8 +42,18 @@ public class VimeoNetworker {
     // this is the string for both fetching and uploading. Difference is in the request type.
     private String mVideoFetchUri;
 
+    // part of the query string for specifying page number for videos fetch
+    private String mPageNumberParameter;
+
+    // part of the query string for specifying number of videos per page
+    private String mPerPageParameter;
+
+    // number of videos to request per page
+    private final String mVideosPerPage = "20";
+
     // to be included in headers to let Vimeo know what version of the API we expect
     private String mApiVersion;
+
 
     /**
      * CONSTRUCTORS
@@ -55,6 +66,8 @@ public class VimeoNetworker {
         mAccessToken = applicationContext.getString(R.string.api_access_token);
         mApiAddress = applicationContext.getString(R.string.api_base_address);
         mVideoFetchUri = applicationContext.getString(R.string.video_fetch_uri);
+        mPageNumberParameter = applicationContext.getString(R.string.page_number_parameter);
+        mPerPageParameter = applicationContext.getString(R.string.per_page_parameter);
         mApiVersion = applicationContext.getString(R.string.api_version);
 
         // set the intent extras' argument names
@@ -68,19 +81,21 @@ public class VimeoNetworker {
      * INSTANCE METHODS
      */
 
-    public ArrayList<Moment> getCommunityMoments() {
+    public ArrayList<Moment> getCommunityMoments(int pageNumber) {
         // fetches the list of Videos for the CommunityFragment
 
         OkHttpClient client = new OkHttpClient();
         ArrayList<Moment> moments = new ArrayList<>();
         Response response = null;
 
+        String pageNumberString = String.valueOf(pageNumber);
+
         try {
             // try to fetch the content
 
             // build the request
             Request request = new Request.Builder()
-                    .url(mApiAddress + mVideoFetchUri)
+                    .url(mApiAddress + mVideoFetchUri + "?" + mPageNumberParameter + pageNumberString + "&" + mPerPageParameter + mVideosPerPage)
                     .addHeader("Authorization", "Bearer " + mAccessToken)
                     .build();
 
@@ -133,8 +148,66 @@ public class VimeoNetworker {
 
     }
 
+    public String getPlayableVideo(String videoUri) {
+        // takes the uri from a mMoment and fetches the video playback url
+
+        OkHttpClient client = new OkHttpClient();
+        Response response = null;
+
+        try {
+
+            // build the request
+            Request request = new Request.Builder()
+                    .url(mApiAddress + "/me" + videoUri)
+                    .addHeader("Authorization", "Bearer " + mAccessToken)
+                    .build();
+
+            // make the call and receive the response
+            response = client.newCall(request).execute();
+
+            // convert the body to a String
+            String responseString = response.body().string();
+
+            // convert the String to a JSONObject
+            JSONObject jsonResponse = new JSONObject(responseString);
+
+            // get the video data
+            JSONArray jsonArray = jsonResponse.getJSONArray("files");
+
+            // fetch the highest quality video
+            JSONObject jsonVideo = fetchHighestQualityVideo(jsonArray);
+
+            String videoUrl = jsonVideo.getString("link");
+
+            return videoUrl;
+
+        }
+
+        catch(IOException exception) {
+
+            Log.e(TAG, "getPlayableVideo" + exception.toString());
+
+            return null;
+
+        }
+
+        catch(JSONException exception) {
+
+            Log.e(TAG, "getPlayableVideo" + exception.toString());
+
+            return null;
+
+        }
+
+        finally {
+
+            response.body().close();
+
+        }
+    }
+
     public void uploadVideo(Uri uri, Context context) {
-        // upload a moment to Vimeo using the UploadService
+        // upload a mMoment to Vimeo using the UploadService
 
         // start the UploadService and pass it the videoUri
         Intent uploadIntent = new Intent(context, UploadService.class);
@@ -205,6 +278,59 @@ public class VimeoNetworker {
         // return the list
         // may be null. should check for that where it's called
         return moments;
+
+    }
+
+    public JSONObject fetchHighestQualityVideo(JSONArray jsonArray) {
+        // loop through the JSONArray and find the highest quality video
+
+        JSONObject highestQualityVideo = null;
+
+        try {
+
+            // maintain the index of the video with the highest quality
+            int highest = 0;
+
+            // the current highest quality value
+            int currentHigh = 0;
+
+            for(int i = 0; i < jsonArray.length(); i++) {
+
+                // get the video object
+                JSONObject video = jsonArray.getJSONObject(i);
+
+                if(video.has("height")) {
+
+                    // get the video's quality
+                    int videoQuality = video.getInt("height");
+
+                    // if it has the highest quality so far, update highest with its index
+                    if(videoQuality >= currentHigh) {
+
+                        currentHigh = videoQuality;
+                        highest = i;
+
+                    }
+
+                }
+
+            }
+
+            // set the highestQualityVideo to be returned
+            highestQualityVideo = jsonArray.getJSONObject(highest);
+
+        }
+
+        catch(JSONException jsonException) {
+
+            Log.e(TAG, "fetchHighestQualityVideo " + jsonException);
+
+        }
+
+        // return the highest quality video
+        return highestQualityVideo;
+
+
     }
 
 }

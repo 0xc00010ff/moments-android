@@ -1,5 +1,7 @@
 package com.tikkunolam.momentsintime;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.VideoView;
@@ -7,16 +9,16 @@ import android.widget.MediaController;
 
 public class VideoViewActivity extends AppCompatActivity {
 
-    // the moment that was passed in
-    Moment moment;
+    // the mMoment that was passed in
+    Moment mMoment;
 
     // strings for intent extra arguments
-    String videoExtra;
+    String mVideoExtra;
 
     // ui references
-    VideoView videoView;
+    VideoView mVideoView;
 
-    MediaController mediaController;
+    MediaController mMediaController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,38 +28,80 @@ public class VideoViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video_view);
 
         // fetch the string for Intent Extra argument from resources
-        videoExtra = (String) getResources().getText(R.string.video_extra);
+        mVideoExtra = (String) getResources().getText(R.string.video_extra);
 
         // get the VideoView
-        videoView = (VideoView) findViewById(R.id.videoView);
+        mVideoView = (VideoView) findViewById(R.id.videoView);
 
         // take the Moment out of the extras bundle
-        moment = getIntent().getExtras().getParcelable(videoExtra);
+        mMoment = getIntent().getExtras().getParcelable(mVideoExtra);
 
-        // set up the Moment
-        setUpVideoView(moment);
+        // set up the video
+        setUpVideoView();
 
-        // start the moment
-        videoView.start();
+        // start the video
+        mVideoView.start();
 
 
 
 
     }
 
-    private void setUpVideoView(Moment moment) {
+    private void setUpVideoView( ) {
 
-        // get the moment path
-        String url = moment.getVideoUrl();
+        // get the Moment path
+        String uri = mMoment.getVideoUri();
 
-        // set the VideoView's path
-        videoView.setVideoPath(url);
+        // call the async task to set the VideoView's path and set the MediaController
+        AsyncFetchVideo asyncFetchVideo = new AsyncFetchVideo(this);
+        asyncFetchVideo.execute(uri);
 
-        // set up the MediaController
-        mediaController = new MediaController(this);
-        mediaController.setMediaPlayer(videoView);
+    }
 
-        videoView.setMediaController(mediaController);
+    public class AsyncFetchVideo extends AsyncTask<String, Void, String> {
+        /**
+         * class for asynchronously fetching a link to an mp4 from Vimeo
+         */
+
+        Context mContext;
+
+        /**
+         * CONSTRUCTOR
+         */
+
+        public AsyncFetchVideo(Context context) {
+
+            mContext = context;
+
+        }
+
+        protected String doInBackground(String... videoUri) {
+
+            // grab a networker
+            VimeoNetworker vimeoNetworker = new VimeoNetworker(getApplicationContext());
+
+            // have it fetch the video link
+            String videoUrl = vimeoNetworker.getPlayableVideo(videoUri[0]);
+
+            return videoUrl;
+
+        }
+
+        protected void onPostExecute(String videoUrl) {
+
+            // set the video path
+            mVideoView.setVideoPath(videoUrl);
+
+            // set up the MediaController
+            mMediaController = new MediaController(mContext);
+            mMediaController.setMediaPlayer(mVideoView);
+
+            // set the MediaController on the VideoView
+            mVideoView.setMediaController(mMediaController);
+
+        }
+
+
 
     }
 

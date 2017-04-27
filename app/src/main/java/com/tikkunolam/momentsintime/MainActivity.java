@@ -12,7 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 public class MainActivity extends AppCompatActivity
-    implements CardInteractionListener {
+    implements FragmentInteractionListener {
 
     // tag for logging purposes
     private final String TAG = "MainActivity";
@@ -64,10 +64,25 @@ public class MainActivity extends AppCompatActivity
 
         // create the Intent
         Intent videoIntent = new Intent(getBaseContext(), VideoViewActivity.class);
+
         // add the Parcelable Moment to it
         videoIntent.putExtra(videoExtra, moment);
+
         // open the activity
         startActivity(videoIntent);
+
+    }
+
+    // the callback method that will be called when the FloatingActionButton in MyMomentsFragment is clicked
+    public void onNewMomentClick() {
+        // open the MakeAMomentActivity
+
+        // create the Intent
+        Intent makeAMomentIntent = new Intent(getBaseContext(), MakeAMomentActivity.class);
+
+        // open the activity
+        startActivity(makeAMomentIntent);
+
 
     }
 

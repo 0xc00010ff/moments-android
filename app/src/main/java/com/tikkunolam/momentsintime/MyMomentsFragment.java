@@ -4,15 +4,19 @@ package com.tikkunolam.momentsintime;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 
 public class MyMomentsFragment extends Fragment {
@@ -23,11 +27,11 @@ public class MyMomentsFragment extends Fragment {
     // list of Moments
     private MomentList mMomentList;
 
-    // callback for the activity to handle business when a Moment is clicked
-    CardInteractionListener mActivityCallback;
+    // callback for the activity to handle fragment business
+    FragmentInteractionListener mActivityCallback;
 
-    // CardAdapter for the RecyclerView
-    CardAdapter mCardAdapter;
+    // MomentCardAdapter for the RecyclerView
+    MomentCardAdapter mMomentCardAdapter;
 
     // fragment identifier for the adapter
     int mIdentifier = 2;
@@ -36,6 +40,10 @@ public class MyMomentsFragment extends Fragment {
     RelativeLayout mMyMomentsRelativeLayout;
     LinearLayout mNoMomentsLinearLayout;
     RecyclerView mMyMomentsRecyclerView;
+    TextView mMakeAMomentTextView;
+    FloatingActionButton mFloatingActionButton;
+    ProgressBar mProgressBar;
+
 
     public MyMomentsFragment() {
 
@@ -68,8 +76,39 @@ public class MyMomentsFragment extends Fragment {
         // get the RelativeLayout to retrieve the child views
         mMyMomentsRelativeLayout = (RelativeLayout) entireView;
 
+        // get the progressBar
+        mProgressBar = (ProgressBar) mMyMomentsRelativeLayout.findViewById(R.id.progressBar);
+
         // get the view to show when there are no moments. it's set to hidden for now
         mNoMomentsLinearLayout = (LinearLayout) mMyMomentsRelativeLayout.findViewById(R.id.no_moments_linearLayout);
+
+        // get the Make a Moment prompt and set an OnClickListener on it
+        mMakeAMomentTextView = (TextView) mNoMomentsLinearLayout.findViewById(R.id.make_a_moment_textView);
+
+        mMakeAMomentTextView.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+
+                Log.d(TAG, "CLICK!!!!!!!!");
+                mActivityCallback.onNewMomentClick();
+
+            }
+
+        });
+
+        // get the FloatingActionButton and set an OnClickListener on it
+        mFloatingActionButton = (FloatingActionButton) mMyMomentsRelativeLayout.findViewById(R.id.floatingActionButton);
+
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                // when the fab is clicked tell the MainActivity to load the MakeAMomentActivity
+
+                mActivityCallback.onNewMomentClick();
+
+            }
+
+        });
 
         // get the RecyclerView
         mMyMomentsRecyclerView = (RecyclerView) mMyMomentsRelativeLayout.findViewById(R.id.my_moments_recyclerView);
@@ -101,7 +140,7 @@ public class MyMomentsFragment extends Fragment {
         super.onAttach(context);
 
         // get the reference to the activity for the callback
-        mActivityCallback = (CardInteractionListener) context;
+        mActivityCallback = (FragmentInteractionListener) context;
 
     }
 
@@ -115,10 +154,10 @@ public class MyMomentsFragment extends Fragment {
          */
 
         // get the RecyclerAdapter
-        mCardAdapter = new CardAdapter(getContext(), R.id.community_cardView, mMomentList, mIdentifier);
+        mMomentCardAdapter = new MomentCardAdapter(getContext(), R.id.community_cardView, mMomentList, mIdentifier);
 
         // set the adapter on the RecyclerView
-        mMyMomentsRecyclerView.setAdapter(mCardAdapter);
+        mMyMomentsRecyclerView.setAdapter(mMomentCardAdapter);
 
         // choose and set LayoutManager based on device
         if(DeviceManager.isDeviceATablet(getActivity())) {
@@ -160,6 +199,13 @@ public class MyMomentsFragment extends Fragment {
          * then the adapter is notified of the change
          */
 
+        protected void onPreExecute() {
+
+            // show the mProgressBar while fetching Moments
+            mProgressBar.setVisibility(View.VISIBLE);
+
+        }
+
         protected Void doInBackground(MomentList... momentList) {
             // run this task in the background
 
@@ -177,9 +223,12 @@ public class MyMomentsFragment extends Fragment {
             // Void argument is necessary, but not used
 
 
+            // stop the mProgressBar
+            mProgressBar.setVisibility(View.GONE);
+
             // notify the adapter the MomentList has changed
-            mCardAdapter.updateDataSet();
-            mCardAdapter.notifyDataSetChanged();
+            mMomentCardAdapter.updateDataSet();
+            mMomentCardAdapter.notifyDataSetChanged();
 
             // if there are still no Moments, display the no_moments layout
             mNoMomentsLinearLayout.setVisibility(View.VISIBLE);

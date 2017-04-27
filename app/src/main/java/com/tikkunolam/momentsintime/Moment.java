@@ -1,7 +1,13 @@
 package com.tikkunolam.momentsintime;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.MediaStore;
+
+import java.util.ArrayList;
 
 import static android.R.attr.width;
 
@@ -11,10 +17,10 @@ public class Moment implements Parcelable {
      * INSTANCE VARIABLES
      */
 
-    // the name of the moment
+    // the name of the mMoment
     public String name;
 
-    // the description of the moment
+    // the description of the mMoment
     public String description;
 
     // the person being interviewed. likely will change to a Person object
@@ -26,8 +32,17 @@ public class Moment implements Parcelable {
     // the video playback url
     public String videoUrl;
 
+    // the local video file uri
+    public String localVideoUri;
+
+    // the local video thumbnail
+    public Bitmap localThumbnail;
+
     // the url of the video thumbnail
     public String pictureUrl;
+
+    // list of notes on the Moment
+    ArrayList<String> notes;
 
 
     // if the video is available (relevant after uploading)
@@ -58,6 +73,8 @@ public class Moment implements Parcelable {
     // empty constructor for Moment creation by user
     public Moment() {
 
+        notes = new ArrayList<>();
+
     }
 
     // the constructor for generating Moments from Vimeo results
@@ -84,7 +101,9 @@ public class Moment implements Parcelable {
         interviewee = in.readString();
         videoUri = in.readString();
         videoUrl = in.readString();
+        localVideoUri = in.readString();
         pictureUrl = in.readString();
+        notes = in.readArrayList(String.class.getClassLoader());
 
     }
 
@@ -105,7 +124,9 @@ public class Moment implements Parcelable {
         out.writeString(interviewee);
         out.writeString(videoUri);
         out.writeString(videoUrl);
+        out.writeString(localVideoUri);
         out.writeString(pictureUrl);
+        out.writeStringList(notes);
 
     }
 
@@ -149,9 +170,27 @@ public class Moment implements Parcelable {
 
     }
 
+    public String getLocalVideoUri() {
+
+        return localVideoUri;
+
+    }
+
+    public Bitmap getLocalThumbnail() {
+
+        return localThumbnail;
+
+    }
+
     public String getPictureUrl() {
 
         return pictureUrl;
+
+    }
+
+    public ArrayList<String> getNotes() {
+
+        return notes;
 
     }
 
@@ -187,9 +226,31 @@ public class Moment implements Parcelable {
 
     }
 
+    public void setLocalVideoUri(String localVideoUri) {
+
+        // set the localVideoUri from the argument
+        this.localVideoUri = localVideoUri;
+
+        // call the private getLocalThumbnail method
+        setLocalThumbnail();
+
+    }
+
+    private void setLocalThumbnail() {
+
+        localThumbnail = ThumbnailUtils.createVideoThumbnail(localVideoUri, MediaStore.Images.Thumbnails.MINI_KIND);
+
+    }
+
     public void setPictureUrl(String pictureUrl) {
 
         this.pictureUrl = pictureUrl;
+
+    }
+
+    public void addNote(String note) {
+
+        notes.add(note);
 
     }
 

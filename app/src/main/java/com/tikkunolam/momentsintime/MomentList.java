@@ -14,6 +14,9 @@ public class MomentList {
     private ArrayList<Moment> mMoments;
     private VimeoNetworker mVimeoNetworker;
 
+    // keeps up with the last loaded page of Vimeo videos
+    private int mCurrentPage;
+
     /**
      * CONSTRUCTORS
      */
@@ -24,6 +27,8 @@ public class MomentList {
         mMoments = new ArrayList<>();
         mVimeoNetworker = new VimeoNetworker(applicationContext);
 
+        mCurrentPage = 0;
+
     }
 
     /**
@@ -31,7 +36,7 @@ public class MomentList {
      */
 
     public ArrayList<Moment> getMomentList() {
-        // just return the moment list. useless for now as all methods will return the list.
+        // just return the mMoment list. useless for now as all methods will return the list.
 
         return mMoments;
 
@@ -41,7 +46,11 @@ public class MomentList {
     public void getCommunityMoments() {
         // update the moments list by fetching the Community Videos list
 
-        mMoments = mVimeoNetworker.getCommunityMoments();
+        // fetch the current page of videos
+        mMoments.addAll(mVimeoNetworker.getCommunityMoments(mCurrentPage + 1));
+
+        // increment mCurrentPage
+        mCurrentPage++;
 
 
     }
@@ -49,6 +58,12 @@ public class MomentList {
     public void getMyMoments() {
         // update the moments list
 
+
+    }
+
+    public int getCurrentPage() {
+
+        return mCurrentPage;
 
     }
 
