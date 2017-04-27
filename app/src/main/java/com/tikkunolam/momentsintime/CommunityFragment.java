@@ -11,8 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-
-import static android.media.CamcorderProfile.get;
+import android.widget.ProgressBar;
 
 
 public class CommunityFragment extends Fragment {
@@ -20,6 +19,7 @@ public class CommunityFragment extends Fragment {
     // ui references
     FrameLayout mCommunityFrameLayout;
     RecyclerView mCommunityRecyclerView;
+    ProgressBar mProgressBar;
 
     // adapter for the RecyclerView
     MomentCardAdapter mMomentCardAdapter;
@@ -32,6 +32,9 @@ public class CommunityFragment extends Fragment {
 
     // callback for the activity to handle fragment business
     FragmentInteractionListener mActivityCallback;
+
+    // listener for mCommunityRecyclerView's scroll
+    EndlessRecyclerViewScrollListener mScrollListener;
 
     public CommunityFragment() {
 
@@ -61,6 +64,9 @@ public class CommunityFragment extends Fragment {
 
         // from the View retrieve the FrameLayout to get the rest of the views
         mCommunityFrameLayout = (FrameLayout) entireView;
+
+        // the the ProgressBar
+        mProgressBar = (ProgressBar) mCommunityFrameLayout.findViewById(R.id.progressBar);
 
         // get the RecyclerView
         mCommunityRecyclerView = (RecyclerView) mCommunityFrameLayout.findViewById(R.id.community_recyclerView);
@@ -133,6 +139,24 @@ public class CommunityFragment extends Fragment {
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
             mCommunityRecyclerView.setLayoutManager(linearLayoutManager);
 
+            // make a new EndlessScrollRecyclerViewListener
+            mScrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+
+                @Override
+                public void onLoadMore() {
+
+                    AsyncFetchCommunityMoments asyncFetchCommunityMoments = new AsyncFetchCommunityMoments();
+                    asyncFetchCommunityMoments.execute(mMomentList);
+
+                }
+
+            };
+
+            // add the scroll listener to the RecyclerView
+            mCommunityRecyclerView.addOnScrollListener(mScrollListener);
+
+
+
         }
 
         // add the RecyclerItemClickListener to the RecyclerView items.
@@ -143,6 +167,12 @@ public class CommunityFragment extends Fragment {
                             @Override
                             public void onItemClick(View view, int position) {
                                 // tell the Activity what Moment was selected
+
+                                // to account for having added the moment_prompt add 1 to position
+                                // if the position is > 7 (the index of the moment_prompt)
+                                if(position > 7) position++;
+
+                                // tell the Activity
                                 mActivityCallback.onMomentSelect(mMomentList.getMomentList().get(position));
                             }
                         }
@@ -158,6 +188,13 @@ public class CommunityFragment extends Fragment {
          * just updates the underlying list of Videos by fetching the Community Videos
          * then the adapter is notified of the change
          */
+
+        protected void onPreExecute() {
+
+            // show the progress bar
+            mProgressBar.setVisibility(View.VISIBLE);
+
+        }
 
         protected Void doInBackground(MomentList... momentList) {
             // run this task in the background
@@ -176,7 +213,11 @@ public class CommunityFragment extends Fragment {
             // Void argument is necessary, but not used
 
 
+            // stop the progressBar
+            mProgressBar.setVisibility(View.GONE);
+
             // notify the adapter the MomentList has changed
+            mMomentCardAdapter.clear();
             mMomentCardAdapter.updateDataSet();
             mMomentCardAdapter.notifyDataSetChanged();
 

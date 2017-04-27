@@ -10,6 +10,8 @@
     <string name="api_base_address">https://api.vimeo.com</string>
     <string name="api_version">application/vnd.vimeo.*+json;version=3.2</string>
     <string name="video_fetch_uri">/me/videos</string>
+    <string name="page_number_parameter">page=</string>
+    <string name="per_page_parameter">per_page=</string>
 
 
     <!--UI STRINGS-->
@@ -34,9 +36,7 @@
     <string name="description">Description</string>
     <string name="description_prompt">Add a title and description</string>
     <string name="video">Video</string>
-    <string name="video_prompt">Start filming</string>
-    <string name="video_or"> or </string>
-    <string name="upload_prompt">upload a video</string>
+    <string name="video_prompt">Start filming or upload a video</string>
     <string name="notes">Notes</string>
     <string name="notes_prompt">Add a new note</string>
 

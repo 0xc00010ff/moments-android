@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -41,6 +42,7 @@ public class MyMomentsFragment extends Fragment {
     RecyclerView mMyMomentsRecyclerView;
     TextView mMakeAMomentTextView;
     FloatingActionButton mFloatingActionButton;
+    ProgressBar mProgressBar;
 
 
     public MyMomentsFragment() {
@@ -73,6 +75,9 @@ public class MyMomentsFragment extends Fragment {
 
         // get the RelativeLayout to retrieve the child views
         mMyMomentsRelativeLayout = (RelativeLayout) entireView;
+
+        // get the progressBar
+        mProgressBar = (ProgressBar) mMyMomentsRelativeLayout.findViewById(R.id.progressBar);
 
         // get the view to show when there are no moments. it's set to hidden for now
         mNoMomentsLinearLayout = (LinearLayout) mMyMomentsRelativeLayout.findViewById(R.id.no_moments_linearLayout);
@@ -194,6 +199,13 @@ public class MyMomentsFragment extends Fragment {
          * then the adapter is notified of the change
          */
 
+        protected void onPreExecute() {
+
+            // show the mProgressBar while fetching Moments
+            mProgressBar.setVisibility(View.VISIBLE);
+
+        }
+
         protected Void doInBackground(MomentList... momentList) {
             // run this task in the background
 
@@ -210,6 +222,9 @@ public class MyMomentsFragment extends Fragment {
             // execute on the UI thread when the background task completes
             // Void argument is necessary, but not used
 
+
+            // stop the mProgressBar
+            mProgressBar.setVisibility(View.GONE);
 
             // notify the adapter the MomentList has changed
             mMomentCardAdapter.updateDataSet();

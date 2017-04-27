@@ -8,8 +8,10 @@ import android.view.ViewGroup;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 
 import java.util.ArrayList;
+import java.util.zip.Inflater;
 
 import static android.os.Build.VERSION_CODES.M;
+import static okhttp3.internal.Internal.instance;
 
 public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     /**
@@ -19,62 +21,56 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     Context mContext;
 
-    // the View filling the RecyclerView cells
-    int mResource;
+    // list of all things to be bound to the RecyclerView cells
+    ArrayList<Object> mViewModelList;
 
-    // the Moment being created
-    Moment mMoment;
+    // integer identifiers for the view types
+    final int SECTION_TITLE = 0, SECTION_PROMPT = 1, NOTE = 2;
 
-    // an ArrayList filled with Strings that identify the Holder to use to
-    ArrayList<String> mIdentifierList;
 
-    // integers to identify the Object type in the arraylist
-    final int INTERVIEWING_TEXT = 0;
-    final int INTERVIEWING_PROMPT = 1;
-    final int DESCRIPTION_TEXT = 2;
-    final int DESCRIPTION_PROMPT = 3;
-    final int VIDEO_TEXT = 4;
-    final int VIDEO_PROMPT = 5;
-    final int NOTES_TEXT = 6;
-    final int NOTES_PROMPT = 7;
-    final int NOTE = 8;
+
 
     /**
      * CONSTRUCTORS
      */
-    public MakeAMomentAdapter(Context context, Moment moment) {
+    public MakeAMomentAdapter(Context context, ArrayList<Object> viewModels) {
 
         mContext = context;
 
-        mMoment = moment;
-
-        // fill the mIdentifierList with placeholders and notes
-        mIdentifierList = new ArrayList<String>();
-        updateDataSet();
+        mViewModelList = viewModels;
 
     }
 
     public int getItemCount() {
         // return the number of items to fill the RecyclerView
 
-        return mIdentifierList.size();
+        return mViewModelList.size();
 
     }
 
     public int getItemViewType(int position) {
-        // returns and integer identifier for the type of Holder to use
 
-        // if the position is greater than 7 it's a note
-        if(position > 7) {
+        if(mViewModelList.get(position) instanceof SectionTitle) {
+
+            return SECTION_TITLE;
+
+        }
+
+        else if(mViewModelList.get(position) instanceof SectionPrompt) {
+
+            return SECTION_PROMPT;
+
+        }
+
+        else if(mViewModelList.get(position) instanceof String) {
 
             return NOTE;
 
         }
 
-        // otherwise the position matches up to the identifier. just return position
         else {
 
-            return position;
+            return -1;
 
         }
 
@@ -90,173 +86,51 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         // generic ViewHolder for either type of Holder
         RecyclerView.ViewHolder viewHolder = null;
 
-        // a view to inflate the section_title_text into
-        View sectionTitleView;
-
-        // a view to inflate the section_prompt_text into
-        View sectionPromptText;
 
         switch(viewType) {
 
-            case INTERVIEWING_TEXT:
-                // this is the first cell. just return a SectionTitleHolder
+            case SECTION_TITLE:
 
-                // inflate a section_title_text
-                sectionTitleView = LayoutInflater
+                // inflate a section_title_text layout
+                View sectionTitleView = LayoutInflater
                         .from(parent.getContext())
                         .inflate(R.layout.section_title_text, parent, false);
 
-                // set the viewHolder as a SectionTitleHolder
-                viewHolder = new SectionTitleHolder(sectionTitleView);
-
-
-                break;
-
-            case INTERVIEWING_PROMPT:
-                // second cell. decide whether to return an SectionPromptHolder or a FilledIntervieweeHolder
-
-                if(mMoment.getInterviewee() == null) {
-                    // set the Holder to a SectionPromptHolder
-
-                    // inflate the section_prompt_text
-                    sectionPromptText = LayoutInflater
-                            .from(parent.getContext())
-                            .inflate(R.layout.section_prompt_text, parent, false);
-
-                    // set the ViewHolder to a SectionPromptHolder
-                    viewHolder = new SectionPromptHolder(sectionPromptText);
-
-                }
-
-                else {
-                    // inflate the view for a filled_interviewee and return a FilledIntervieweeHolder
-
-
-                }
-
+                // fill the ViewHolder with a SectionTitleHolder
+                viewHolder = new SectionTitleHolder(mContext, sectionTitleView);
 
                 break;
 
-            case DESCRIPTION_TEXT:
-                // third cell. just return a SectionTitleHolder
+            case SECTION_PROMPT:
 
-                // inflate a section_title_text
-                sectionTitleView = LayoutInflater
-                        .from(parent.getContext())
-                        .inflate(R.layout.section_title_text, parent, false);
-
-                // set the viewHolder as a SectionTitleHolder
-                viewHolder = new SectionTitleHolder(sectionTitleView);
-
-
-                break;
-
-            case DESCRIPTION_PROMPT:
-                // fourth cell. decide whether to return a SectionPromptHolder or a FilledDescriptionHolder
-
-                if(mMoment.getDescription() == null) {
-                    // set the Holder to a SectionPromptHolder
-
-                    // inflate the section_prompt_text
-                    sectionPromptText = LayoutInflater
-                            .from(parent.getContext())
-                            .inflate(R.layout.section_prompt_text, parent, false);
-
-                    // set the ViewHolder to a SectionPromptHolder
-                    viewHolder = new SectionPromptHolder(sectionPromptText);
-
-                }
-
-                else {
-                    // inflate a filled_description and set the ViewHolder to a FilledDescriptionHolder
-
-
-                }
-
-                break;
-
-            case VIDEO_TEXT:
-                // fifth cell. just return a SectionTitleHolder
-
-                // inflate a section_title_text
-                sectionTitleView = LayoutInflater
-                        .from(parent.getContext())
-                        .inflate(R.layout.section_title_text, parent, false);
-
-                // set the viewHolder as a SectionTitleHolder
-                viewHolder = new SectionTitleHolder(sectionTitleView);
-
-
-                break;
-
-            case VIDEO_PROMPT:
-                // sixth cell. decide whether to return a VideoSectionPromptHolder or a FilledVideoHolder
-
-                if(mMoment.getLocalThumbnail() == null) {
-                    // set the Holder to a SectionPromptHolder
-
-                    // inflate the section_prompt_text
-                    sectionPromptText = LayoutInflater
-                            .from(parent.getContext())
-                            .inflate(R.layout.video_section_prompt_text, parent, false);
-
-                    // set the ViewHolder to a VideoSectionPromptHolder
-                    viewHolder = new VideoSectionPromptHolder(sectionPromptText);
-
-                }
-
-                else {
-                    // inflate a filled_video and set the Holder to a FilledVideoHolder
-
-
-                }
-
-
-                break;
-
-            case NOTES_TEXT:
-                // seventh cell. just return a SectionTitleHolder
-
-                // inflate a section_title_text
-                sectionTitleView = LayoutInflater
-                        .from(parent.getContext())
-                        .inflate(R.layout.section_title_text, parent, false);
-
-                // set the viewHolder as a SectionTitleHolder
-                viewHolder = new SectionTitleHolder(sectionTitleView);
-
-                break;
-
-            case NOTES_PROMPT:
-                // eighth cell. just return a SectionPromptHolder
-
-
-                // inflate the section_prompt_text
-                sectionPromptText = LayoutInflater
+                // inflate a section_prompt_text layout
+                View sectionPromptView = LayoutInflater
                         .from(parent.getContext())
                         .inflate(R.layout.section_prompt_text, parent, false);
 
-                // set the ViewHolder to a SectionPromptHolder
-                viewHolder = new SectionPromptHolder(sectionPromptText);
-
-
+                // fill the ViewHolder with a SectionPromptHolder
+                viewHolder = new SectionPromptHolder(mContext, sectionPromptView);
 
                 break;
 
             case NOTE:
-                // any cell beyond eight. return a NoteCardHolder
 
-                // inflate the note_card
+                // inflate a note_card layout
                 View noteCardView = LayoutInflater
                         .from(parent.getContext())
                         .inflate(R.layout.note_card, parent, false);
 
-                // set the ViewHolder to a NoteCardHolder
-                viewHolder = new NoteCardHolder(noteCardView);
+                // fill the ViewHolder with a NoteCardHolder
+                viewHolder = new NoteCardHolder(mContext, noteCardView);
 
+                break;
+
+            default:
+                // unexpected value... will just return a null RecyclerView.ViewHolder
+
+                break;
 
         }
-
 
 
         return viewHolder;
@@ -266,154 +140,65 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         // fill the holder with the values it needs
 
-        // a SectionTitleHolder to be cast to from the holder
-        SectionTitleHolder sectionTitleHolder;
+        switch(holder.getItemViewType()) {
 
-        // a SectionPromptHolder to be cast to from the holder
-        SectionPromptHolder sectionPromptHolder;
+            case SECTION_TITLE:
+                // fill a SectionTitleHolder
 
+                // cast the generic Holder to a SectionTitleHolder
+                SectionTitleHolder sectionTitleHolder = (SectionTitleHolder) holder;
 
+                // cast the generic Object at the position in mViewModelList to a SectionTitle
+                SectionTitle sectionTitle = (SectionTitle) mViewModelList.get(position);
 
-        switch(position) {
+                // retrieve the title string from the SectionTitle object
+                String title = sectionTitle.getSectionTitle();
 
-            case 0:
-                // the Holder is a SectionTitleHolder to be filled with interviewing text
-                sectionTitleHolder = (SectionTitleHolder) holder;
-
-                //fill it
-                sectionTitleHolder.sectionTitleTextView.setText(mContext.getText(R.string.interviewing));
-
-                break;
-
-            case 1:
-                // the Holder is a SectionPromptHolder to be filled with interviewing_prompt text
-                // or it's a FilledIntervieweeHolder to be filled with Moment.interviewee info
-
-                if(mMoment.getInterviewee() == null) {
-
-                    // cast the holder to a SectionPromptHolder
-                    sectionPromptHolder = (SectionPromptHolder) holder;
-
-                    // set the text within it
-                    sectionPromptHolder.sectionPromptTextView.setText(mContext.getText(R.string.interviewing_prompt));
-
-                }
-
+                // set the SectionTitleHolder's sectionTitleTextView value
+                sectionTitleHolder.sectionTitleTextView.setText(title);
 
                 break;
 
-            case 2:
-                // the Holder is a SectionTitleHolder to be filled with description text
-                sectionTitleHolder = (SectionTitleHolder) holder;
+            case SECTION_PROMPT:
+                // fill a SectionPromptHolder
 
-                // fill it
-                sectionTitleHolder.sectionTitleTextView.setText(mContext.getText(R.string.description));
+                // cast the generic Holder to a SectionPromptHolder
+                SectionPromptHolder sectionPromptHolder = (SectionPromptHolder) holder;
 
-                break;
+                // cast the generic Object at the position in mViewModelList to a SectionPrompt
+                SectionPrompt sectionPrompt = (SectionPrompt) mViewModelList.get(position);
 
-            case 3:
-                // the Holder is a SectionPromptHolder to be filled with description_prompt text
-                // or it's a FilledDescriptionHolder to be filled with Moment.description info
+                // retrieve the prompt string from the SectionPrompt object
+                String prompt = sectionPrompt.getSectionPrompt();
 
-                if(mMoment.getDescription() == null) {
-
-                    // cast the holder to a SectionPromptHolder
-                    sectionPromptHolder = (SectionPromptHolder) holder;
-
-                    // set the text within it
-                    sectionPromptHolder.sectionPromptTextView.setText(mContext.getText(R.string.description_prompt));
-
-                }
+                // set the SectionPromptHolder's sectionPromptTextView value
+                sectionPromptHolder.sectionPromptTextView.setText(prompt);
 
                 break;
 
-            case 4:
-                // the Holder is a SectionTitleHolder to be filled with video text
-                sectionTitleHolder = (SectionTitleHolder) holder;
+            case NOTE:
+                // fill a NoteCardHolder
 
-                // fill it
-                sectionTitleHolder.sectionTitleTextView.setText(R.string.video);
+                // cast the generic Holder to a NoteCardHolder
+                NoteCardHolder noteCardHolder = (NoteCardHolder) holder;
 
-                break;
+                // cast the generic Object at the position in mViewModelList to a String
+                String noteString = (String) mViewModelList.get(position);
 
-            case 5:
-                // the Holder is a VideoSectionPromptHolder.. already filled in xml file
-                // or it's a FilledVideoHolder to be filled with Moment.localThumbnail Bitmap
-
-                if(mMoment.getLocalThumbnail() == null) {
-
-                    // cast the holder to a VideoSectionPromptHolder
-                    VideoSectionPromptHolder videoSectionPromptHolder = (VideoSectionPromptHolder) holder;
-
-                }
-
-                break;
-
-            case 6:
-                // the Holder is a SectionTitleHolder to be filled with notes text
-                sectionTitleHolder = (SectionTitleHolder) holder;
-
-                // fill it
-                sectionTitleHolder.sectionTitleTextView.setText(mContext.getText(R.string.notes));
-
-                break;
-
-            case 7:
-                // the Holder is a SectionPromptHolder to be filled with notes text
-
-                // cast it
-                sectionPromptHolder = (SectionPromptHolder) holder;
-
-                // fill it with notes String
-                sectionPromptHolder.sectionPromptTextView.setText(mContext.getText(R.string.notes_prompt));
+                // set the NoteCardHolder's noteCardTextView value
+                noteCardHolder.noteCardTextView.setText(noteString);
 
                 break;
 
             default:
-                // otherwise the Holder is a NoteCardHolder to be filled with notes from mIdentifierList
-                // this is what the garbage String values are for... to access notes by given position
-
-                NoteCardHolder noteCardHolder = (NoteCardHolder) holder;
-
-                // fill the holder with the note from mIdentifierList
-                noteCardHolder.noteCardTextView.setText(mIdentifierList.get(position));
+                // received a null Holder
+                // nothing to do... do nothing
 
                 break;
 
-        }
-
-    }
-
-    public void addSectionText() {
-        /**
-         * adds Strings to the first eight positions of the mIdentifierList
-         * to make indexing easier in onBindViewHolder
-         */
-
-        for(int i = 0; i < 8; i++) {
-
-            mIdentifierList.add(i, "not a note");
 
         }
 
-
     }
-
-    public void updateDataSet() {
-        // fills the mIdentifierList with the notes the Moment has. to be called before notifyDataSetChanged
-
-        // clear out the list every time
-        mIdentifierList.clear();
-
-        // add the Strings for indexing
-        addSectionText();
-
-        // add all of the notes
-        mIdentifierList.addAll(mMoment.getNotes());
-
-
-    }
-
-
 
 }

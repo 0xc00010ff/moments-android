@@ -42,8 +42,18 @@ public class VimeoNetworker {
     // this is the string for both fetching and uploading. Difference is in the request type.
     private String mVideoFetchUri;
 
+    // part of the query string for specifying page number for videos fetch
+    private String mPageNumberParameter;
+
+    // part of the query string for specifying number of videos per page
+    private String mPerPageParameter;
+
+    // number of videos to request per page
+    private final String mVideosPerPage = "20";
+
     // to be included in headers to let Vimeo know what version of the API we expect
     private String mApiVersion;
+
 
     /**
      * CONSTRUCTORS
@@ -56,6 +66,8 @@ public class VimeoNetworker {
         mAccessToken = applicationContext.getString(R.string.api_access_token);
         mApiAddress = applicationContext.getString(R.string.api_base_address);
         mVideoFetchUri = applicationContext.getString(R.string.video_fetch_uri);
+        mPageNumberParameter = applicationContext.getString(R.string.page_number_parameter);
+        mPerPageParameter = applicationContext.getString(R.string.per_page_parameter);
         mApiVersion = applicationContext.getString(R.string.api_version);
 
         // set the intent extras' argument names
@@ -69,19 +81,21 @@ public class VimeoNetworker {
      * INSTANCE METHODS
      */
 
-    public ArrayList<Moment> getCommunityMoments() {
+    public ArrayList<Moment> getCommunityMoments(int pageNumber) {
         // fetches the list of Videos for the CommunityFragment
 
         OkHttpClient client = new OkHttpClient();
         ArrayList<Moment> moments = new ArrayList<>();
         Response response = null;
 
+        String pageNumberString = String.valueOf(pageNumber);
+
         try {
             // try to fetch the content
 
             // build the request
             Request request = new Request.Builder()
-                    .url(mApiAddress + mVideoFetchUri)
+                    .url(mApiAddress + mVideoFetchUri + "?" + mPageNumberParameter + pageNumberString + "&" + mPerPageParameter + mVideosPerPage)
                     .addHeader("Authorization", "Bearer " + mAccessToken)
                     .build();
 

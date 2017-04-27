@@ -197,4 +197,10 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     }
 
+    public void clear() {
+
+        mDynamicList.clear();
+
+    }
+
 }
