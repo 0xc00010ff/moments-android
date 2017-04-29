@@ -1,5 +1,8 @@
 package com.tikkunolam.momentsintime;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,16 +10,22 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.EventLogTags;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 
 import java.util.ArrayList;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
+
 public class MakeAMomentActivity extends AppCompatActivity implements HolderInteractionListener{
 
     // tag for logging purposes
     final String TAG = "MakeAMomentActivity";
+
+    // String for use as Extra argument identifier
+    String mMomentExtra;
 
     // ui references
     Toolbar mToolbar;
@@ -35,6 +44,10 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     ArrayList<SectionTitle> mTitles;
     ArrayList<SectionPrompt> mPrompts;
 
+    // integers for use as request codes between Intents
+    final int VIDEO_FROM_GALLERY = 1;
+    final int VIDEO_FROM_CAMERA = 2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +59,25 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         mToolbar = (Toolbar) findViewById(R.id.make_a_moment_toolbar);
         setSupportActionBar(mToolbar);
 
+        // set the Moment Extra identifier
+        mMomentExtra = getString(R.string.moment_extra);
+
         // get the RecyclerView. this holds everything in this activity but the toolbar
         mRecyclerView = (RecyclerView) findViewById(R.id.make_a_moment_recyclerView);
 
-        // make a new Moment. to be filled with values from disk, or by the user
-        mMoment = new Moment();
+        // if an activity is returning a filled out Moment, set mMoment with it
+        if(getIntent().getExtras() != null) {
+
+            mMoment = getIntent().getExtras().getParcelable(mMomentExtra);
+
+        }
+
+        // otherwise make a new moment
+        else {
+
+            mMoment = new Moment();
+
+        }
 
         // make a new mViewModelList
         mViewModelList = new ArrayList<Object>();
@@ -166,6 +193,54 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
     }
 
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // called upon returning from another Activity called with an implicit Intent
+
+        // make sure the operation went through without a hitch
+        if(resultCode == RESULT_OK) {
+
+            switch(requestCode) {
+                // determine which implicit intent we're receiving from based on the resultCode
+
+                case VIDEO_FROM_GALLERY:
+                    // the user just fetched a video from the gallery. get the uri and assign it to the mMoment
+                    // replace the section_prompt with a video_card
+
+                    // get the Uri from the Intent
+                    Uri selectedVideoUri = data.getData();
+
+                    // convert it to a string
+                    String selectedVideoString = selectedVideoUri.toString();
+
+                    // put it in the mMoment's localVideoUri field
+                    mMoment.setLocalVideoUri(selectedVideoString);
+
+                    // replace the section_prompt with a video_card
+
+                    break;
+
+                case VIDEO_FROM_CAMERA:
+                    // the user filmed a video. get the uri and assign it to the mMoment
+                    // replace the section_prompt with a video_card
+
+                    // get the Uri from the Intent
+                    Uri filmedVideoUri = data.getData();
+
+                    // convert it to a string
+                    String filmedVideoString = filmedVideoUri.toString();
+
+                    // put it in the mMoment's localVideoUri field
+                    mMoment.setLocalVideoUri(filmedVideoString);
+
+                    // replace the view with a video_card
+
+            }
+
+        }
+
+
+    }
+
     /**
      * CALLBACK IMPLEMENTATIONS
      */
@@ -184,12 +259,27 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         Log.d(TAG, "opening the DescriptionActivity");
 
+        // make an Intent with the DescriptionActivity
+        Intent descriptionIntent = new Intent(getBaseContext(), DescriptionActivity.class);
+
+        // add the Moment to it
+        descriptionIntent.putExtra(mMomentExtra, mMoment);
+
+        // start the Activity
+        startActivity(descriptionIntent);
+
     }
 
     public void onVideoPromptClick() {
         // deal with loading a FilmVideoIntent, adding the localVideoUri to the Moment, and refreshing
 
         Log.d(TAG, "expressing a video Intent");
+
+        // express an implicit intent for to film a video
+        Intent filmVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+
+        startActivityForResult(filmVideoIntent, VIDEO_FROM_CAMERA);
+
 
     }
 
@@ -198,12 +288,26 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         Log.d(TAG, "expressing a fetch video Intent");
 
+        Intent intent = new Intent();
+        intent.setType("video/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent,"Select Video"),VIDEO_FROM_GALLERY);
+
     }
 
     public void onNotesPromptClick() {
         // deal with acquiring a new note, adding it to the Moment, and refreshing the Adapter
 
         Log.d(TAG, "loading a NoteActivity");
+
+        // make an Intent with the NoteActivity
+        Intent noteIntent = new Intent(getBaseContext(), NoteActivity.class);
+
+        // add the Moment to it
+        noteIntent.putExtra(mMomentExtra, mMoment);
+
+        // start the Activity
+        startActivity(noteIntent);
 
     }
 

@@ -126,7 +126,7 @@ public class Moment implements Parcelable {
         out.writeString(videoUrl);
         out.writeString(localVideoUri);
         out.writeString(pictureUrl);
-        out.writeStringList(notes);
+        out.writeList(notes);
 
     }
 

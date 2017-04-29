@@ -40,11 +40,20 @@
     <string name="notes">Notes</string>
     <string name="notes_prompt">Add a new note</string>
 
+    <!--strings for the DescriptionActivity-->
+    <string name="description_title">Title</string>
+    <string name="description_toolbar_title">Description</string>
+    <string name="description_menu_item">SAVE</string>
+    <string name="description_description">Description</string>
+
+    <!--strings for the NoteActivity-->
+    <string name="note_hint">Note</string>
+    <string name="note_toolbar_title">Note</string>
 
     <!--STRINGS THAT HELP WITH COORDINATION-->
 
     <!--intent extra arguments-->
-    <string name="video_extra">moment</string>
+    <string name="moment_extra">moment</string>
     <string name="video_uri_extra">videoUri</string>
 
 

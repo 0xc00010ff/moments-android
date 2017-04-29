@@ -13,7 +13,7 @@ public class VideoViewActivity extends AppCompatActivity {
     Moment mMoment;
 
     // strings for intent extra arguments
-    String mVideoExtra;
+    String mMomentExtra;
 
     // ui references
     VideoView mVideoView;
@@ -28,13 +28,13 @@ public class VideoViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video_view);
 
         // fetch the string for Intent Extra argument from resources
-        mVideoExtra = (String) getResources().getText(R.string.video_extra);
+        mMomentExtra = (String) getResources().getText(R.string.moment_extra);
 
         // get the VideoView
         mVideoView = (VideoView) findViewById(R.id.videoView);
 
         // take the Moment out of the extras bundle
-        mMoment = getIntent().getExtras().getParcelable(mVideoExtra);
+        mMoment = getIntent().getExtras().getParcelable(mMomentExtra);
 
         // set up the video
         setUpVideoView();
