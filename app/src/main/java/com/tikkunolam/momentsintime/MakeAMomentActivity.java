@@ -1,6 +1,7 @@
 package com.tikkunolam.momentsintime;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 
 public class MakeAMomentActivity extends AppCompatActivity implements HolderInteractionListener{
 
@@ -211,7 +214,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                     }
 
-                    // do whatever to refresh the list... probably replace whatever item in the list with an Interviewee
+                    // insert an interviewing_card in the mViewModelList
+                    insertInterviewingCard();
 
                     break;
 
@@ -226,8 +230,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     String description = data.getStringExtra(descriptionExtra);
                     mMoment.setDescription(description);
 
-                    // do whatever to refresh the list... probably replace whatever item is in the list with a Description
-
+                    // insert a description_card in place of section_prompt_text
+                    insertDescriptionCard();
 
                     break;
 
@@ -260,6 +264,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     mMoment.setLocalVideoUri(selectedVideoString);
 
                     // replace the section_prompt with a video_card
+                    insertVideoCard();
 
                     break;
 
@@ -277,6 +282,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     mMoment.setLocalVideoUri(filmedVideoString);
 
                     // replace the view with a video_card
+                    insertVideoCard();
 
             }
 
@@ -378,6 +384,68 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         // set the mSaveMenuItem's title to the SpannableString
         mSaveMenuItem.setTitle(saveString);
+
+    }
+
+    private void insertInterviewingCard() {
+        // inserts a filled out interviewing_card in place of the corresponding section_prompt_text
+
+        // make a new InterviewingCardData
+        InterviewingCardData interviewingCardData = new InterviewingCardData(mMoment.getInterviewee());
+
+        // add the intervieweeRole if there is one
+        if(mMoment.getIntervieweeRole() != null) {
+
+            interviewingCardData.setIntervieweeRole(mMoment.getIntervieweeRole());
+
+        }
+
+        // add the intervieweePhotoUri if there is one
+        if(mMoment.getIntervieweePhotoUri() != null) {
+
+            interviewingCardData.setIntervieweePhotoUri(mMoment.getIntervieweePhotoUri());
+
+        }
+
+        // replace the prompt with the InterviewingCardData
+        mViewModelList.set(1, interviewingCardData);
+
+        // tell the adapter to update the list on screen
+        mMakeAMomentAdapter.notifyDataSetChanged();
+
+    }
+
+    private void insertDescriptionCard() {
+        // inserts a filled out description_card in place of the corresponding section_prompt_text
+
+        // mMoment is guaranteed to have the necessary fields so just fill out a DescriptionCardData
+        DescriptionCardData descriptionCardData = new DescriptionCardData(mMoment.getName(), mMoment.getDescription());
+
+        // replace the prompt with the DescriptionCardData
+        mViewModelList.set(3, descriptionCardData);
+
+        // tell the adapter to update the list on screen
+        mMakeAMomentAdapter.notifyDataSetChanged();
+
+    }
+
+    private void insertVideoCard() {
+        // inserts a filled out video_card in place of the corresponding section_prompt_text
+
+        // mMoment is guaranteed to have the necessary field so just fill out a VideoCardData
+
+        // get the local thumbnail Bitmap from the mMoment
+        Bitmap thumbnailBitmap = mMoment.getLocalThumbnail();
+
+        // make a new VideoCardData with it
+        VideoCardData videoCardData = new VideoCardData(thumbnailBitmap);
+
+        // replace the prompt with the VideoCardData
+        mViewModelList.set(5, videoCardData);
+
+        // tell the Adapter to update the list on screen
+        mMakeAMomentAdapter.notifyDataSetChanged();
+
 
     }
 

@@ -10,6 +10,8 @@ import android.support.v7.widget.RecyclerView.ViewHolder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static okhttp3.internal.Internal.instance;
+
 public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     /**
      * this adapter controls the display of every single view in the MakeAMomentActivity
@@ -22,7 +24,7 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     ArrayList<Object> mViewModelList;
 
     // integer identifiers for the view types
-    final int SECTION_TITLE = 0, SECTION_PROMPT = 1, NOTE = 2;
+    final int SECTION_TITLE = 0, SECTION_PROMPT = 1, NOTE = 2, INTERVIEWING = 3, DESCRIPTION = 4, VIDEO = 5;
 
 
 
@@ -62,6 +64,24 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         else if(mViewModelList.get(position) instanceof String) {
 
             return NOTE;
+
+        }
+
+        else if(mViewModelList.get(position) instanceof InterviewingCardData) {
+
+            return INTERVIEWING;
+
+        }
+
+        else if(mViewModelList.get(position) instanceof DescriptionCardData) {
+
+            return DESCRIPTION;
+
+        }
+
+        else if(mViewModelList.get(position) instanceof VideoCardData) {
+
+            return VIDEO;
 
         }
 
@@ -119,6 +139,42 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                 // fill the ViewHolder with a NoteCardHolder
                 viewHolder = new NoteCardHolder(mContext, noteCardView);
+
+                break;
+
+            case INTERVIEWING:
+
+                // inflate a interviewing_card layout
+                View interviewingCardView = LayoutInflater
+                        .from(parent.getContext())
+                        .inflate(R.layout.interviewing_card, parent, false);
+
+                // fill the ViewHolder with a InterviewingCardHolder
+                viewHolder = new InterviewingCardHolder(interviewingCardView);
+
+                break;
+
+            case DESCRIPTION:
+
+                // inflate a description_card layout
+                View descriptionCardView = LayoutInflater
+                        .from(parent.getContext())
+                        .inflate(R.layout.description_card, parent, false);
+
+                // fill the ViewHolder with a DescriptionCardHolder
+                viewHolder = new DescriptionCardHolder(descriptionCardView);
+
+                break;
+
+            case VIDEO:
+
+                // inflate a video_card layout
+                View videoCardLayout = LayoutInflater
+                        .from(parent.getContext())
+                        .inflate(R.layout.video_card, parent, false);
+
+                // fill the ViewHolder with a VideoCardHolder
+                viewHolder = new VideoCardHolder(videoCardLayout);
 
                 break;
 
@@ -186,6 +242,63 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 noteCardHolder.noteCardTextView.setText(noteString);
 
                 break;
+
+            case INTERVIEWING:
+                // fill an InterviewingCardHolder
+
+                // cast the generic Holder to an InterviewingCardHolder
+                InterviewingCardHolder interviewingCardHolder = (InterviewingCardHolder) holder;
+
+                // cast the generic Object at mViewModelList(position) to an InterviewingCardData
+                InterviewingCardData interviewingCardData = (InterviewingCardData) mViewModelList.get(position);
+
+                // fill the InterviewingCardHolder's views
+                interviewingCardHolder.mIntervieweeNameTextView.setText(interviewingCardData.getIntervieweeName());
+
+                // if the user entered a role, then fill the TextView with it
+                if(interviewingCardData.getIntervieweeRole() != null) {
+
+                    interviewingCardHolder.mIntervieweeRoleTextView.setText(interviewingCardData.getIntervieweeRole());
+
+                }
+
+                // if the user added a picture, then fill the ImageView with it
+                if(interviewingCardData.getIntervieweePhotoUri() != null) {
+
+                    interviewingCardHolder.mIntervieweePhotoImageView.setImageURI(interviewingCardData.getIntervieweePhotoUri());
+
+                }
+
+                break;
+
+            case DESCRIPTION:
+                // fill a DescriptionCardHolder
+
+                // cast the generic Holder to a DescriptionCardHolder
+                DescriptionCardHolder descriptionCardHolder = (DescriptionCardHolder) holder;
+
+                // cast the generic Object at mViewModelList(position) to a DescriptionCardData
+                DescriptionCardData descriptionCardData = (DescriptionCardData) mViewModelList.get(position);
+
+                // fill the DescriptionCardHolder's views
+                descriptionCardHolder.descriptionCardTitleTextView.setText(descriptionCardData.getTitle());
+
+                descriptionCardHolder.descriptionCardDescriptionTextView.setText(descriptionCardData.getDescription());
+
+                break;
+
+            case VIDEO:
+                // fill a VideoCardHolder
+
+                // cast the generic Holder to a VideoCardHolder
+                VideoCardHolder videoCardHolder = (VideoCardHolder) holder;
+
+                // cast the generic Object at mViewModelList(position) to a VideoCardData
+                VideoCardData videoCardData = (VideoCardData) mViewModelList.get(position);
+
+                // fill the VideoCardHolder's ImageView
+                videoCardHolder.videoPreviewImageView.setImageBitmap(videoCardData.getVideoPreviewBitmap());
+
 
             default:
                 // received a null Holder
