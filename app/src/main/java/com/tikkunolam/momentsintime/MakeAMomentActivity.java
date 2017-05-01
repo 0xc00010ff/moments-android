@@ -3,33 +3,41 @@ package com.tikkunolam.momentsintime;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.EventLogTags;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import java.util.ArrayList;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 
 public class MakeAMomentActivity extends AppCompatActivity implements HolderInteractionListener{
 
     // tag for logging purposes
     final String TAG = "MakeAMomentActivity";
 
-    // String for use as Extra argument identifier
-    String mMomentExtra;
+    // Strings for use as Extra argument identifiers
+    String nameExtra, roleExtra, photoUriExtra, titleExtra, descriptionExtra, noteExtra;
+
+    // integers for use as request codes between Intents
+    final int VIDEO_FROM_GALLERY = 1;
+    final int VIDEO_FROM_CAMERA = 2;
+    final int INTERVIEWING_INTENT = 3;
+    final int DESCRIPTION_INTENT = 4;
+    final int NOTE_INTENT = 5;
 
     // ui references
     Toolbar mToolbar;
     RecyclerView mRecyclerView;
+
+    // Menu item so the color can be changed later
+    MenuItem mSaveMenuItem;
 
     // adapter for the RecyclerView that fills the whole Activity
     MakeAMomentAdapter mMakeAMomentAdapter;
@@ -44,10 +52,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     ArrayList<SectionTitle> mTitles;
     ArrayList<SectionPrompt> mPrompts;
 
-    // integers for use as request codes between Intents
-    final int VIDEO_FROM_GALLERY = 1;
-    final int VIDEO_FROM_CAMERA = 2;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,29 +59,24 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_make_a_moment);
 
+        // get all the Extra argument names from resources
+        nameExtra = getString(R.string.name_extra);
+        roleExtra = getString(R.string.role_extra);
+        photoUriExtra = getString(R.string.photo_uri_extra);
+        titleExtra = getString(R.string.title_extra);
+        descriptionExtra = getString(R.string.description_extra);
+        noteExtra = getString(R.string.note_extra);
+
         // get the toolbar and set it
         mToolbar = (Toolbar) findViewById(R.id.make_a_moment_toolbar);
         setSupportActionBar(mToolbar);
 
-        // set the Moment Extra identifier
-        mMomentExtra = getString(R.string.moment_extra);
 
         // get the RecyclerView. this holds everything in this activity but the toolbar
         mRecyclerView = (RecyclerView) findViewById(R.id.make_a_moment_recyclerView);
 
-        // if an activity is returning a filled out Moment, set mMoment with it
-        if(getIntent().getExtras() != null) {
-
-            mMoment = getIntent().getExtras().getParcelable(mMomentExtra);
-
-        }
-
-        // otherwise make a new moment
-        else {
-
-            mMoment = new Moment();
-
-        }
+        // make a new moment
+        mMoment = new Moment();
 
         // make a new mViewModelList
         mViewModelList = new ArrayList<Object>();
@@ -85,8 +84,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // set up the RecyclerView
         setUpRecyclerView();
 
-        // fake some notes to see if it works
-        fakeSomeNotes();
+        // set up the mViewModelList
+        setUpViewModelList();
 
 
     }
@@ -97,14 +96,13 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.make_a_moment_menu, menu);
 
+        mSaveMenuItem = menu.findItem(R.id.save_menu_item);
+
         return true;
     }
 
     public void setUpRecyclerView() {
         // sets up the RecyclerView with the MakeAMomentAdapter and mViewModelList
-
-        // set up the mViewModelList
-        setUpViewModelList();
 
         // set up the adapter
         mMakeAMomentAdapter = new MakeAMomentAdapter(this, mViewModelList);
@@ -121,15 +119,17 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     public void setUpViewModelList() {
         // fills the mViewModelList with values
 
+        // clear it
+        mViewModelList.clear();
+
         // add the titles and prompts to the beginning of the mViewModelList
         addTitlesAndPrompts();
-
-        // fake some notes
-        fakeSomeNotes();
 
         // add all of the notes from the Moment
         mViewModelList.addAll(mMoment.getNotes());
 
+        // tell the adapter to update itself
+        mMakeAMomentAdapter.notifyDataSetChanged();
 
     }
 
@@ -182,17 +182,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
     }
 
-    public void fakeSomeNotes() {
-
-        mMoment.addNote("throw me on the tooooooooooooooooopp broooooooooooo");
-        mMoment.addNote("Taylor Gray switch pop-shuv");
-        mMoment.addNote("ayyyyyy baybeeeeeeeeeee you ever been to Tijuana???");
-        mMoment.addNote("throw me on the tooooooooooooooooopp broooooooooooo");
-        mMoment.addNote("Taylor Gray switch pop-shuv");
-        mMoment.addNote("ayyyyyy baybeeeeeeeeeee you ever been to Tijuana???");
-
-    }
-
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // called upon returning from another Activity called with an implicit Intent
 
@@ -201,6 +190,61 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
             switch(requestCode) {
                 // determine which implicit intent we're receiving from based on the resultCode
+
+                case INTERVIEWING_INTENT:
+                    // a Moment is being returned from InterviewingActivity
+
+                    // fetch the name and assign it to the mMoment
+                    String name = data.getStringExtra(nameExtra);
+                    mMoment.setInterviewee(name);
+
+                    // fetch the role and assign it to the mMoment
+                    String role = data.getStringExtra(roleExtra);
+                    mMoment.setIntervieweeRole(role);
+
+                    // fetch the photoUri and assign it to the mMoment
+                    String photoUri = data.getStringExtra(photoUriExtra);
+
+                    if(photoUri != null) {
+
+                        mMoment.setIntervieweePhotoUri(Uri.parse(photoUri));
+
+                    }
+
+                    // do whatever to refresh the list... probably replace whatever item in the list with an Interviewee
+
+                    break;
+
+                case DESCRIPTION_INTENT:
+                    // a Moment is being returned from DescriptionActivity
+
+                    // get the title from the Intent and assign it to the mMoment
+                    String title = data.getStringExtra(titleExtra);
+                    mMoment.setName(title);
+
+                    // get the description from the Intent and assign it to the mMoment
+                    String description = data.getStringExtra(descriptionExtra);
+                    mMoment.setDescription(description);
+
+                    // do whatever to refresh the list... probably replace whatever item is in the list with a Description
+
+
+                    break;
+
+                case NOTE_INTENT:
+                    // a note is being returned from NotesActivity. get it, add it to the mMoment, and refresh the Adapter
+
+                    String note = data.getStringExtra(noteExtra);
+
+                    mMoment.addNote(note);
+
+                    // add it to the viewlist
+                    mViewModelList.add(note);
+
+                    mMakeAMomentAdapter.notifyDataSetChanged();
+
+                    break;
+
 
                 case VIDEO_FROM_GALLERY:
                     // the user just fetched a video from the gallery. get the uri and assign it to the mMoment
@@ -251,6 +295,11 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         Log.d(TAG, "opening the InterviewingActivity");
 
+        // make an intent with the InterviewingActivity
+        Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
+
+        startActivityForResult(interviewingIntent, INTERVIEWING_INTENT);
+
     }
 
     // the callback for when the description_prompt is clicked
@@ -262,11 +311,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // make an Intent with the DescriptionActivity
         Intent descriptionIntent = new Intent(getBaseContext(), DescriptionActivity.class);
 
-        // add the Moment to it
-        descriptionIntent.putExtra(mMomentExtra, mMoment);
-
         // start the Activity
-        startActivity(descriptionIntent);
+        startActivityForResult(descriptionIntent, DESCRIPTION_INTENT);
 
     }
 
@@ -303,11 +349,35 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // make an Intent with the NoteActivity
         Intent noteIntent = new Intent(getBaseContext(), NoteActivity.class);
 
-        // add the Moment to it
-        noteIntent.putExtra(mMomentExtra, mMoment);
+        startActivityForResult(noteIntent, NOTE_INTENT);
 
-        // start the Activity
-        startActivity(noteIntent);
+    }
+
+    private void enableSave() {
+        // change menu item color to white to indicate save is clickable
+
+        // make a SpannableString from the title of the mSaveMenuItem
+        SpannableString saveString = new SpannableString(mSaveMenuItem.getTitle());
+
+        // color the SpannableString
+        saveString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.white)), 0, saveString.length(), 0);
+
+        // set the mSaveMenuItem's title to the SpannableString
+        mSaveMenuItem.setTitle(saveString);
+
+    }
+
+    private void disableSave() {
+        // change menu item color to grey to indicate save is unclickable
+
+        // make a SpannableString from the title of the mSaveMenuItem
+        SpannableString saveString = new SpannableString(mSaveMenuItem.getTitle());
+
+        // color the SpannableString
+        saveString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.textLight)), 0, saveString.length(), 0);
+
+        // set the mSaveMenuItem's title to the SpannableString
+        mSaveMenuItem.setTitle(saveString);
 
     }
 

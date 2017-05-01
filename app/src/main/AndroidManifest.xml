@@ -22,11 +22,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".VideoViewActivity" />
-        <activity
-            android:name=".MakeAMomentActivity"
-            android:theme="@style/MakeAMomentTheme" />
+        <activity android:name=".MakeAMomentActivity" />
         <activity android:name=".DescriptionActivity" />
-        <activity android:name=".NoteActivity"></activity>
+        <activity android:name=".NoteActivity" />
+        <activity android:name=".InterviewingActivity"></activity>
     </application>
 
 </manifest>

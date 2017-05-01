@@ -3,6 +3,7 @@ package com.tikkunolam.momentsintime;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
@@ -25,6 +26,12 @@ public class Moment implements Parcelable {
 
     // the person being interviewed. likely will change to a Person object
     public String interviewee;
+
+    // the role of the person being interviewed
+    public String intervieweeRole;
+
+    // the uri of the picture of the interviewee on phone
+    public String intervieweePhotoUri;
 
     // the video uri for any further operation on the video
     public String videoUri;
@@ -99,6 +106,8 @@ public class Moment implements Parcelable {
         name = in.readString();
         description = in.readString();
         interviewee = in.readString();
+        intervieweeRole = in.readString();
+        intervieweePhotoUri = in.readString();
         videoUri = in.readString();
         videoUrl = in.readString();
         localVideoUri = in.readString();
@@ -122,6 +131,8 @@ public class Moment implements Parcelable {
         out.writeString(name);
         out.writeString(description);
         out.writeString(interviewee);
+        out.writeString(intervieweeRole);
+        out.writeString(intervieweePhotoUri);
         out.writeString(videoUri);
         out.writeString(videoUrl);
         out.writeString(localVideoUri);
@@ -154,6 +165,18 @@ public class Moment implements Parcelable {
     public String getInterviewee() {
 
         return interviewee;
+
+    }
+
+    public String getIntervieweeRole() {
+
+        return intervieweeRole;
+
+    }
+
+    public Uri getIntervieweePhotoUri() {
+
+        return Uri.parse(intervieweePhotoUri);
 
     }
 
@@ -211,6 +234,18 @@ public class Moment implements Parcelable {
     public void setInterviewee(String interviewee) {
 
         this.interviewee = interviewee;
+
+    }
+
+    public void setIntervieweeRole(String intervieweeRole) {
+
+        this.intervieweeRole = intervieweeRole;
+
+    }
+
+    public void setIntervieweePhotoUri(Uri interVieweePhotoUri) {
+
+        this.intervieweePhotoUri = interVieweePhotoUri.toString();
 
     }
 

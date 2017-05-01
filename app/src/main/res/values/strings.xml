@@ -50,11 +50,22 @@
     <string name="note_hint">Note</string>
     <string name="note_toolbar_title">Note</string>
 
+    <!--strings for the InterviewingActivity-->
+    <string name="interviewing_toolbar_title">Interviewing</string>
+    <string name="interviewing_name_hint">Name</string>
+    <string name="interviewing_role_hint">Role</string>
+    <string name="add_a_picture">Add a Picture (optional)</string>
+
     <!--STRINGS THAT HELP WITH COORDINATION-->
 
     <!--intent extra arguments-->
     <string name="moment_extra">moment</string>
     <string name="video_uri_extra">videoUri</string>
-
+    <string name="name_extra">name</string>
+    <string name="role_extra">role</string>
+    <string name="photo_uri_extra">photoUri</string>
+    <string name="title_extra">title</string>
+    <string name="description_extra">description</string>
+    <string name="note_extra">note</string>
 
 </resources>
