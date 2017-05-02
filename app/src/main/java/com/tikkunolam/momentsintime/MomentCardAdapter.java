@@ -19,87 +19,31 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     Context mContext;
 
-    // the View filling the RecyclerView cells
-    int mResource;
+    // reference to the Activity for making callbacks in onClick
+    FragmentInteractionListener mActivityCallback;
 
-    // integer used to identify the calling fragment
-    int mFragmentIdentifier;
 
-    // the original list of Moments
-    MomentList mMomentList;
+    // ArrayList of objects, holding Moments and MomentPrompts
+    ArrayList<Object> mViewModelList;
 
-    // the list that may have prompts inserted
-    ArrayList<Object> mDynamicList = new ArrayList<>();
 
     // integers to identify the Object in the ArrayList
     final int MOMENT = 1;
     final int PROMPT = 2;
 
 
-    public MomentCardAdapter(Context context, int resource, MomentList momentList, int fragmentIdentifier) {
+    public MomentCardAdapter(Context context, ArrayList<Object> viewModelList) {
 
         mContext = context;
-        mResource = resource;
-        mMomentList = momentList;
-        mFragmentIdentifier = fragmentIdentifier;
-
-        // fill the dynamic list with all the Moments
-        mDynamicList.addAll(momentList.getMomentList());
+        mActivityCallback = (MainActivity) context;
+        mViewModelList = viewModelList;
 
     }
 
     public int getItemCount() {
         // return the number of items to fill the RecyclerView
 
-        return mDynamicList.size();
-
-    }
-
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        // fill the views contained in the holder with their intended values
-
-        switch(holder.getItemViewType()) {
-
-            case MOMENT:
-                // fill a momentCardHolder
-
-                MomentCardHolder momentCardHolder = (MomentCardHolder) holder;
-
-                // get the mMoment corresponding to the list position
-                Moment moment = (Moment) mDynamicList.get(position);
-
-                // use Picasso to fill the videoPreviewImageView from the mMoment's picture url
-                // fill this before the rest so the loading doesn't look silly
-                Picasso.with(mContext).load(moment.getPictureUrl()).into(momentCardHolder.videoPreviewImageView);
-
-                // set the text in the videoNameTextView from the mMoment
-                momentCardHolder.videoNameTextView.setText(moment.getName());
-
-                // if there is a description set it, otherwise delete the view
-                String description = moment.getDescription();
-
-                if(!description.equals("")) {
-
-                    momentCardHolder.videoDescriptionTextView.setText(description);
-
-                }
-                else {
-
-                    momentCardHolder.videoDescriptionTextView.setVisibility(View.GONE);
-
-                }
-
-                break;
-
-            case PROMPT:
-                // set a MomentPromptHolder
-
-                MomentPromptHolder momentPromptHolder = (MomentPromptHolder) holder;
-
-                // the text is set in the xml so no need to fill in values
-
-
-        }
+        return mViewModelList.size();
 
     }
 
@@ -107,18 +51,19 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public int getItemViewType(int position) {
         // determine what type of object is in the current position of the list
 
-        if(mDynamicList.get(position) instanceof Moment) {
+        if(mViewModelList.get(position) instanceof Moment) {
 
             return MOMENT;
 
         }
 
-        else if(mDynamicList.get(position) instanceof String) {
+        else if(mViewModelList.get(position) instanceof MomentPrompt) {
 
             return PROMPT;
 
         }
 
+        // if it makes it to here it found an unidentified viewtype. will never happen. return -1
         return -1;
 
     }
@@ -143,7 +88,7 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         .inflate(R.layout.moment_prompt, parent, false);
 
                 // set the viewHolder as a MomentPromptHolder
-                viewHolder = new MomentPromptHolder(promptItemView);
+                viewHolder = new MomentPromptHolder(mContext, promptItemView);
 
                 break;
 
@@ -156,7 +101,7 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         .inflate(R.layout.moment_card, parent, false);
 
                 // set the viewHolder as a MomentCardHolder
-                viewHolder = new MomentCardHolder(momentItemView);
+                viewHolder = new MomentCardHolder(mContext, momentItemView);
 
                 break;
 
@@ -166,32 +111,66 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     }
 
-    public void updateDataSet() {
-        /**
-         * since notifyDataSetChanged is final, this method is to notify the adapter
-         * that the data has been updated and it should fill the mDynamicList with
-         * the new data
-         */
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+        // fill the views contained in the holder with their intended values
 
-        // fill the mDynamicList with the new Moments
-        mDynamicList.addAll(mMomentList.getMomentList());
+        switch(holder.getItemViewType()) {
 
-        // if the calling fragment is CommunityFragment add the Moment Prompts
-        if(mFragmentIdentifier == 1) {
+            case MOMENT:
+                // fill a momentCardHolder
 
-            addMomentPrompts();
+                MomentCardHolder momentCardHolder = (MomentCardHolder) holder;
 
-        }
+                // get the mMoment corresponding to the list position
+                Moment moment = (Moment) mViewModelList.get(position);
 
-    }
+                // use Picasso to fill the videoPreviewImageView from the mMoment's picture url
+                // fill this before the rest so the loading doesn't look silly
+                Picasso.with(mContext).load(moment.getPictureUrl()).into(momentCardHolder.videoPreviewImageView);
 
-    public void addMomentPrompts() {
-        // adds Strings to the dynamic list to notify the adapter to fill the RecyclerView with moment_prompts
+                // set the text in the videoNameTextView from the mMoment
+                momentCardHolder.videoNameTextView.setText(moment.getName());
 
-        // add a String at the seventh position, if possible
-        if(mDynamicList.size() > 7) {
+                // if there is a description set it, otherwise delete the view
+                String description = moment.getDescription();
 
-            mDynamicList.add(7, "PROMPT");
+                if(!description.equals("")) {
+
+                    momentCardHolder.videoDescriptionTextView.setText(description);
+
+                }
+                else {
+
+                    momentCardHolder.videoDescriptionTextView.setVisibility(View.GONE);
+
+                }
+
+                // set the onClick for the Moments
+                momentCardHolder.videoPreviewImageView.setOnClickListener(new View.OnClickListener() {
+
+                    public void onClick(View view) {
+
+                        mActivityCallback.onMomentSelect((Moment) mViewModelList.get(position));
+
+                    }
+
+                });
+
+                break;
+
+            case PROMPT:
+                // set a MomentPromptHolder
+
+                MomentPromptHolder momentPromptHolder = (MomentPromptHolder) holder;
+
+                // cast the generic Object to a MomentPrompt
+                MomentPrompt momentPrompt = (MomentPrompt) mViewModelList.get(position);
+
+                // fill the Holder with the MomentPrompt's values
+                momentPromptHolder.moment_prompt_textView.setText(momentPrompt.getMakeAMomentString());
+                momentPromptHolder.moment_prompt_cont_textView.setText(momentPrompt.getWhoString());
+                momentPromptHolder.ask_to_interview_textView.setText(momentPrompt.getAskToInterviewString());
+
 
         }
 
@@ -199,7 +178,7 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public void clear() {
 
-        mDynamicList.clear();
+        mViewModelList.clear();
 
     }
 

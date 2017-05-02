@@ -11,4 +11,7 @@ public interface FragmentInteractionListener {
     // when the FloatingActionButton on the MyMomentsFragment is clicked
     void onNewMomentClick();
 
+    // when the moment_prompt is clicked
+    void onMomentPromptClick();
+
 }

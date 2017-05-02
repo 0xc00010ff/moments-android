@@ -10,9 +10,10 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 
 public class MainActivity extends AppCompatActivity
-    implements FragmentInteractionListener {
+    implements FragmentInteractionListener{
 
     // tag for logging purposes
     private final String TAG = "MainActivity";
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    // the callback method that will be called when the FloatingActionButton in MyMomentsFragment is clicked
+    // the callback method that will be called when the FloatingActionButton or NoMomentPrompt in MyMomentsFragment is clicked
     public void onNewMomentClick() {
         // open the MakeAMomentActivity
 
@@ -83,6 +84,14 @@ public class MainActivity extends AppCompatActivity
         // open the activity
         startActivity(makeAMomentIntent);
 
+
+    }
+
+    // the callback method that will be called when the
+    public void onMomentPromptClick() {
+
+        // do whatever to share
+        Log.d(TAG, "MOMENT PROMPT CLICKED");
 
     }
 
@@ -136,4 +145,5 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
+
 }
