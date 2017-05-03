@@ -178,6 +178,8 @@ public class SectionPromptHolder extends RecyclerView.ViewHolder {
         else if(text.equals(mNotesPrompt)) {
             // if it's notes text apply a listener that calls the HolderInteractionListener's onNotesPromptClick
 
+            mSectionPromptTextView.setTextColor(mContext.getResources().getColor(R.color.actionBlue));
+
             mSectionPromptTextView.setOnClickListener(new OnClickListener() {
 
                 @Override

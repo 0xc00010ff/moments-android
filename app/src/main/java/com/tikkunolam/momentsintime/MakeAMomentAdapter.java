@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -174,7 +176,7 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .inflate(R.layout.video_card, parent, false);
 
                 // fill the ViewHolder with a VideoCardHolder
-                viewHolder = new VideoCardHolder(videoCardLayout);
+                viewHolder = new VideoCardHolder(mContext, videoCardLayout);
 
                 break;
 
@@ -297,7 +299,7 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 VideoCardData videoCardData = (VideoCardData) mViewModelList.get(position);
 
                 // fill the VideoCardHolder's ImageView
-                videoCardHolder.videoPreviewImageView.setImageBitmap(videoCardData.getVideoPreviewBitmap());
+                Glide.with(mContext).load(videoCardData.getVideoUri()).asBitmap().into(videoCardHolder.videoPreviewImageView);
 
 
             default:

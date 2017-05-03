@@ -1,5 +1,6 @@
 package com.tikkunolam.momentsintime;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,14 +13,32 @@ public class VideoCardHolder extends RecyclerView.ViewHolder{
      */
 
     ImageView videoPreviewImageView;
+    ImageView dotsImageView;
 
-    public VideoCardHolder(View view) {
+    HolderInteractionListener mActivityCallback;
+
+    public VideoCardHolder(Context context, View view) {
 
         // call the superclass's constructor
         super(view);
 
+        // cast the context to a HolderInteractionListener
+        mActivityCallback = (HolderInteractionListener) context;
+
         // fill the views
         videoPreviewImageView = (ImageView) view.findViewById(R.id.video_card_preview_imageView);
+        dotsImageView = (ImageView) view.findViewById(R.id.video_card_dots_imageView);
+
+        // add a listener to the dots
+        dotsImageView.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+
+                mActivityCallback.onVideoDotsClick();
+
+            }
+
+        });
 
     }
 

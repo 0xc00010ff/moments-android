@@ -23,6 +23,7 @@
         android:layout_marginTop="24dp"
         android:hint="@string/description_title"
         app:met_floatingLabel="normal"
+        app:met_floatingLabelAnimating="true"
         app:met_maxCharacters="50"
         app:met_primaryColor="@color/colorPrimary" />
 
@@ -35,6 +36,7 @@
         android:layout_marginTop="24dp"
         android:hint="@string/description_description"
         app:met_floatingLabel="normal"
+        app:met_floatingLabelAnimating="true"
         app:met_maxCharacters="120"
         app:met_primaryColor="@color/colorPrimary" />
 

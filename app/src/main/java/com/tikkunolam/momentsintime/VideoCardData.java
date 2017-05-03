@@ -10,23 +10,23 @@ public class VideoCardData {
      */
 
     // the uri of the image on disk
-    Bitmap mVideoPreviewBitmap;
+    Uri mVideoUri;
 
-    public VideoCardData(Bitmap videoPreviewBitmap) {
+    public VideoCardData(Uri videoUri) {
 
-        mVideoPreviewBitmap = videoPreviewBitmap;
-
-    }
-
-    public Bitmap getVideoPreviewBitmap() {
-
-        return mVideoPreviewBitmap;
+        mVideoUri = videoUri;
 
     }
 
-    public void setVideoPreviewBitmap(Bitmap videoPreviewBitmap) {
+    public Uri getVideoUri() {
 
-        mVideoPreviewBitmap = videoPreviewBitmap;
+        return mVideoUri;
+
+    }
+
+    public void setVideoUri(Uri videoUri) {
+
+        mVideoUri = videoUri;
 
     }
 

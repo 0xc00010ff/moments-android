@@ -68,7 +68,10 @@ public class DescriptionActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.save_menu, menu);
 
+        // get the MenuItem
         mSaveMenuItem = menu.findItem(R.id.save_menu_item);
+        // disable it until the TextWatcher determines it should be enabled
+        mSaveMenuItem.setEnabled(false);
 
         return true;
 
@@ -112,6 +115,7 @@ public class DescriptionActivity extends AppCompatActivity {
     }
 
     private TextWatcher buildTextWatcher() {
+        // build a TextWatcher to watch the EditTexts and determine if the mSaveMenuItem should be enabled
 
         TextWatcher textWatcher = new TextWatcher() {
             @Override
@@ -131,7 +135,7 @@ public class DescriptionActivity extends AppCompatActivity {
                     // if both EditTexts now have text in them, then turn save white to indicate it's clickable
 
                     // set the Save button to white
-                    enableSave();
+                    mSaveMenuItem.setEnabled(true);
                     Log.d(TAG, "SAVE ENABLED");
 
                 }
@@ -140,7 +144,7 @@ public class DescriptionActivity extends AppCompatActivity {
                     // if either of the EditTexts now have no text in them, then turn save grey to indicate it's not clickable
 
                     // set the save button to grey
-                    disableSave();
+                    mSaveMenuItem.setEnabled(false);
                     Log.d(TAG, "SAVE DISABLED");
 
                 }
@@ -150,34 +154,6 @@ public class DescriptionActivity extends AppCompatActivity {
         };
 
         return textWatcher;
-
-    }
-
-    private void enableSave() {
-        // change menu item color to white to indicate save is clickable
-
-        // make a SpannableString from the title of the mSaveMenuItem
-        SpannableString saveString = new SpannableString(mSaveMenuItem.getTitle());
-
-        // color the SpannableString
-        saveString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.white)), 0, saveString.length(), 0);
-
-        // set the mSaveMenuItem's title to the SpannableString
-        mSaveMenuItem.setTitle(saveString);
-
-    }
-
-    private void disableSave() {
-        // change menu item color to grey to indicate save is unclickable
-
-        // make a SpannableString from the title of the mSaveMenuItem
-        SpannableString saveString = new SpannableString(mSaveMenuItem.getTitle());
-
-        // color the SpannableString
-        saveString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.textLight)), 0, saveString.length(), 0);
-
-        // set the mSaveMenuItem's title to the SpannableString
-        mSaveMenuItem.setTitle(saveString);
 
     }
 

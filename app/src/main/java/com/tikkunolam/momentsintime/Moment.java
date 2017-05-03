@@ -1,16 +1,21 @@
 package com.tikkunolam.momentsintime;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import static android.R.attr.width;
+import static android.content.ContentValues.TAG;
 
 public class Moment implements Parcelable {
 
@@ -19,41 +24,41 @@ public class Moment implements Parcelable {
      */
 
     // the name of the mMoment
-    public String name;
+    private String name;
 
     // the description of the mMoment
-    public String description;
+    private String description;
 
     // the person being interviewed. likely will change to a Person object
-    public String interviewee;
+    private String interviewee;
 
     // the role of the person being interviewed
-    public String intervieweeRole;
+    private String intervieweeRole;
 
     // the uri of the picture of the interviewee on phone
-    public String intervieweePhotoUri;
+    private String intervieweePhotoUri;
 
     // the video uri for any further operation on the video
-    public String videoUri;
+    private String videoUri;
 
     // the video playback url
-    public String videoUrl;
+    private String videoUrl;
 
     // the local video file uri
-    public String localVideoUri;
+    private String localVideoUri;
 
     // the local video thumbnail
-    public Bitmap localThumbnail;
+    private Bitmap localThumbnail;
 
     // the url of the video thumbnail
-    public String pictureUrl;
+    private String pictureUrl;
 
     // list of notes on the Moment
     ArrayList<String> notes;
 
 
     // if the video is available (relevant after uploading)
-    public boolean available;
+    private boolean available;
 
     // the Creator field. more Parcelable functionality. used for actually creating the Moment
     public static final Parcelable.Creator<Moment> CREATOR = new Parcelable.Creator<Moment>() {
@@ -176,7 +181,17 @@ public class Moment implements Parcelable {
 
     public Uri getIntervieweePhotoUri() {
 
-        return Uri.parse(intervieweePhotoUri);
+        if(intervieweePhotoUri != null) {
+
+            return Uri.parse(intervieweePhotoUri);
+
+        }
+
+        else {
+
+            return null;
+
+        }
 
     }
 
@@ -193,9 +208,9 @@ public class Moment implements Parcelable {
 
     }
 
-    public String getLocalVideoUri() {
+    public Uri getLocalVideoUri() {
 
-        return localVideoUri;
+        return Uri.parse(localVideoUri);
 
     }
 
@@ -261,19 +276,17 @@ public class Moment implements Parcelable {
 
     }
 
-    public void setLocalVideoUri(String localVideoUri) {
+    public void setLocalVideoUri(Uri localVideoUri) {
 
         // set the localVideoUri from the argument
-        this.localVideoUri = localVideoUri;
-
-        // call the private getLocalThumbnail method
-        setLocalThumbnail();
+        this.localVideoUri = localVideoUri.toString();
 
     }
 
-    private void setLocalThumbnail() {
 
-        localThumbnail = ThumbnailUtils.createVideoThumbnail(localVideoUri, MediaStore.Images.Thumbnails.MINI_KIND);
+    public void setLocalThumbnail(Bitmap bitmap) {
+
+        localThumbnail = bitmap;
 
     }
 
@@ -288,7 +301,6 @@ public class Moment implements Parcelable {
         notes.add(note);
 
     }
-
 
 }
 

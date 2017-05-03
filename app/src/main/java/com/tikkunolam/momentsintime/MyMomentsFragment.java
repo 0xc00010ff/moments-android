@@ -39,9 +39,6 @@ public class MyMomentsFragment extends Fragment{
     // MomentCardAdapter for the RecyclerView
     MomentCardAdapter mMomentCardAdapter;
 
-    // fragment identifier for the adapter
-    int mIdentifier = 2;
-
     // ui references
     RelativeLayout mMyMomentsRelativeLayout;
     LinearLayout mNoMomentsLinearLayout;
@@ -90,12 +87,11 @@ public class MyMomentsFragment extends Fragment{
 
         // get the Make a Moment prompt and set an OnClickListener on it
         mMakeAMomentTextView = (TextView) mNoMomentsLinearLayout.findViewById(R.id.make_a_moment_textView);
-
         mMakeAMomentTextView.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
 
-                Log.d(TAG, "CLICK!!!!!!!!");
+                // tell the Activity we want to make a new Moment
                 mActivityCallback.onNewMomentClick();
 
             }
@@ -243,7 +239,12 @@ public class MyMomentsFragment extends Fragment{
             mMomentCardAdapter.notifyDataSetChanged();
 
             // if there are still no Moments, display the no_moments layout
-            mNoMomentsLinearLayout.setVisibility(View.VISIBLE);
+            if(mViewModelList.size() < 1) {
+
+                // make it visible
+                mNoMomentsLinearLayout.setVisibility(View.VISIBLE);
+
+            }
 
         }
 

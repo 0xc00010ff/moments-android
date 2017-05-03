@@ -18,6 +18,9 @@ public class MainActivity extends AppCompatActivity
     // tag for logging purposes
     private final String TAG = "MainActivity";
 
+    // integer identifiers for Activity results
+    final int NEW_MOMENT = 1;
+
     // strings for intent extra arguments
     String momentExtra;
 
@@ -82,12 +85,12 @@ public class MainActivity extends AppCompatActivity
         Intent makeAMomentIntent = new Intent(getBaseContext(), MakeAMomentActivity.class);
 
         // open the activity
-        startActivity(makeAMomentIntent);
+        startActivityForResult(makeAMomentIntent, NEW_MOMENT);
 
 
     }
 
-    // the callback method that will be called when the
+    // the callback method that will be called when the MomentPrompt is clicked in the CommunityFragment RecyclerView
     public void onMomentPromptClick() {
 
         // do whatever to share

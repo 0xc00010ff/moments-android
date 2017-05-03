@@ -1,8 +1,11 @@
 package com.tikkunolam.momentsintime;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,7 +18,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
+import java.io.File;
 import java.util.ArrayList;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
@@ -99,9 +106,35 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.make_a_moment_menu, menu);
 
-        mSaveMenuItem = menu.findItem(R.id.save_menu_item);
+        mSaveMenuItem = menu.findItem(R.id.make_a_moment_submit);
+        mSaveMenuItem.setEnabled(false);
 
         return true;
+
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // called when a MenuItem is selected
+
+        switch(item.getItemId()) {
+
+            case R.id.make_a_moment_submit:
+                // SUBMIT was selected... check if mMoment is submittable and if so submit it
+
+                if(isMomentComplete()) {
+
+                    // submit the Moment
+                    Log.d(TAG, "submitting the Moment");
+                    submitMoment();
+                    finish();
+
+                }
+
+
+        }
+
+        return true;
+
     }
 
     public void setUpRecyclerView() {
@@ -185,6 +218,50 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
     }
 
+    private void enableDisableMomentSubmission() {
+        // checks if the mMoment is ready for submission, and if so makes submit MenuItem white, if not makes it grey
+
+        if(isMomentComplete()) {
+
+            // turn MenuItem white
+            mSaveMenuItem.setEnabled(true);
+
+        }
+
+        else {
+
+            // turn MenuItem grey
+            mSaveMenuItem.setEnabled(false);
+
+        }
+
+
+    }
+
+    private boolean isMomentComplete() {
+        // checks if the mMoment is sufficiently filled out to be submitted
+
+        // if the user has provided a title, description, interviewee, and video then it's good
+        if (mMoment.getName() != null && mMoment.getDescription() != null
+                && mMoment.getInterviewee() != null && mMoment.getLocalVideoUri() != null) {
+
+            return true;
+
+        }
+
+        else {
+
+            return false;
+
+        }
+
+    }
+
+    private void submitMoment() {
+        // submits the Moment
+
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // called upon returning from another Activity called with an implicit Intent
 
@@ -217,6 +294,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     // insert an interviewing_card in the mViewModelList
                     insertInterviewingCard();
 
+                    // enable or disable submission depending on mMoment's contents
+                    enableDisableMomentSubmission();
+
                     break;
 
                 case DESCRIPTION_INTENT:
@@ -232,6 +312,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                     // insert a description_card in place of section_prompt_text
                     insertDescriptionCard();
+
+                    // enable or disable submission depending on mMoment's contents
+                    enableDisableMomentSubmission();
 
                     break;
 
@@ -257,14 +340,14 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     // get the Uri from the Intent
                     Uri selectedVideoUri = data.getData();
 
-                    // convert it to a string
-                    String selectedVideoString = selectedVideoUri.toString();
-
                     // put it in the mMoment's localVideoUri field
-                    mMoment.setLocalVideoUri(selectedVideoString);
+                    mMoment.setLocalVideoUri(selectedVideoUri);
 
                     // replace the section_prompt with a video_card
                     insertVideoCard();
+
+                    // enable or disable submission depending on mMoment's contents
+                    enableDisableMomentSubmission();
 
                     break;
 
@@ -275,14 +358,14 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     // get the Uri from the Intent
                     Uri filmedVideoUri = data.getData();
 
-                    // convert it to a string
-                    String filmedVideoString = filmedVideoUri.toString();
-
                     // put it in the mMoment's localVideoUri field
-                    mMoment.setLocalVideoUri(filmedVideoString);
+                    mMoment.setLocalVideoUri(filmedVideoUri);
 
                     // replace the view with a video_card
                     insertVideoCard();
+
+                    // enable or disable submission depending on mMoment's contents
+                    enableDisableMomentSubmission();
 
             }
 
@@ -301,10 +384,43 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         Log.d(TAG, "opening the InterviewingActivity");
 
-        // make an intent with the InterviewingActivity
-        Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title(R.string.interviewing)
+                .items(R.array.interviewing_dialog_array)
+                .itemsCallback(new MaterialDialog.ListCallback() {
 
-        startActivityForResult(interviewingIntent, INTERVIEWING_INTENT);
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                        // when a dialog option is selected these callbacks are used
+
+                        switch(position) {
+
+                            case 0:
+                                // they chose Facebook...
+
+                                break;
+
+                            case 1:
+                                // they chose to make one manually
+
+                                // make an intent with the InterviewingActivity
+                                Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
+
+                                startActivityForResult(interviewingIntent, INTERVIEWING_INTENT);
+
+                                break;
+
+                            case 2:
+                                // they chose to cancel. auto dismiss is on so do nothing
+
+                                break;
+
+                        }
+
+                    }
+
+                })
+                .show();
 
     }
 
@@ -327,7 +443,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         Log.d(TAG, "expressing a video Intent");
 
-        // express an implicit intent for to film a video
+        // express an implicit intent to film a video
         Intent filmVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 
         startActivityForResult(filmVideoIntent, VIDEO_FROM_CAMERA);
@@ -359,33 +475,47 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
     }
 
-    private void enableSave() {
-        // change menu item color to white to indicate save is clickable
+    public void onVideoDotsClick() {
+        // open the dialog to ask the user to edit/delete the video
 
-        // make a SpannableString from the title of the mSaveMenuItem
-        SpannableString saveString = new SpannableString(mSaveMenuItem.getTitle());
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title(R.string.video_dialog_title)
+                .items(R.array.video_dialog_array)
+                .itemsCallback(new MaterialDialog.ListCallback() {
 
-        // color the SpannableString
-        saveString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.white)), 0, saveString.length(), 0);
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
 
-        // set the mSaveMenuItem's title to the SpannableString
-        mSaveMenuItem.setTitle(saveString);
+                        switch(position) {
+
+                            case 0:
+                                // user chose to edit
+
+
+                                break;
+
+                            case 1:
+                                // user chose to delete
+
+                                break;
+
+                            case 2:
+                                // user chose to cancel. auto dismiss is on so do nothing
+
+                                break;
+
+                        }
+
+                    }
+
+                })
+                .show();
 
     }
 
-    private void disableSave() {
-        // change menu item color to grey to indicate save is unclickable
-
-        // make a SpannableString from the title of the mSaveMenuItem
-        SpannableString saveString = new SpannableString(mSaveMenuItem.getTitle());
-
-        // color the SpannableString
-        saveString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.textLight)), 0, saveString.length(), 0);
-
-        // set the mSaveMenuItem's title to the SpannableString
-        mSaveMenuItem.setTitle(saveString);
-
-    }
+    /**
+     * methods that insert views into the RecyclerView
+     */
 
     private void insertInterviewingCard() {
         // inserts a filled out interviewing_card in place of the corresponding section_prompt_text
@@ -434,11 +564,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         // mMoment is guaranteed to have the necessary field so just fill out a VideoCardData
 
-        // get the local thumbnail Bitmap from the mMoment
-        Bitmap thumbnailBitmap = mMoment.getLocalThumbnail();
-
         // make a new VideoCardData with it
-        VideoCardData videoCardData = new VideoCardData(thumbnailBitmap);
+        VideoCardData videoCardData = new VideoCardData(mMoment.getLocalVideoUri());
 
         // replace the prompt with the VideoCardData
         mViewModelList.set(5, videoCardData);

@@ -39,6 +39,7 @@
     <string name="video_prompt">Start filming or upload a video</string>
     <string name="notes">Notes</string>
     <string name="notes_prompt">Add a new note</string>
+    <string name="video_dialog_title">Video Options</string>
 
     <!--strings for the DescriptionActivity-->
     <string name="description_title">Title</string>

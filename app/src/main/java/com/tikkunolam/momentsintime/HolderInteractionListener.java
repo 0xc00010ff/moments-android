@@ -21,4 +21,7 @@ public interface HolderInteractionListener {
     // callback for when notes_prompt is clicked
     public void onNotesPromptClick();
 
+    // callback for when the video_card dots are clicked
+    public void onVideoDotsClick();
+
 }

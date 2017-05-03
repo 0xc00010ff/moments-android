@@ -9,7 +9,7 @@
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@color/background</item>
         <item name="android:actionMenuTextAppearance">@style/CustomActionBar</item>
-        <item name="android:actionMenuTextColor">@color/textLight</item>
+        <item name="android:actionMenuTextColor">@drawable/menu_text_color</item>
     </style>
 
     <!--style exists only to change the size and color of the text in the MakeAMomentActivity and subsequent Activities-->

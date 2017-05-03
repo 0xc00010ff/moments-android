@@ -1,7 +1,6 @@
 package com.tikkunolam.momentsintime;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,9 +19,6 @@ import android.widget.RelativeLayout;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
-import static android.R.attr.name;
-import static android.net.wifi.WifiConfiguration.Status.ENABLED;
-
 public class InterviewingActivity extends AppCompatActivity {
 
     // tag for log statements
@@ -37,7 +33,7 @@ public class InterviewingActivity extends AppCompatActivity {
     ImageView mIntervieweeImageView;
 
     // "save" menu item
-    MenuItem saveMenuItem;
+    MenuItem mSaveMenuItem;
 
     // string for the retrieved photo uri, to be returned to the MakeAMomentActivity
     String mPhotoUriString;
@@ -109,7 +105,8 @@ public class InterviewingActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.save_menu, menu);
 
-        saveMenuItem = menu.findItem(R.id.save_menu_item);
+        mSaveMenuItem = menu.findItem(R.id.save_menu_item);
+        mSaveMenuItem.setEnabled(false);
 
         return true;
 
@@ -197,6 +194,7 @@ public class InterviewingActivity extends AppCompatActivity {
     }
 
     private TextWatcher buildTextWatcher() {
+        // build a TextWatcher to watch the EditTexts and determine if mSaveMenuItem should be enabled
 
         TextWatcher textWatcher = new TextWatcher() {
             @Override
@@ -216,7 +214,7 @@ public class InterviewingActivity extends AppCompatActivity {
                     // if the EditText now has some text in it
 
                     // change the color of the save menu item to white, to indicate it's clickable
-                    enableSave();
+                    mSaveMenuItem.setEnabled(true);
                     Log.d(TAG, "SAVE ENABLED");
 
                 }
@@ -225,7 +223,7 @@ public class InterviewingActivity extends AppCompatActivity {
                     // if the EditText now has nothing in it
 
                     // change the color of the save menu to grey, to indicate it's not clickable
-                    disableSave();
+                    mSaveMenuItem.setEnabled(false);
                     Log.d(TAG, "SAVE DISABLED");
 
                 }
@@ -235,38 +233,6 @@ public class InterviewingActivity extends AppCompatActivity {
         };
 
         return textWatcher;
-
-    }
-
-    private void enableSave() {
-        // change menu item color to white to indicate save is clickable
-
-        Menu menu = mToolbar.getMenu();
-
-        MenuItem saveItem = menu.getItem(0);
-
-        // make a SpannableString from the title of the mSaveMenuItem
-        SpannableString saveString = new SpannableString(saveItem.getTitle());
-
-        // color the SpannableString
-        saveString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.white)), 0, saveString.length(), 0);
-
-        // set the mSaveMenuItem's title to the SpannableString
-        saveItem.setTitle(saveString);
-
-    }
-
-    private void disableSave() {
-        // change menu item color to grey to indicate save is unclickable
-
-        // make a SpannableString from the title of the mSaveMenuItem
-        SpannableString saveString = new SpannableString(saveMenuItem.getTitle());
-
-        // color the SpannableString
-        saveString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.textLight)), 0, saveString.length(), 0);
-
-        // set the mSaveMenuItem's title to the SpannableString
-        saveMenuItem.setTitle(saveString);
 
     }
 
