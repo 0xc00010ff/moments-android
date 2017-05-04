@@ -3,6 +3,11 @@
     package="com.tikkunolam.momentsintime">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -18,7 +23,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".VideoViewActivity" />
-        <activity android:name=".MakeAMomentActivity"></activity>
+        <activity android:name=".MakeAMomentActivity" />
+        <activity android:name=".DescriptionActivity" />
+        <activity android:name=".NoteActivity" />
+        <activity android:name=".InterviewingActivity"></activity>
     </application>
 
 </manifest>

@@ -13,20 +13,28 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/my_moments_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp" />
+
     <LinearLayout
         android:id="@+id/no_moments_linearLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:clickable="true"
         android:orientation="vertical"
         android:visibility="gone">
 
         <TextView
             android:id="@+id/no_moments_textView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
+            android:clickable="true"
             android:text="@string/no_moments"
             android:textAlignment="center"
             android:textColor="@color/text"
@@ -35,7 +43,7 @@
 
         <TextView
             android:id="@+id/no_moments_cont_textView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="40dp"
@@ -47,24 +55,18 @@
 
         <TextView
             android:id="@+id/make_a_moment_textView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:clickable="true"
-            android:focusableInTouchMode="true"
+            android:focusableInTouchMode="false"
             android:onClick="onMakeAMomentClick"
             android:text="@string/make_a_moment"
             android:textAlignment="center"
             android:textColor="@color/actionBlue"
             android:textSize="18sp" />
     </LinearLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/my_moments_recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="8dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButton"
@@ -73,8 +75,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_gravity="bottom|right"
-        android:layout_marginBottom="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
         android:clickable="true"
         app:backgroundTint="@color/colorPrimary"
         app:fabSize="normal"

@@ -13,13 +13,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 
-public class MyMomentsFragment extends Fragment {
+
+public class MyMomentsFragment extends Fragment{
 
     // tag for logging purposes
     private final String TAG = "My Moments Fragment";
@@ -27,14 +30,14 @@ public class MyMomentsFragment extends Fragment {
     // list of Moments
     private MomentList mMomentList;
 
+    // list of Moments and Prompts to fill the RecyclerView
+    ArrayList<Object> mViewModelList;
+
     // callback for the activity to handle fragment business
     FragmentInteractionListener mActivityCallback;
 
     // MomentCardAdapter for the RecyclerView
     MomentCardAdapter mMomentCardAdapter;
-
-    // fragment identifier for the adapter
-    int mIdentifier = 2;
 
     // ui references
     RelativeLayout mMyMomentsRelativeLayout;
@@ -84,12 +87,11 @@ public class MyMomentsFragment extends Fragment {
 
         // get the Make a Moment prompt and set an OnClickListener on it
         mMakeAMomentTextView = (TextView) mNoMomentsLinearLayout.findViewById(R.id.make_a_moment_textView);
-
         mMakeAMomentTextView.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
 
-                Log.d(TAG, "CLICK!!!!!!!!");
+                // tell the Activity we want to make a new Moment
                 mActivityCallback.onNewMomentClick();
 
             }
@@ -115,6 +117,9 @@ public class MyMomentsFragment extends Fragment {
 
         // create a new MomentList
         mMomentList = new MomentList(getActivity().getApplicationContext());
+
+        // create a new mViewModelList
+        mViewModelList = new ArrayList<>();
 
         // set up the RecyclerView
         setUpRecyclerView();
@@ -154,7 +159,7 @@ public class MyMomentsFragment extends Fragment {
          */
 
         // get the RecyclerAdapter
-        mMomentCardAdapter = new MomentCardAdapter(getContext(), R.id.community_cardView, mMomentList, mIdentifier);
+        mMomentCardAdapter = new MomentCardAdapter(getContext(), mViewModelList);
 
         // set the adapter on the RecyclerView
         mMyMomentsRecyclerView.setAdapter(mMomentCardAdapter);
@@ -226,12 +231,20 @@ public class MyMomentsFragment extends Fragment {
             // stop the mProgressBar
             mProgressBar.setVisibility(View.GONE);
 
+            mViewModelList.clear();
+
+            mViewModelList.addAll(mMomentList.getMomentList());
+
             // notify the adapter the MomentList has changed
-            mMomentCardAdapter.updateDataSet();
             mMomentCardAdapter.notifyDataSetChanged();
 
             // if there are still no Moments, display the no_moments layout
-            mNoMomentsLinearLayout.setVisibility(View.VISIBLE);
+            if(mViewModelList.size() < 1) {
+
+                // make it visible
+                mNoMomentsLinearLayout.setVisibility(View.VISIBLE);
+
+            }
 
         }
 

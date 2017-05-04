@@ -13,8 +13,12 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
+import java.util.ArrayList;
+
 
 public class CommunityFragment extends Fragment {
+
+    Context mContext;
 
     // ui references
     FrameLayout mCommunityFrameLayout;
@@ -24,11 +28,11 @@ public class CommunityFragment extends Fragment {
     // adapter for the RecyclerView
     MomentCardAdapter mMomentCardAdapter;
 
-    // fragment identifier for the adapter
-    int mIdentifier = 1;
-
     // list of Moments
     MomentList mMomentList;
+
+    // list of Moments and MomentPrompts for the RecyclerView
+    ArrayList<Object> mViewModelList;
 
     // callback for the activity to handle fragment business
     FragmentInteractionListener mActivityCallback;
@@ -59,6 +63,8 @@ public class CommunityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        mContext = getActivity();
+
         // inflate the layout for the fragment
         View entireView = inflater.inflate(R.layout.fragment_community, container, false);
 
@@ -74,6 +80,9 @@ public class CommunityFragment extends Fragment {
         // set the MomentList
         mMomentList = new MomentList(getActivity().getApplicationContext());
 
+        // make a new mViewModelList
+        mViewModelList = new ArrayList<>();
+
         // set up the RecyclerView
         setUpRecyclerView();
 
@@ -88,7 +97,7 @@ public class CommunityFragment extends Fragment {
 
         super.onActivityCreated(savedInstanceState);
 
-        // create and execute a new asynchronous task to fill the mMomentList
+        // create and execute a new asynchronous task to fill the mViewModelList
         AsyncFetchCommunityMoments asyncFetchCommunityVideos = new AsyncFetchCommunityMoments();
         asyncFetchCommunityVideos.execute(mMomentList);
 
@@ -119,7 +128,7 @@ public class CommunityFragment extends Fragment {
          */
 
         // get the RecyclerAdapter
-        mMomentCardAdapter = new MomentCardAdapter(getContext(), R.id.community_cardView, mMomentList, mIdentifier);
+        mMomentCardAdapter = new MomentCardAdapter(getContext(), mViewModelList);
 
         // set the adapter on the RecyclerView
         mCommunityRecyclerView.setAdapter(mMomentCardAdapter);
@@ -131,6 +140,22 @@ public class CommunityFragment extends Fragment {
             StaggeredGridLayoutManager staggeredGridLayoutManager =
                     new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
             mCommunityRecyclerView.setLayoutManager(staggeredGridLayoutManager);
+
+            // make a new EndlessScrollRecyclerViewListener
+            mScrollListener = new EndlessRecyclerViewScrollListener(staggeredGridLayoutManager) {
+
+                @Override
+                public void onLoadMore() {
+
+                    AsyncFetchCommunityMoments asyncFetchCommunityMoments = new AsyncFetchCommunityMoments();
+                    asyncFetchCommunityMoments.execute(mMomentList);
+
+                }
+
+            };
+
+            // add the scroll listener to the RecyclerView
+            mCommunityRecyclerView.addOnScrollListener(mScrollListener);
 
         }
         else {
@@ -155,29 +180,7 @@ public class CommunityFragment extends Fragment {
             // add the scroll listener to the RecyclerView
             mCommunityRecyclerView.addOnScrollListener(mScrollListener);
 
-
-
         }
-
-        // add the RecyclerItemClickListener to the RecyclerView items.
-        mCommunityRecyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(getContext(), mCommunityRecyclerView,
-                        new RecyclerItemClickListener.OnItemClickListener() {
-                            // what's to be done when a cell is clicked
-                            @Override
-                            public void onItemClick(View view, int position) {
-                                // tell the Activity what Moment was selected
-
-                                // to account for having added the moment_prompt subtract 1 from position
-                                // if the position is > 7 (the index of the moment_prompt)
-                                if(position > 7) position--;
-
-                                // tell the Activity
-                                mActivityCallback.onMomentSelect(mMomentList.getMomentList().get(position));
-                            }
-                        }
-                )
-        );
 
     }
 
@@ -216,10 +219,46 @@ public class CommunityFragment extends Fragment {
             // stop the progressBar
             mProgressBar.setVisibility(View.GONE);
 
-            // notify the adapter the MomentList has changed
-            mMomentCardAdapter.clear();
-            mMomentCardAdapter.updateDataSet();
+            // clear the list for the sake of the endless scroll
+            mViewModelList.clear();
+
+            // add all the fetched Moments to the mViewModelList
+            mViewModelList.addAll(mMomentList.getMomentList());
+
+            // insert a single prompt at the seventh position
+            insertMomentPrompts(7, false);
+
+            // notify the adapter the mViewModelList has changed
             mMomentCardAdapter.notifyDataSetChanged();
+
+        }
+
+    }
+
+    private void insertMomentPrompts(int position, boolean repeating) {
+        // either inserts one MomentPrompt at position, or a MomentPrompt at every [position]th position in mViewModeList
+
+        if(repeating) {
+            // add a MomentPrompt at every [position]th position
+
+            for(int i = 0; i > mViewModelList.size(); i++) {
+
+                if ((position - 1) % i == 0) {
+
+                    MomentPrompt momentPrompt = new MomentPrompt(mContext);
+                    mViewModelList.add(i, momentPrompt);
+
+                }
+
+            }
+
+        }
+
+        else {
+            // add a single MomentPrompt at position
+
+            MomentPrompt momentPrompt = new MomentPrompt(mContext);
+            mViewModelList.add(position, momentPrompt);
 
         }
 

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--string array for the dialog for Interviewing in MakeAMomentActivity-->
+    <string-array name="interviewing_dialog_array">
+
+        <item>Pick from Facebook</item>
+        <item>Enter Manually</item>
+        <item>Cancel</item>
+
+    </string-array>
+
+    <!--string array for the dialog when you click the dots in the video_card of MakeAMomentActivity-->
+    <string-array name="video_dialog_array">
+
+        <item>Edit Video</item>
+        <item>Delete Video</item>
+        <item>Cancel</item>
+
+    </string-array>
+
+    <!--string array for when you click the dots in the note_card of MakeAMomentActivity-->
+    <string-array name="note_dialog_array">
+
+        <item>DeleteNote</item>
+        <item>Cancel</item>
+
+    </string-array>
+
+</resources>

@@ -10,15 +10,19 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 
 public class MainActivity extends AppCompatActivity
-    implements FragmentInteractionListener {
+    implements FragmentInteractionListener{
 
     // tag for logging purposes
     private final String TAG = "MainActivity";
 
+    // integer identifiers for Activity results
+    final int NEW_MOMENT = 1;
+
     // strings for intent extra arguments
-    String videoExtra;
+    String momentExtra;
 
     // ui references
     Toolbar mToolbar;
@@ -35,7 +39,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         // get the string resource for the outgoing intent extra
-        videoExtra = getResources().getString(R.string.video_extra);
+        momentExtra = getResources().getString(R.string.moment_extra);
 
         //set the ActionBar to the toolbar we created
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -66,14 +70,14 @@ public class MainActivity extends AppCompatActivity
         Intent videoIntent = new Intent(getBaseContext(), VideoViewActivity.class);
 
         // add the Parcelable Moment to it
-        videoIntent.putExtra(videoExtra, moment);
+        videoIntent.putExtra(momentExtra, moment);
 
         // open the activity
         startActivity(videoIntent);
 
     }
 
-    // the callback method that will be called when the FloatingActionButton in MyMomentsFragment is clicked
+    // the callback method that will be called when the FloatingActionButton or NoMomentPrompt in MyMomentsFragment is clicked
     public void onNewMomentClick() {
         // open the MakeAMomentActivity
 
@@ -81,8 +85,16 @@ public class MainActivity extends AppCompatActivity
         Intent makeAMomentIntent = new Intent(getBaseContext(), MakeAMomentActivity.class);
 
         // open the activity
-        startActivity(makeAMomentIntent);
+        startActivityForResult(makeAMomentIntent, NEW_MOMENT);
 
+
+    }
+
+    // the callback method that will be called when the MomentPrompt is clicked in the CommunityFragment RecyclerView
+    public void onMomentPromptClick() {
+
+        // do whatever to share
+        Log.d(TAG, "MOMENT PROMPT CLICKED");
 
     }
 
@@ -136,4 +148,5 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
+
 }
