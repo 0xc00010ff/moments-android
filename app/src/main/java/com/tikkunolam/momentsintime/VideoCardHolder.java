@@ -14,6 +14,7 @@ public class VideoCardHolder extends RecyclerView.ViewHolder{
 
     ImageView videoPreviewImageView;
     ImageView dotsImageView;
+    ImageView playButtonImageView;
 
     HolderInteractionListener mActivityCallback;
 
@@ -28,6 +29,7 @@ public class VideoCardHolder extends RecyclerView.ViewHolder{
         // fill the views
         videoPreviewImageView = (ImageView) view.findViewById(R.id.video_card_preview_imageView);
         dotsImageView = (ImageView) view.findViewById(R.id.video_card_dots_imageView);
+        playButtonImageView = (ImageView) view.findViewById(R.id.video_card_play_imageView);
 
         // add a listener to the dots
         dotsImageView.setOnClickListener(new View.OnClickListener() {
@@ -35,6 +37,17 @@ public class VideoCardHolder extends RecyclerView.ViewHolder{
             public void onClick(View view) {
 
                 mActivityCallback.onVideoDotsClick();
+
+            }
+
+        });
+
+        // add a listener to the play button
+        playButtonImageView.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+
+                mActivityCallback.onPlayButtonClick();
 
             }
 

@@ -1,19 +1,13 @@
 package com.tikkunolam.momentsintime;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,10 +16,9 @@ import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import java.io.File;
 import java.util.ArrayList;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
+import static com.tikkunolam.momentsintime.R.string.moment_extra;
 
 public class MakeAMomentActivity extends AppCompatActivity implements HolderInteractionListener{
 
@@ -33,7 +26,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     final String TAG = "MakeAMomentActivity";
 
     // Strings for use as Extra argument identifiers
-    String nameExtra, roleExtra, photoUriExtra, titleExtra, descriptionExtra, noteExtra;
+    String mMomentExtra, mNameExtra, mRoleExtra, mPhotoUriExtra, mTitleExtra, mDescriptionExtra, mNoteExtra;
 
     // integers for use as request codes between Intents
     final int VIDEO_FROM_GALLERY = 1;
@@ -70,12 +63,13 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         setContentView(R.layout.activity_make_a_moment);
 
         // get all the Extra argument names from resources
-        nameExtra = getString(R.string.name_extra);
-        roleExtra = getString(R.string.role_extra);
-        photoUriExtra = getString(R.string.photo_uri_extra);
-        titleExtra = getString(R.string.title_extra);
-        descriptionExtra = getString(R.string.description_extra);
-        noteExtra = getString(R.string.note_extra);
+        mMomentExtra = getString(moment_extra);
+        mNameExtra = getString(R.string.name_extra);
+        mRoleExtra = getString(R.string.role_extra);
+        mPhotoUriExtra = getString(R.string.photo_uri_extra);
+        mTitleExtra = getString(R.string.title_extra);
+        mDescriptionExtra = getString(R.string.description_extra);
+        mNoteExtra = getString(R.string.note_extra);
 
         // get the toolbar and set it
         mToolbar = (Toolbar) findViewById(R.id.make_a_moment_toolbar);
@@ -274,22 +268,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                 case INTERVIEWING_INTENT:
                     // a Moment is being returned from InterviewingActivity
 
-                    // fetch the name and assign it to the mMoment
-                    String name = data.getStringExtra(nameExtra);
-                    mMoment.setInterviewee(name);
-
-                    // fetch the role and assign it to the mMoment
-                    String role = data.getStringExtra(roleExtra);
-                    mMoment.setIntervieweeRole(role);
-
-                    // fetch the photoUri and assign it to the mMoment
-                    String photoUri = data.getStringExtra(photoUriExtra);
-
-                    if(photoUri != null) {
-
-                        mMoment.setIntervieweePhotoUri(Uri.parse(photoUri));
-
-                    }
+                    mMoment = data.getParcelableExtra(mMomentExtra);
 
                     // insert an interviewing_card in the mViewModelList
                     insertInterviewingCard();
@@ -302,13 +281,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                 case DESCRIPTION_INTENT:
                     // a Moment is being returned from DescriptionActivity
 
-                    // get the title from the Intent and assign it to the mMoment
-                    String title = data.getStringExtra(titleExtra);
-                    mMoment.setName(title);
-
-                    // get the description from the Intent and assign it to the mMoment
-                    String description = data.getStringExtra(descriptionExtra);
-                    mMoment.setDescription(description);
+                    //get the Moment from the Intent
+                    mMoment = data.getParcelableExtra(mMomentExtra);
 
                     // insert a description_card in place of section_prompt_text
                     insertDescriptionCard();
@@ -321,7 +295,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                 case NOTE_INTENT:
                     // a note is being returned from NotesActivity. get it, add it to the mMoment, and refresh the Adapter
 
-                    String note = data.getStringExtra(noteExtra);
+                    String note = data.getStringExtra(mNoteExtra);
 
                     mMoment.addNote(note);
 
@@ -406,6 +380,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                                 // make an intent with the InterviewingActivity
                                 Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
 
+                                interviewingIntent.putExtra(mMomentExtra, mMoment);
+
                                 startActivityForResult(interviewingIntent, INTERVIEWING_INTENT);
 
                                 break;
@@ -432,6 +408,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         // make an Intent with the DescriptionActivity
         Intent descriptionIntent = new Intent(getBaseContext(), DescriptionActivity.class);
+
+        descriptionIntent.putExtra(mMomentExtra, mMoment);
 
         // start the Activity
         startActivityForResult(descriptionIntent, DESCRIPTION_INTENT);
@@ -510,6 +488,60 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                 })
                 .show();
+
+    }
+
+    public void onNoteCardDotsClick(final int notePosition) {
+        // open the dialog to ask the user to delete the note
+
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title(R.string.note_dialog_title)
+                .items(R.array.note_dialog_array)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+
+                        switch(position) {
+
+                            case 0:
+                                // user chose to delete... delete the note at the position from the mViewModelList
+
+                                // delete it
+                                mViewModelList.remove(notePosition);
+
+                                // tell the Adapter to update the RecyclerView
+                                mMakeAMomentAdapter.notifyDataSetChanged();
+
+                                break;
+
+                            case 1:
+                                // user chose to cancel... auto dismiss is on so do nothing
+
+                                break;
+
+                        }
+
+                    }
+
+                })
+                .show();
+
+
+    }
+
+    // the callback for when the play button in the video_card is clicked
+    public void onPlayButtonClick() {
+        // start a VideoViewActivity
+
+        // make the Intent
+        Intent videoViewActivityIntent = new Intent(this, VideoViewActivity.class);
+
+        // bundle the Moment with it
+        videoViewActivityIntent.putExtra(mMomentExtra, mMoment);
+
+        // start the Activity
+        startActivity(videoViewActivityIntent);
 
     }
 

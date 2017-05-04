@@ -49,12 +49,32 @@ public class VideoViewActivity extends AppCompatActivity {
 
     private void setUpVideoView( ) {
 
-        // get the Moment path
-        String uri = mMoment.getVideoUri();
+        if(mMoment.getLocalVideoUri() != null) {
+            // there's a local video so set up the MediaController with that
 
-        // call the async task to set the VideoView's path and set the MediaController
-        AsyncFetchVideo asyncFetchVideo = new AsyncFetchVideo(this);
-        asyncFetchVideo.execute(uri);
+            // set the video path
+            mVideoView.setVideoURI(mMoment.getLocalVideoUri());
+
+            // set up the MediaController
+            mMediaController = new MediaController(this);
+            mMediaController.setMediaPlayer(mVideoView);
+
+            // set the MediaController on the VideoView
+            mVideoView.setMediaController(mMediaController);
+
+        }
+
+        else {
+            // there is a link to a Vimeo video
+
+            // get the Moment path
+            String uri = mMoment.getVideoUri();
+
+            // call the async task to set the VideoView's path and set the MediaController
+            AsyncFetchVideo asyncFetchVideo = new AsyncFetchVideo(this);
+            asyncFetchVideo.execute(uri);
+
+        }
 
     }
 

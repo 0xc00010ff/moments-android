@@ -19,4 +19,12 @@
 
     </string-array>
 
+    <!--string array for when you click the dots in the note_card of MakeAMomentActivity-->
+    <string-array name="note_dialog_array">
+
+        <item>DeleteNote</item>
+        <item>Cancel</item>
+
+    </string-array>
+
 </resources>

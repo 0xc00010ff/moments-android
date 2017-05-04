@@ -210,7 +210,13 @@ public class Moment implements Parcelable {
 
     public Uri getLocalVideoUri() {
 
-        return Uri.parse(localVideoUri);
+        if(localVideoUri != null) {
+
+            return Uri.parse(localVideoUri);
+
+        }
+
+        else return null;
 
     }
 

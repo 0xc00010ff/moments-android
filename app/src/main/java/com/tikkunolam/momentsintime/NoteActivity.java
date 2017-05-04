@@ -65,7 +65,10 @@ public class NoteActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.save_menu, menu);
 
+        // get the "save" MenuItem so it can be toggled by the TextWatcher
         mSaveMenuItem = menu.findItem(R.id.save_menu_item);
+
+        // disable it to begin with
         mSaveMenuItem.setEnabled(false);
 
         return true;
@@ -87,8 +90,11 @@ public class NoteActivity extends AppCompatActivity {
 
                     // make an intent, add the note to it, and return to the calling Activity
                     Intent returnIntent = new Intent();
+
                     returnIntent.putExtra(mNoteExtra, note);
+
                     setResult(RESULT_OK, returnIntent);
+
                     finish();
 
                 }

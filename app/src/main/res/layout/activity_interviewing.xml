@@ -24,8 +24,8 @@
 
         <View
             android:id="@+id/circle_container"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_centerHorizontal="false"
             android:layout_centerInParent="true"
             android:background="@drawable/circle">
@@ -35,8 +35,8 @@
 
         <ImageView
             android:id="@+id/camera_imageView"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_centerInParent="true"
             app:srcCompat="@drawable/camera" />
 
@@ -56,7 +56,7 @@
     <ImageView
         android:id="@+id/interviewee_imageView"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="100dp"
         android:layout_below="@+id/interviewing_toolbar"
         android:layout_margin="8dp"
         android:visibility="gone"

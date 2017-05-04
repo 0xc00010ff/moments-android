@@ -141,6 +141,22 @@ public class CommunityFragment extends Fragment {
                     new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
             mCommunityRecyclerView.setLayoutManager(staggeredGridLayoutManager);
 
+            // make a new EndlessScrollRecyclerViewListener
+            mScrollListener = new EndlessRecyclerViewScrollListener(staggeredGridLayoutManager) {
+
+                @Override
+                public void onLoadMore() {
+
+                    AsyncFetchCommunityMoments asyncFetchCommunityMoments = new AsyncFetchCommunityMoments();
+                    asyncFetchCommunityMoments.execute(mMomentList);
+
+                }
+
+            };
+
+            // add the scroll listener to the RecyclerView
+            mCommunityRecyclerView.addOnScrollListener(mScrollListener);
+
         }
         else {
 
@@ -203,6 +219,7 @@ public class CommunityFragment extends Fragment {
             // stop the progressBar
             mProgressBar.setVisibility(View.GONE);
 
+            // clear the list for the sake of the endless scroll
             mViewModelList.clear();
 
             // add all the fetched Moments to the mViewModelList

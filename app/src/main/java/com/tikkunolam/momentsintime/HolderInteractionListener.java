@@ -7,21 +7,27 @@ public interface HolderInteractionListener {
      */
 
     // callback for when interviewing_prompt is clicked
-    public void onInterviewingPromptClick();
+    void onInterviewingPromptClick();
 
     // callback for when description_prompt is clicked
-    public void onDescriptionPromptClick();
+    void onDescriptionPromptClick();
 
     //callback for when video_prompt is clicked
-    public void onVideoPromptClick();
+    void onVideoPromptClick();
 
     // callback for when upload_prompt is clicked
-    public void onUploadPromptClick();
+    void onUploadPromptClick();
 
     // callback for when notes_prompt is clicked
-    public void onNotesPromptClick();
+    void onNotesPromptClick();
 
     // callback for when the video_card dots are clicked
-    public void onVideoDotsClick();
+    void onVideoDotsClick();
+
+    // callback for when the video_card play button is clicked
+    void onPlayButtonClick();
+
+    // callback for when the note_card dots are clicked
+    void onNoteCardDotsClick(int position);
 
 }

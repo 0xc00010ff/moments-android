@@ -21,10 +21,13 @@ public class DescriptionActivity extends AppCompatActivity {
     final String TAG = "DescriptionActivity";
 
     // Strings for Extra argument identification
-    String mTitleExtra, mDescriptionExtra;
+    String mMomentExtra;
 
     // the Activity title for display in the toolbar
     String mActivityTitle;
+
+    // the Moment passed by the MakeAMomentActivity
+    Moment mMoment;
 
     // ui references
     Toolbar mToolbar;
@@ -41,8 +44,10 @@ public class DescriptionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_description);
 
         // fetch the Extra argument identifiers from resources
-        mTitleExtra = getString(R.string.title_extra);
-        mDescriptionExtra = getString(R.string.description_extra);
+        mMomentExtra = getString(R.string.moment_extra);
+
+        // get the Moment
+        mMoment = getIntent().getParcelableExtra(mMomentExtra);
 
         // get the toolbar, get the activity title from resources, and set the toolbar title
         mToolbar = (Toolbar) findViewById(R.id.description_toolbar);
@@ -54,10 +59,8 @@ public class DescriptionActivity extends AppCompatActivity {
         mDescriptionTitleEditText = (MaterialEditText) findViewById(R.id.description_title_editText);
         mDescriptionDescriptionEditText = (MaterialEditText) findViewById(R.id.description_description_editText);
 
-        // add a TextWatcher to both MaterialEditTexts to change the "save" menu button to white if conditions are met
-        TextWatcher mTextWatcher = buildTextWatcher();
-        mDescriptionTitleEditText.addTextChangedListener(mTextWatcher);
-        mDescriptionDescriptionEditText.addTextChangedListener(mTextWatcher);
+        // fill them in with values from the mMoment if they're present
+        setViewsFromMoment();
 
 
     }
@@ -70,8 +73,16 @@ public class DescriptionActivity extends AppCompatActivity {
 
         // get the MenuItem
         mSaveMenuItem = menu.findItem(R.id.save_menu_item);
+
         // disable it until the TextWatcher determines it should be enabled
         mSaveMenuItem.setEnabled(false);
+
+        // add a TextWatcher to both MaterialEditTexts to toggle the "save" MenuItem if conditions are right
+        TextWatcher mTextWatcher = buildTextWatcher();
+
+        mDescriptionTitleEditText.addTextChangedListener(mTextWatcher);
+
+        mDescriptionDescriptionEditText.addTextChangedListener(mTextWatcher);
 
         return true;
 
@@ -93,16 +104,21 @@ public class DescriptionActivity extends AppCompatActivity {
                 if(title != null && title.length() >= 1 && description != null && description.length() >= 1) {
                     // if the user has entered information for title and description
 
+                    // add the title and description to the Moment
+                    mMoment.setName(title);
+                    mMoment.setDescription(description);
+
                     // make an intent with the MakeAMomentActivity
                     Intent makeAMomentIntent = new Intent(getBaseContext(), MakeAMomentActivity.class);
 
-                    // add the title and description to the Intent
-                    makeAMomentIntent.putExtra(mTitleExtra, title).putExtra(mDescriptionExtra, description);
+                    // add the Moment to it
+                    makeAMomentIntent.putExtra(mMomentExtra, mMoment);
+
 
                     // set the result
                     setResult(RESULT_OK, makeAMomentIntent);
 
-                    // return to the Activity
+                    // return to the calling Activity
                     finish();
 
                 }
@@ -154,6 +170,23 @@ public class DescriptionActivity extends AppCompatActivity {
         };
 
         return textWatcher;
+
+    }
+
+    public void setViewsFromMoment() {
+        // fills the EditTexts from the Moment that's passed in if the values are present
+
+        if(mMoment.getName() != null) {
+
+            mDescriptionTitleEditText.setText(mMoment.getName());
+
+        }
+
+        if(mMoment.getDescription() != null){
+
+            mDescriptionDescriptionEditText.setText(mMoment.getDescription());
+
+        }
 
     }
 

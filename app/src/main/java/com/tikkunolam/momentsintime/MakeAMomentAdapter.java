@@ -10,9 +10,6 @@ import android.support.v7.widget.RecyclerView.ViewHolder;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import static okhttp3.internal.Internal.instance;
 
 public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     /**
@@ -152,7 +149,7 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .inflate(R.layout.interviewing_card, parent, false);
 
                 // fill the ViewHolder with a InterviewingCardHolder
-                viewHolder = new InterviewingCardHolder(interviewingCardView);
+                viewHolder = new InterviewingCardHolder(mContext, interviewingCardView);
 
                 break;
 
@@ -164,7 +161,7 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .inflate(R.layout.description_card, parent, false);
 
                 // fill the ViewHolder with a DescriptionCardHolder
-                viewHolder = new DescriptionCardHolder(descriptionCardView);
+                viewHolder = new DescriptionCardHolder(mContext, descriptionCardView);
 
                 break;
 
@@ -240,8 +237,11 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 // cast the generic Object at the position in mViewModelList to a String
                 String noteString = (String) mViewModelList.get(position);
 
-                // set the NoteCardHolder's noteCardTextView value
-                noteCardHolder.noteCardTextView.setText(noteString);
+                // set the NoteCardHolder's mNoteCardTextView value
+                noteCardHolder.mNoteCardTextView.setText(noteString);
+
+                // set the NoteCardHolder's position so it knows what to tell the MakeAMomentActivity
+                noteCardHolder.setPosition(position);
 
                 break;
 
@@ -261,6 +261,12 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 if(interviewingCardData.getIntervieweeRole() != null) {
 
                     interviewingCardHolder.mIntervieweeRoleTextView.setText(interviewingCardData.getIntervieweeRole());
+
+                }
+
+                else {
+                    // otherwise hide the TextView
+                    interviewingCardHolder.mIntervieweeRoleTextView.setVisibility(View.GONE);
 
                 }
 
