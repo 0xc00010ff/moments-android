@@ -47,9 +47,6 @@ public class Moment implements Parcelable {
     // the local video file uri
     private String localVideoUri;
 
-    // the local video thumbnail
-    private Bitmap localThumbnail;
-
     // the url of the video thumbnail
     private String pictureUrl;
 
@@ -220,12 +217,6 @@ public class Moment implements Parcelable {
 
     }
 
-    public Bitmap getLocalThumbnail() {
-
-        return localThumbnail;
-
-    }
-
     public String getPictureUrl() {
 
         return pictureUrl;
@@ -289,12 +280,6 @@ public class Moment implements Parcelable {
 
     }
 
-
-    public void setLocalThumbnail(Bitmap bitmap) {
-
-        localThumbnail = bitmap;
-
-    }
 
     public void setPictureUrl(String pictureUrl) {
 
