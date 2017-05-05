@@ -27,7 +27,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     final String TAG = "MakeAMomentActivity";
 
     // Strings for use as Extra argument identifiers
-    String mPrimaryKeyExtra, mPhotoUriExtra, mNoteExtra;
+    String mPrimaryKeyExtra, mPhotoUriExtra, mNoteExtra, mLocalVideoUriExtra;
 
     // integers for use as request codes between Intents
     final int VIDEO_FROM_GALLERY = 1;
@@ -67,6 +67,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         mPrimaryKeyExtra = getString(primary_key_extra);
         mPhotoUriExtra = getString(R.string.photo_uri_extra);
         mNoteExtra = getString(R.string.note_extra);
+        mLocalVideoUriExtra = getString(R.string.local_video_uri_extra);
 
         // get the toolbar and set it
         mToolbar = (Toolbar) findViewById(R.id.make_a_moment_toolbar);
@@ -552,7 +553,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         Intent videoViewActivityIntent = new Intent(this, VideoViewActivity.class);
 
         // add the mMoment's primaryKey as an extra
-        videoViewActivityIntent.putExtra(mPrimaryKeyExtra, mMoment.getPrimaryKey());
+        videoViewActivityIntent.putExtra(mLocalVideoUriExtra, mMoment.getLocalVideoUri());
 
         // start the Activity
         startActivity(videoViewActivityIntent);

@@ -15,6 +15,11 @@ public class VideoViewActivity extends AppCompatActivity {
 
     // strings for intent extra arguments
     String mPrimaryKeyExtra;
+    String mLocalVideoUriExtra;
+    String mVimeoVideoUriExtra;
+
+    String mLocalVideoUri;
+    String mVimeoVideoUri;
 
     // ui references
     VideoView mVideoView;
@@ -30,14 +35,17 @@ public class VideoViewActivity extends AppCompatActivity {
 
         // fetch the string for Intent Extra argument from resources
         mPrimaryKeyExtra = (String) getResources().getText(R.string.primary_key_extra);
+        mLocalVideoUri = getString(R.string.local_video_uri_extra);
+        mVimeoVideoUriExtra = getString(R.string.vimeo_video_uri_extra);
 
         // get the VideoView
         mVideoView = (VideoView) findViewById(R.id.videoView);
 
-        // get the primaryKey by which the mMoment will be identified in Realm
-        String primaryKey = getIntent().getStringExtra(mPrimaryKeyExtra);
+        // get the mLocalVideoUri if there is one
+        mLocalVideoUri = getIntent().getStringExtra(mLocalVideoUri);
 
-        // fetch the Moment from Realm
+        // get the mVimeoVideoUri if there is one
+        mVimeoVideoUri = getIntent().getStringExtra(mVimeoVideoUriExtra);
 
         // set up the video
         setUpVideoView();
@@ -52,11 +60,11 @@ public class VideoViewActivity extends AppCompatActivity {
 
     private void setUpVideoView( ) {
 
-        if(mMoment.getLocalVideoUri() != null) {
+        if(mLocalVideoUri != null) {
             // there's a local video so set up the MediaController with that
 
             // set the video path
-            mVideoView.setVideoURI(Uri.parse(mMoment.getLocalVideoUri()));
+            mVideoView.setVideoURI(Uri.parse(mLocalVideoUri));
 
             // set up the MediaController
             mMediaController = new MediaController(this);
@@ -70,12 +78,9 @@ public class VideoViewActivity extends AppCompatActivity {
         else {
             // there is a link to a Vimeo video
 
-            // get the Moment path
-            String uri = mMoment.getVideoUri();
-
             // call the async task to set the VideoView's path and set the MediaController
             AsyncFetchVideo asyncFetchVideo = new AsyncFetchVideo(this);
-            asyncFetchVideo.execute(uri);
+            asyncFetchVideo.execute(mVimeoVideoUri);
 
         }
 

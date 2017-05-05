@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity
 
     // strings for intent extra arguments
     String mPrimaryKeyExtra;
+    String mVimeoVideoUriExtra;
 
     // ui references
     Toolbar mToolbar;
@@ -38,8 +39,9 @@ public class MainActivity extends AppCompatActivity
         //inflate the activity's corresponding layout
         setContentView(R.layout.activity_main);
 
-        // get the string resource for the outgoing intent extra
+        // get the string resources for the outgoing intent extras
         mPrimaryKeyExtra = getResources().getString(R.string.primary_key_extra);
+        mVimeoVideoUriExtra = getString(R.string.vimeo_video_uri_extra);
 
         //set the ActionBar to the toolbar we created
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity
         Intent videoIntent = new Intent(getBaseContext(), VideoViewActivity.class);
 
         // add the Parcelable Moment to it
-        videoIntent.putExtra(mPrimaryKeyExtra, moment.getPrimaryKey());
+        videoIntent.putExtra(mVimeoVideoUriExtra, moment.getVideoUri());
 
         // open the activity
         startActivity(videoIntent);

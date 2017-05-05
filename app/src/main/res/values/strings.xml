@@ -64,6 +64,8 @@
     <string name="video_uri_extra">videoUri</string>
     <string name="photo_uri_extra">photoUri</string>
     <string name="note_extra">note</string>
-    <string name="primary_key_extra">primary key</string>
+    <string name="primary_key_extra">primaryKey</string>
+    <string name="local_video_uri_extra">localVideo</string>
+    <string name="vimeo_video_uri_extra">vimeoVideo</string>
 
 </resources>
