@@ -1,6 +1,7 @@
 package com.tikkunolam.momentsintime;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,7 +14,7 @@ public class VideoViewActivity extends AppCompatActivity {
     Moment mMoment;
 
     // strings for intent extra arguments
-    String mMomentExtra;
+    String mPrimaryKeyExtra;
 
     // ui references
     VideoView mVideoView;
@@ -28,13 +29,15 @@ public class VideoViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video_view);
 
         // fetch the string for Intent Extra argument from resources
-        mMomentExtra = (String) getResources().getText(R.string.moment_extra);
+        mPrimaryKeyExtra = (String) getResources().getText(R.string.primary_key_extra);
 
         // get the VideoView
         mVideoView = (VideoView) findViewById(R.id.videoView);
 
-        // take the Moment out of the extras bundle
-        mMoment = getIntent().getExtras().getParcelable(mMomentExtra);
+        // get the primaryKey by which the mMoment will be identified in Realm
+        String primaryKey = getIntent().getStringExtra(mPrimaryKeyExtra);
+
+        // fetch the Moment from Realm
 
         // set up the video
         setUpVideoView();
@@ -53,7 +56,7 @@ public class VideoViewActivity extends AppCompatActivity {
             // there's a local video so set up the MediaController with that
 
             // set the video path
-            mVideoView.setVideoURI(mMoment.getLocalVideoUri());
+            mVideoView.setVideoURI(Uri.parse(mMoment.getLocalVideoUri()));
 
             // set up the MediaController
             mMediaController = new MediaController(this);

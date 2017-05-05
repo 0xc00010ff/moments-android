@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity
     final int NEW_MOMENT = 1;
 
     // strings for intent extra arguments
-    String momentExtra;
+    String mPrimaryKeyExtra;
 
     // ui references
     Toolbar mToolbar;
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         // get the string resource for the outgoing intent extra
-        momentExtra = getResources().getString(R.string.moment_extra);
+        mPrimaryKeyExtra = getResources().getString(R.string.primary_key_extra);
 
         //set the ActionBar to the toolbar we created
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity
         Intent videoIntent = new Intent(getBaseContext(), VideoViewActivity.class);
 
         // add the Parcelable Moment to it
-        videoIntent.putExtra(momentExtra, moment);
+        videoIntent.putExtra(mPrimaryKeyExtra, moment.getPrimaryKey());
 
         // open the activity
         startActivity(videoIntent);

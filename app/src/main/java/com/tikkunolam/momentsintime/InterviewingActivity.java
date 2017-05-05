@@ -38,13 +38,14 @@ public class InterviewingActivity extends AppCompatActivity {
     // "save" menu item
     MenuItem mSaveMenuItem;
 
+    // the Moment
     Moment mMoment;
 
     // the Activity title for display in the Toolbar
     String mActivityTitle;
 
     // Strings for Extra argument identification
-    String mMomentExtra;
+    String mPrimaryKeyExtra;
 
     // request codes for implicit intent receipt
     final int PHOTO_REQUEST_CODE = 1;
@@ -56,10 +57,12 @@ public class InterviewingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_interviewing);
 
         // get the Extra argument identifiers from resources
-        mMomentExtra = getString(R.string.moment_extra);
+        mPrimaryKeyExtra = getString(R.string.primary_key_extra);
 
-        // get the Moment to see if the values already exist
-        mMoment = getIntent().getParcelableExtra(mMomentExtra);
+        // get the Moment's primary key to get the Moment
+        String primaryKey = getIntent().getStringExtra(mPrimaryKeyExtra);
+
+        // get the Moment from Realm
 
         // get the Toolbar, get the activity title from resources, and set the toolbar title
         mToolbar = (Toolbar) findViewById(R.id.interviewing_toolbar);
@@ -141,11 +144,10 @@ public class InterviewingActivity extends AppCompatActivity {
                     mMoment.setInterviewee(name);
                     mMoment.setIntervieweeRole(role);
 
+                    // update the Moment in Realm
+
                     // make an Intent with the MakeAMomentActivity
                     Intent makeAMomentIntent = new Intent(getBaseContext(), MakeAMomentActivity.class);
-
-                    // add the Moment
-                    makeAMomentIntent.putExtra(mMomentExtra, mMoment);
 
                     // signal that the results are okay and attach the Intent
                     setResult(RESULT_OK, makeAMomentIntent);
@@ -282,7 +284,7 @@ public class InterviewingActivity extends AppCompatActivity {
         mIntervieweeImageView.setVisibility(View.VISIBLE);
 
         // set the image on the ImageView
-        mIntervieweeImageView.setImageURI(mMoment.getIntervieweePhotoUri());
+        mIntervieweeImageView.setImageURI(Uri.parse(mMoment.getIntervieweePhotoUri()));
 
     }
 

@@ -5,9 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.SpannableString;
 import android.text.TextWatcher;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,7 +19,7 @@ public class DescriptionActivity extends AppCompatActivity {
     final String TAG = "DescriptionActivity";
 
     // Strings for Extra argument identification
-    String mMomentExtra;
+    String mPrimaryKeyExtra;
 
     // the Activity title for display in the toolbar
     String mActivityTitle;
@@ -44,10 +42,12 @@ public class DescriptionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_description);
 
         // fetch the Extra argument identifiers from resources
-        mMomentExtra = getString(R.string.moment_extra);
+        mPrimaryKeyExtra = getString(R.string.primary_key_extra);
 
-        // get the Moment
-        mMoment = getIntent().getParcelableExtra(mMomentExtra);
+        // get the primaryKey from the Intent to get the Moment from Realm
+        String primaryKey = getIntent().getStringExtra(mPrimaryKeyExtra);
+
+        // get the Moment from Realm with the key
 
         // get the toolbar, get the activity title from resources, and set the toolbar title
         mToolbar = (Toolbar) findViewById(R.id.description_toolbar);
@@ -105,15 +105,13 @@ public class DescriptionActivity extends AppCompatActivity {
                     // if the user has entered information for title and description
 
                     // add the title and description to the Moment
-                    mMoment.setName(title);
+                    mMoment.setTitle(title);
                     mMoment.setDescription(description);
+
+                    // update the Moment in Realm
 
                     // make an intent with the MakeAMomentActivity
                     Intent makeAMomentIntent = new Intent(getBaseContext(), MakeAMomentActivity.class);
-
-                    // add the Moment to it
-                    makeAMomentIntent.putExtra(mMomentExtra, mMoment);
-
 
                     // set the result
                     setResult(RESULT_OK, makeAMomentIntent);
@@ -176,9 +174,9 @@ public class DescriptionActivity extends AppCompatActivity {
     public void setViewsFromMoment() {
         // fills the EditTexts from the Moment that's passed in if the values are present
 
-        if(mMoment.getName() != null) {
+        if(mMoment.getTitle() != null) {
 
-            mDescriptionTitleEditText.setText(mMoment.getName());
+            mDescriptionTitleEditText.setText(mMoment.getTitle());
 
         }
 
