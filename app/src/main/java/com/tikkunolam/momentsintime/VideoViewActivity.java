@@ -34,7 +34,6 @@ public class VideoViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video_view);
 
         // fetch the string for Intent Extra argument from resources
-        mPrimaryKeyExtra = (String) getResources().getText(R.string.primary_key_extra);
         mLocalVideoUri = getString(R.string.local_video_uri_extra);
         mVimeoVideoUriExtra = getString(R.string.vimeo_video_uri_extra);
 

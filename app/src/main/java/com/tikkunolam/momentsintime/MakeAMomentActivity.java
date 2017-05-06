@@ -19,6 +19,10 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import io.realm.Realm;
+import io.realm.RealmList;
+
+import static android.os.Build.VERSION_CODES.N;
 import static com.tikkunolam.momentsintime.R.string.primary_key_extra;
 
 public class MakeAMomentActivity extends AppCompatActivity implements HolderInteractionListener{
@@ -27,7 +31,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     final String TAG = "MakeAMomentActivity";
 
     // Strings for use as Extra argument identifiers
-    String mPrimaryKeyExtra, mPhotoUriExtra, mNoteExtra, mLocalVideoUriExtra;
+    String mPrimaryKeyExtra, mNoteExtra, mLocalVideoUriExtra, mIntervieweeExtra, mRoleExtra, mIntervieweePhotoUriExtra, mTitleExtra, mDescriptionExtra;
 
     // integers for use as request codes between Intents
     final int VIDEO_FROM_GALLERY = 1;
@@ -65,9 +69,13 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         // get all the Extra argument names from resources
         mPrimaryKeyExtra = getString(primary_key_extra);
-        mPhotoUriExtra = getString(R.string.photo_uri_extra);
         mNoteExtra = getString(R.string.note_extra);
         mLocalVideoUriExtra = getString(R.string.local_video_uri_extra);
+        mIntervieweeExtra = getString(R.string.interviewee_extra);
+        mRoleExtra = getString(R.string.interviewee_role_extra);
+        mIntervieweePhotoUriExtra = getString(R.string.interviewee_photo_uri_extra);
+        mTitleExtra = getString(R.string.title_extra);
+        mDescriptionExtra = getString(R.string.description_extra);
 
         // get the toolbar and set it
         mToolbar = (Toolbar) findViewById(R.id.make_a_moment_toolbar);
@@ -77,12 +85,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // get the RecyclerView. this holds everything in this activity but the toolbar
         mRecyclerView = (RecyclerView) findViewById(R.id.make_a_moment_recyclerView);
 
-        // make a new moment
-        mMoment = new Moment();
-
-        // set its primaryKey with a UUID
-        String primaryKey = UUID.randomUUID().toString();
-        mMoment.setPrimaryKey(primaryKey);
+        // make a new managed Moment
+        mMoment = Moment.getMoment();
 
         // make a new mViewModelList
         mViewModelList = new ArrayList<Object>();
@@ -157,8 +161,15 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // add the titles and prompts to the beginning of the mViewModelList
         addTitlesAndPrompts();
 
-        // add all of the notes from the Moment
-        mViewModelList.addAll(mMoment.getNotes());
+        // get the list of Notes from the Moment
+        RealmList<Note> notes = mMoment.getNotes();
+
+        // add the Strings from the Notes to the mViewModelList
+        for(int i = 0; i < notes.size(); i++) {
+
+            mViewModelList.add(notes.get(i).getNote());
+
+        }
 
         // tell the adapter to update itself
         mMakeAMomentAdapter.notifyDataSetChanged();
@@ -269,11 +280,12 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                 case INTERVIEWING_INTENT:
 
-                    /**
-                     * THE INTERVIEWINGACTIVITY WILL HAVE UPDATED THE MOMENT
-                     * THE PRIMARYKEY HERE WILL STILL BE VALID SO NO NEED TO RECEIVE AN EXTRA
-                     * DEFINITELY UPDATE THE MOMENT FROM REALM THOUGH!!!!!!!
-                     */
+                    // get the Strings returned from the InterviewingActivity
+                    String interviewee = data.getStringExtra(mIntervieweeExtra);
+                    String intervieweeRole = data.getStringExtra(mIntervieweeExtra);
+                    String intervieweePhotoUri = data.getStringExtra(mIntervieweePhotoUriExtra);
+
+                    // add these to the Moment and update them in Realm
 
                     // insert an interviewing_card in the mViewModelList
                     insertInterviewingCard();
@@ -284,11 +296,13 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     break;
 
                 case DESCRIPTION_INTENT:
-                    /**
-                     * THE INTERVIEWINGACTIVITY WILL HAVE UPDATED THE MOMENT
-                     * THE PRIMARYKEY HERE WILL STILL BE VALID SO NO NEED TO RECEIVE AN EXTRA
-                     * DEFINITELY UPDATE THE MOMENT FROM REALM THOUGH!!!!!!!
-                     */
+
+                    // get the title and description from the DescriptionActivity
+                    String title = data.getStringExtra(mTitleExtra);
+                    String description = data.getStringExtra(mDescriptionExtra);
+
+                    // set the Moment's fields and update them in Realm
+
 
                     // insert a description_card in place of section_prompt_text
                     insertDescriptionCard();
@@ -301,21 +315,14 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                 case NOTE_INTENT:
                     // a note String is being returned from NotesActivity. get it, add it to the mMoment, and refresh the Adapter
 
-                    String note = data.getStringExtra(mNoteExtra);
+                    final String noteString = data.getStringExtra(mNoteExtra);
 
-                    // make a new Note
-                    Note newNote = new Note();
-
-                    // add the note String to it
-                    newNote.setNote(note);
-
-                    // get the mMoment's notes list and add it to it
-                    mMoment.getNotes().add(newNote);
-
-                    // update the Moment in Realm
+                    // make a new note and add it to realm and to the Moment
 
                     // add it to the viewlist
-                    mViewModelList.add(note);
+                    RealmList<Note> notes = mMoment.getNotes();
+                    Note lastNote = notes.get(notes.size() - 1);
+                    mViewModelList.add(lastNote.getNote());
 
                     mMakeAMomentAdapter.notifyDataSetChanged();
 
@@ -570,7 +577,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // make a new InterviewingCardData
         InterviewingCardData interviewingCardData = new InterviewingCardData(mMoment.getInterviewee());
 
-        // add the intervieweeRole if there is one
+        // add the mIntervieweeRole if there is one
         if(mMoment.getIntervieweeRole() != null) {
 
             interviewingCardData.setIntervieweeRole(mMoment.getIntervieweeRole());

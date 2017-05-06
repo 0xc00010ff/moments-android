@@ -13,19 +13,22 @@ import android.view.MenuItem;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
+
 public class DescriptionActivity extends AppCompatActivity {
 
     // a tag for degugging purposes
     final String TAG = "DescriptionActivity";
 
     // Strings for Extra argument identification
-    String mPrimaryKeyExtra;
+    String mTitleExtra, mDescriptionExtra;
 
     // the Activity title for display in the toolbar
     String mActivityTitle;
 
-    // the Moment passed by the MakeAMomentActivity
-    Moment mMoment;
+    // Strings for holding the information from the EditTexts
+    String mTitle, mDescription;
 
     // ui references
     Toolbar mToolbar;
@@ -42,12 +45,12 @@ public class DescriptionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_description);
 
         // fetch the Extra argument identifiers from resources
-        mPrimaryKeyExtra = getString(R.string.primary_key_extra);
+        mTitleExtra = getString(R.string.title_extra);
+        mDescriptionExtra = getString(R.string.description_extra);
 
-        // get the primaryKey from the Intent to get the Moment from Realm
-        String primaryKey = getIntent().getStringExtra(mPrimaryKeyExtra);
-
-        // get the Moment from Realm with the key
+        // set the mTitle and mDescription from the Intent extras if they were present
+        mTitle = getIntent().getStringExtra(mTitleExtra);
+        mDescription = getIntent().getStringExtra(mDescriptionExtra);
 
         // get the toolbar, get the activity title from resources, and set the toolbar title
         mToolbar = (Toolbar) findViewById(R.id.description_toolbar);
@@ -96,22 +99,20 @@ public class DescriptionActivity extends AppCompatActivity {
                 // save was clicked
 
                 // get the text from mDescriptionTitleEditText
-                String title = mDescriptionTitleEditText.getText().toString();
+                mTitle = mDescriptionTitleEditText.getText().toString();
 
                 // get the text from mDescriptionDescriptionEditText
-                String description = mDescriptionDescriptionEditText.getText().toString();
+                mDescription = mDescriptionDescriptionEditText.getText().toString();
 
-                if(title != null && title.length() >= 1 && description != null && description.length() >= 1) {
+                if(mTitle != null && mTitle.length() >= 1 && mDescription != null && mDescription.length() >= 1) {
                     // if the user has entered information for title and description
-
-                    // add the title and description to the Moment
-                    mMoment.setTitle(title);
-                    mMoment.setDescription(description);
-
-                    // update the Moment in Realm
 
                     // make an intent with the MakeAMomentActivity
                     Intent makeAMomentIntent = new Intent(getBaseContext(), MakeAMomentActivity.class);
+
+                    // add the mTitle and mDescription to the Intent
+                    makeAMomentIntent.putExtra(mTitleExtra, mTitle);
+                    makeAMomentIntent.putExtra(mDescriptionExtra, mDescription);
 
                     // set the result
                     setResult(RESULT_OK, makeAMomentIntent);
@@ -174,15 +175,15 @@ public class DescriptionActivity extends AppCompatActivity {
     public void setViewsFromMoment() {
         // fills the EditTexts from the Moment that's passed in if the values are present
 
-        if(mMoment.getTitle() != null) {
+        if(mTitle != null) {
 
-            mDescriptionTitleEditText.setText(mMoment.getTitle());
+            mDescriptionTitleEditText.setText(mTitle);
 
         }
 
-        if(mMoment.getDescription() != null){
+        if(mDescription != null){
 
-            mDescriptionDescriptionEditText.setText(mMoment.getDescription());
+            mDescriptionDescriptionEditText.setText(mDescription);
 
         }
 
