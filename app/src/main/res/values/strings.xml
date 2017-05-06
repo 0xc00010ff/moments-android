@@ -4,7 +4,9 @@
     <!--API DETAILS-->
 
     <!--strings for individual configuration-->
-    <string name="api_access_token">7f737b3dd51c6b895f084f4cd03df2dd</string>
+    <string name="api_access_token">f410124bb5ab3bbb7c64936f98afc973</string>
+    <!--real Moments in Time Token: 7f737b3dd51c6b895f084f4cd03df2dd-->
+    <!--personal test token: f410124bb5ab3bbb7c64936f98afc973-->
 
     <!--string for api interaction-->
     <string name="api_base_address">https://api.vimeo.com</string>

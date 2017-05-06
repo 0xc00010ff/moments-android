@@ -52,6 +52,8 @@ public class VimeoNetworker {
     // number of videos to request per page
     private final String mVideosPerPage = "20";
 
+    private final int mBadRequest = 400;
+
     // to be included in headers to let Vimeo know what version of the API we expect
     private String mApiVersion;
 
@@ -82,8 +84,10 @@ public class VimeoNetworker {
      * INSTANCE METHODS
      */
 
-    public ArrayList<Moment> getCommunityMoments(int pageNumber) {
+    public GetMomentsResponse getCommunityMoments(int pageNumber) {
         // fetches the list of Videos for the CommunityFragment
+
+        GetMomentsResponse getMomentsResponse = new GetMomentsResponse();
 
         OkHttpClient client = new OkHttpClient();
         ArrayList<Moment> moments = new ArrayList<>();
@@ -109,8 +113,27 @@ public class VimeoNetworker {
             // convert the String to a JSONObject
             JSONObject jsonResponse = new JSONObject(responseString);
 
+            // get the JSONObject related to pagination from the response
+            JSONObject paginationObject = jsonResponse.getJSONObject("paging");
+
+            // get the String signifying if there is a next page
+            String isNextPage = paginationObject.getString("next");
+
+            if(isNextPage.equals("null")) {
+
+                getMomentsResponse.setNextPageExists(false);
+
+            }
+
+            else {
+
+                getMomentsResponse.setNextPageExists(true);
+
+            }
+
             // pass the JSONObject to the method that creates the Moment list
             moments = jsonToMomentList(jsonResponse);
+
 
         }
 
@@ -143,9 +166,11 @@ public class VimeoNetworker {
 
         }
 
-        // return the Moment list
-        // might be null from an exception. check for this where it's called
-        return moments;
+        // add the moments list to the GetMomentsResponse
+
+        getMomentsResponse.setMomentList(moments);
+
+        return getMomentsResponse;
 
     }
 
