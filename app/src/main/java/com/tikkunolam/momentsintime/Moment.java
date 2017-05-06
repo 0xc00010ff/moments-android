@@ -2,6 +2,8 @@ package com.tikkunolam.momentsintime;
 
 import android.net.Uri;
 
+import java.util.UUID;
+
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -178,12 +180,6 @@ public class Moment extends RealmObject {
 
     }
 
-    public void setIntervieweePhotoUri(Uri interVieweePhotoUri) {
-
-        this.intervieweePhotoUri = interVieweePhotoUri.toString();
-
-    }
-
     public void setVideoUri(String videoUri) {
 
         this.videoUri = videoUri;
@@ -193,13 +189,6 @@ public class Moment extends RealmObject {
     public void setVideoUrl(String videoUrl) {
 
         this.videoUrl = videoUrl;
-
-    }
-
-    public void setLocalVideoUri(Uri localVideoUri) {
-
-        // set the localVideoUri from the argument
-        this.localVideoUri = localVideoUri.toString();
 
     }
 
@@ -257,7 +246,11 @@ public class Moment extends RealmObject {
 
         realm.beginTransaction();
 
-        Moment moment = realm.createObject(Moment.class);
+        // generate a random uuid for the primaryKey
+        String primaryKey = UUID.randomUUID().toString();
+
+        // make a new Moment with the primaryKey
+        Moment moment = realm.createObject(Moment.class, primaryKey);
 
         realm.commitTransaction();
 

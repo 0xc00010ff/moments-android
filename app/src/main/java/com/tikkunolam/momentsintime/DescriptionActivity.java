@@ -62,8 +62,12 @@ public class DescriptionActivity extends AppCompatActivity {
         mDescriptionTitleEditText = (MaterialEditText) findViewById(R.id.description_title_editText);
         mDescriptionDescriptionEditText = (MaterialEditText) findViewById(R.id.description_description_editText);
 
-        // fill them in with values from the mMoment if they're present
-        setViewsFromMoment();
+        // add a TextWatcher to both MaterialEditTexts to toggle the "save" MenuItem if conditions are right
+        TextWatcher mTextWatcher = buildTextWatcher();
+
+        mDescriptionTitleEditText.addTextChangedListener(mTextWatcher);
+
+        mDescriptionDescriptionEditText.addTextChangedListener(mTextWatcher);
 
 
     }
@@ -80,12 +84,9 @@ public class DescriptionActivity extends AppCompatActivity {
         // disable it until the TextWatcher determines it should be enabled
         mSaveMenuItem.setEnabled(false);
 
-        // add a TextWatcher to both MaterialEditTexts to toggle the "save" MenuItem if conditions are right
-        TextWatcher mTextWatcher = buildTextWatcher();
+        // fill the EditTexts
+        setViewsFromMoment();
 
-        mDescriptionTitleEditText.addTextChangedListener(mTextWatcher);
-
-        mDescriptionDescriptionEditText.addTextChangedListener(mTextWatcher);
 
         return true;
 
@@ -135,6 +136,14 @@ public class DescriptionActivity extends AppCompatActivity {
         TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                if(mTitle != null && mDescription != null) {
+
+                    mSaveMenuItem.setEnabled(true);
+
+                }
+
+
 
             }
 

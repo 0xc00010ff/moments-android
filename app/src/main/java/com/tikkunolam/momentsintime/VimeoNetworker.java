@@ -269,10 +269,6 @@ public class VimeoNetworker {
                 moment.setVideoUrl(url);
                 moment.setPictureUrl(pictureUrl);
 
-                // get a UUID to set the Moment's primaryKey
-                String primaryKey = UUID.randomUUID().toString();
-                moment.setPrimaryKey(primaryKey);
-
                 // add it to the Moment list
                 moments.add(moment);
             }

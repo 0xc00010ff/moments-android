@@ -281,11 +281,23 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                 case INTERVIEWING_INTENT:
 
                     // get the Strings returned from the InterviewingActivity
-                    String interviewee = data.getStringExtra(mIntervieweeExtra);
-                    String intervieweeRole = data.getStringExtra(mIntervieweeExtra);
-                    String intervieweePhotoUri = data.getStringExtra(mIntervieweePhotoUriExtra);
+                    final String interviewee = data.getStringExtra(mIntervieweeExtra);
+                    final String intervieweeRole = data.getStringExtra(mRoleExtra);
+                    final String intervieweePhotoUri = data.getStringExtra(mIntervieweePhotoUriExtra);
 
                     // add these to the Moment and update them in Realm
+                    mMoment.executeRealm(new RealmExecutor() {
+
+                        @Override
+                        public void execute() {
+
+                            mMoment.setInterviewee(interviewee);
+                            mMoment.setIntervieweeRole(intervieweeRole);
+                            mMoment.setIntervieweePhotoUri(intervieweePhotoUri);
+
+                        }
+
+                    });
 
                     // insert an interviewing_card in the mViewModelList
                     insertInterviewingCard();
@@ -298,10 +310,21 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                 case DESCRIPTION_INTENT:
 
                     // get the title and description from the DescriptionActivity
-                    String title = data.getStringExtra(mTitleExtra);
-                    String description = data.getStringExtra(mDescriptionExtra);
+                    final String title = data.getStringExtra(mTitleExtra);
+                    final String description = data.getStringExtra(mDescriptionExtra);
 
                     // set the Moment's fields and update them in Realm
+                    mMoment.executeRealm(new RealmExecutor() {
+
+                        @Override
+                        public void execute() {
+
+                            mMoment.setTitle(title);
+                            mMoment.setDescription(description);
+
+                        }
+
+                    });
 
 
                     // insert a description_card in place of section_prompt_text
@@ -318,11 +341,24 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     final String noteString = data.getStringExtra(mNoteExtra);
 
                     // make a new note and add it to realm and to the Moment
+                    mMoment.executeRealm(new RealmExecutor() {
+
+                        @Override
+                        public void execute() {
+
+                            RealmList noteList = mMoment.getNotes();
+                            Note note = new Note();
+                            note.setNote(noteString);
+                            noteList.add(0, note);
+
+                        }
+
+                    });
 
                     // add it to the viewlist
                     RealmList<Note> notes = mMoment.getNotes();
-                    Note lastNote = notes.get(notes.size() - 1);
-                    mViewModelList.add(lastNote.getNote());
+                    Note newNote = notes.get(0);
+                    mViewModelList.add(8, newNote.getNote());
 
                     mMakeAMomentAdapter.notifyDataSetChanged();
 
@@ -334,12 +370,19 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     // replace the section_prompt with a video_card
 
                     // get the Uri from the Intent
-                    Uri selectedVideoUri = data.getData();
-
-                    // put it in the mMoment's localVideoUri field
-                    mMoment.setLocalVideoUri(selectedVideoUri);
+                    final String selectedVideoUri = data.getData().toString();
 
                     // update the Moment in Realm
+                    mMoment.executeRealm(new RealmExecutor() {
+
+                        @Override
+                        public void execute() {
+
+                            mMoment.setLocalVideoUri(selectedVideoUri);
+
+                        }
+
+                    });
 
                     // replace the section_prompt with a video_card
                     insertVideoCard();
@@ -354,12 +397,19 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     // replace the section_prompt with a video_card
 
                     // get the Uri from the Intent
-                    Uri filmedVideoUri = data.getData();
-
-                    // put it in the mMoment's localVideoUri field
-                    mMoment.setLocalVideoUri(filmedVideoUri);
+                    final String filmedVideoUri = data.getData().toString();
 
                     // update the Moment in Realm
+                    mMoment.executeRealm(new RealmExecutor() {
+
+                        @Override
+                        public void execute() {
+
+                            mMoment.setLocalVideoUri(filmedVideoUri);
+
+                        }
+
+                    });
 
                     // replace the view with a video_card
                     insertVideoCard();
@@ -406,6 +456,11 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                                 // make an intent with the InterviewingActivity
                                 Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
 
+                                // attach the Moment's interviewee, interviewee role, and interviewee photo uri
+                                interviewingIntent.putExtra(mIntervieweeExtra, mMoment.getInterviewee());
+                                interviewingIntent.putExtra(mRoleExtra, mMoment.getIntervieweeRole());
+                                interviewingIntent.putExtra(mIntervieweePhotoUriExtra, mMoment.getIntervieweePhotoUri());
+
                                 startActivityForResult(interviewingIntent, INTERVIEWING_INTENT);
 
                                 break;
@@ -432,6 +487,10 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         // make an Intent with the DescriptionActivity
         Intent descriptionIntent = new Intent(getBaseContext(), DescriptionActivity.class);
+
+        // add the Moment's title and description to the Intent
+        descriptionIntent.putExtra(mTitleExtra, mMoment.getTitle());
+        descriptionIntent.putExtra(mDescriptionExtra, mMoment.getDescription());
 
         // start the Activity
         startActivityForResult(descriptionIntent, DESCRIPTION_INTENT);
@@ -527,9 +586,28 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                         switch(position) {
 
                             case 0:
-                                // user chose to delete... delete the note at the position from the mViewModelList
+                                // user chose to delete... delete the note at the position from the mViewModelList and from the mMoment's noteList
 
-                                // delete it
+                                // get the position where the notes begin
+                                int notesBegin = (mViewModelList.size()) - (mMoment.getNotes().size());
+
+                                // this is the index of the note in the mMoment noteList
+                                final int noteListIndex = notePosition - notesBegin;
+
+                                // delete the Note from the mMoment's noteList
+                                mMoment.executeRealm(new RealmExecutor() {
+
+                                    @Override
+                                    public void execute() {
+
+                                        RealmList<Note> notes = mMoment.getNotes();
+                                        notes.remove(noteListIndex);
+
+                                    }
+
+                                });
+
+                                // delete it from the mViewModelList
                                 mViewModelList.remove(notePosition);
 
                                 // tell the Adapter to update the RecyclerView
