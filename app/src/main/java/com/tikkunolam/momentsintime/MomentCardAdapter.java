@@ -3,7 +3,6 @@ package com.tikkunolam.momentsintime;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +10,6 @@ import android.view.ViewGroup;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-
-import static android.content.ContentValues.TAG;
 
 public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     // Adapter for populating the RecyclerViews with moment_cards
@@ -129,7 +126,7 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 Picasso.with(mContext).load(moment.getPictureUrl()).into(momentCardHolder.videoPreviewImageView);
 
                 // set the text in the videoNameTextView from the mMoment
-                momentCardHolder.videoNameTextView.setText(moment.getName());
+                momentCardHolder.videoNameTextView.setText(moment.getTitle());
 
                 // if there is a description set it, otherwise delete the view
                 String description = moment.getDescription();

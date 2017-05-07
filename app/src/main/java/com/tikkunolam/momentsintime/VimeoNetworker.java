@@ -8,6 +8,7 @@ import android.util.Log;
 import java.net.URL;
 import java.util.ArrayList;
 import java.io.IOException;
+import java.util.UUID;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -261,7 +262,12 @@ public class VimeoNetworker {
                 String pictureUrl = picture.getString("link");
 
                 // create the Moment how God intended
-                Moment moment = new Moment(name, description, uri, url, pictureUrl);
+                Moment moment = new Moment();
+                moment.setTitle(name);
+                moment.setDescription(description);
+                moment.setVideoUri(uri);
+                moment.setVideoUrl(url);
+                moment.setPictureUrl(pictureUrl);
 
                 // add it to the Moment list
                 moments.add(moment);

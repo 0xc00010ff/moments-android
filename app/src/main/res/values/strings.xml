@@ -61,13 +61,16 @@
     <!--STRINGS THAT HELP WITH COORDINATION-->
 
     <!--intent extra arguments-->
-    <string name="moment_extra">moment</string>
     <string name="video_uri_extra">videoUri</string>
-    <string name="name_extra">name</string>
-    <string name="role_extra">role</string>
     <string name="photo_uri_extra">photoUri</string>
-    <string name="title_extra">title</string>
-    <string name="description_extra">description</string>
     <string name="note_extra">note</string>
+    <string name="interviewee_extra">interviewee</string>
+    <string name="interviewee_role_extra">role</string>
+    <string name="interviewee_photo_uri_extra">intervieweePhoto</string>
+    <string name="title_extra">title</string>
+    <string name="description_extra"></string>
+    <string name="primary_key_extra">primaryKey</string>
+    <string name="local_video_uri_extra">localVideo</string>
+    <string name="vimeo_video_uri_extra">vimeoVideo</string>
 
 </resources>

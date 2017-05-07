@@ -1,6 +1,7 @@
 package com.tikkunolam.momentsintime;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,7 +14,12 @@ public class VideoViewActivity extends AppCompatActivity {
     Moment mMoment;
 
     // strings for intent extra arguments
-    String mMomentExtra;
+    String mPrimaryKeyExtra;
+    String mLocalVideoUriExtra;
+    String mVimeoVideoUriExtra;
+
+    String mLocalVideoUri;
+    String mVimeoVideoUri;
 
     // ui references
     VideoView mVideoView;
@@ -28,13 +34,17 @@ public class VideoViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video_view);
 
         // fetch the string for Intent Extra argument from resources
-        mMomentExtra = (String) getResources().getText(R.string.moment_extra);
+        mLocalVideoUri = getString(R.string.local_video_uri_extra);
+        mVimeoVideoUriExtra = getString(R.string.vimeo_video_uri_extra);
 
         // get the VideoView
         mVideoView = (VideoView) findViewById(R.id.videoView);
 
-        // take the Moment out of the extras bundle
-        mMoment = getIntent().getExtras().getParcelable(mMomentExtra);
+        // get the mLocalVideoUri if there is one
+        mLocalVideoUri = getIntent().getStringExtra(mLocalVideoUri);
+
+        // get the mVimeoVideoUri if there is one
+        mVimeoVideoUri = getIntent().getStringExtra(mVimeoVideoUriExtra);
 
         // set up the video
         setUpVideoView();
@@ -49,11 +59,11 @@ public class VideoViewActivity extends AppCompatActivity {
 
     private void setUpVideoView( ) {
 
-        if(mMoment.getLocalVideoUri() != null) {
+        if(mLocalVideoUri != null) {
             // there's a local video so set up the MediaController with that
 
             // set the video path
-            mVideoView.setVideoURI(mMoment.getLocalVideoUri());
+            mVideoView.setVideoURI(Uri.parse(mLocalVideoUri));
 
             // set up the MediaController
             mMediaController = new MediaController(this);
@@ -67,12 +77,9 @@ public class VideoViewActivity extends AppCompatActivity {
         else {
             // there is a link to a Vimeo video
 
-            // get the Moment path
-            String uri = mMoment.getVideoUri();
-
             // call the async task to set the VideoView's path and set the MediaController
             AsyncFetchVideo asyncFetchVideo = new AsyncFetchVideo(this);
-            asyncFetchVideo.execute(uri);
+            asyncFetchVideo.execute(mVimeoVideoUri);
 
         }
 

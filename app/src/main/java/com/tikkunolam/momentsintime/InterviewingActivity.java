@@ -6,9 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.SpannableString;
 import android.text.TextWatcher;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +17,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import io.realm.Realm;
 
 public class InterviewingActivity extends AppCompatActivity {
 
@@ -38,13 +38,16 @@ public class InterviewingActivity extends AppCompatActivity {
     // "save" menu item
     MenuItem mSaveMenuItem;
 
-    Moment mMoment;
-
     // the Activity title for display in the Toolbar
     String mActivityTitle;
 
     // Strings for Extra argument identification
-    String mMomentExtra;
+    String mIntervieweeExtra, mIntervieweeRoleExtra, mIntervieweePhotoUriExtra;
+
+    // Strings for holding the values set within this Activity
+    String mIntervieweeName;
+    String mIntervieweeRole;
+    String mIntervieweePhotoUri;
 
     // request codes for implicit intent receipt
     final int PHOTO_REQUEST_CODE = 1;
@@ -56,10 +59,14 @@ public class InterviewingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_interviewing);
 
         // get the Extra argument identifiers from resources
-        mMomentExtra = getString(R.string.moment_extra);
+        mIntervieweeExtra = getString(R.string.interviewee_extra);
+        mIntervieweeRoleExtra = getString(R.string.interviewee_role_extra);
+        mIntervieweePhotoUriExtra = getString(R.string.interviewee_photo_uri_extra);
 
-        // get the Moment to see if the values already exist
-        mMoment = getIntent().getParcelableExtra(mMomentExtra);
+        // get the mIntervieweeName, mIntervieweeDescription, and mIntervieweePhotoUri if they were passed in
+        mIntervieweeName = getIntent().getStringExtra(mIntervieweeExtra);
+        mIntervieweeRole = getIntent().getStringExtra(mIntervieweeRoleExtra);
+        mIntervieweePhotoUri = getIntent().getStringExtra(mIntervieweePhotoUri);
 
         // get the Toolbar, get the activity title from resources, and set the toolbar title
         mToolbar = (Toolbar) findViewById(R.id.interviewing_toolbar);
@@ -115,7 +122,7 @@ public class InterviewingActivity extends AppCompatActivity {
 
         // fill the views with values from the mMoment passed in, if there are any
         // adding some views affects the MenuItem so it must be done after the Item is instantiated in the line above
-        setViewsFromMoment();
+        setViewsFromIntent();
 
         return true;
 
@@ -129,23 +136,21 @@ public class InterviewingActivity extends AppCompatActivity {
                 // save was clicked
 
                 // get the text from the mNameEditText
-                String name = mNameEditText.getText().toString();
+                mIntervieweeName = mNameEditText.getText().toString();
 
                 // get the text from the mRoleEditText
-                String role = mRoleEditText.getText().toString();
+                mIntervieweeRole = mRoleEditText.getText().toString();
 
-                if (name != null && name.length() >= 1) {
+                if (mIntervieweeName != null && mIntervieweeName.length() >= 1) {
                     // if the necessary information has been entered
-
-                    // add the Strings to the mMoment
-                    mMoment.setInterviewee(name);
-                    mMoment.setIntervieweeRole(role);
 
                     // make an Intent with the MakeAMomentActivity
                     Intent makeAMomentIntent = new Intent(getBaseContext(), MakeAMomentActivity.class);
 
-                    // add the Moment
-                    makeAMomentIntent.putExtra(mMomentExtra, mMoment);
+                    // add all the fields' values to it
+                    makeAMomentIntent.putExtra(mIntervieweeExtra, mIntervieweeName);
+                    makeAMomentIntent.putExtra(mIntervieweeRoleExtra, mIntervieweeRole);
+                    makeAMomentIntent.putExtra(mIntervieweePhotoUriExtra, mIntervieweePhotoUri);
 
                     // signal that the results are okay and attach the Intent
                     setResult(RESULT_OK, makeAMomentIntent);
@@ -173,10 +178,9 @@ public class InterviewingActivity extends AppCompatActivity {
             if(requestCode == PHOTO_REQUEST_CODE) {
                 // it's returning from selecting a photo. save it to mMoment and change the views to display it
 
-                // get the photo's Uri from the Intent
+                // get the photo's Uri from the Intent and set the mIntervieweePhotoUri with it
                 Uri photoUri = data.getData();
-
-                mMoment.setIntervieweePhotoUri(photoUri);
+                mIntervieweePhotoUri = photoUri.toString();
 
                 // add the picture to the screen
                 replaceWithPicture();
@@ -201,7 +205,7 @@ public class InterviewingActivity extends AppCompatActivity {
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
                 // if the mMoment has an interviewee, the user is coming back to edit and the MenuItem should start off enabled
-                if(mMoment.getInterviewee() != null) {
+                if(mIntervieweeName != null) {
 
                     mSaveMenuItem.setEnabled(true);
 
@@ -248,22 +252,22 @@ public class InterviewingActivity extends AppCompatActivity {
 
     }
 
-    public void setViewsFromMoment() {
+    public void setViewsFromIntent() {
         // fills the views with views from values in the Moment being passed in, if there are any
 
-        if(mMoment.getInterviewee() != null) {
+        if(mIntervieweeName != null) {
 
-            mNameEditText.setText(mMoment.getInterviewee());
-
-        }
-
-        if(mMoment.getIntervieweeRole() != null) {
-
-            mRoleEditText.setText(mMoment.getIntervieweeRole());
+            mNameEditText.setText(mIntervieweeName);
 
         }
 
-        if(mMoment.getIntervieweePhotoUri() != null) {
+        if(mIntervieweeRole != null) {
+
+            mRoleEditText.setText(mIntervieweeRole);
+
+        }
+
+        if(mIntervieweePhotoUri != null) {
 
             replaceWithPicture();
 
@@ -282,7 +286,7 @@ public class InterviewingActivity extends AppCompatActivity {
         mIntervieweeImageView.setVisibility(View.VISIBLE);
 
         // set the image on the ImageView
-        mIntervieweeImageView.setImageURI(mMoment.getIntervieweePhotoUri());
+        mIntervieweeImageView.setImageURI(Uri.parse(mIntervieweePhotoUri));
 
     }
 

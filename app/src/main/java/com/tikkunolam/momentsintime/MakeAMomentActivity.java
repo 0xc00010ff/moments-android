@@ -18,15 +18,20 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
 
-import static com.tikkunolam.momentsintime.R.string.moment_extra;
+import io.realm.RealmList;
+
+import static com.tikkunolam.momentsintime.R.string.primary_key_extra;
 
 public class MakeAMomentActivity extends AppCompatActivity implements HolderInteractionListener{
 
     // tag for logging purposes
     final String TAG = "MakeAMomentActivity";
 
+    // location of first note
+    final int FIRST_NOTE_LOCATION = 8;
+
     // Strings for use as Extra argument identifiers
-    String mMomentExtra, mNameExtra, mRoleExtra, mPhotoUriExtra, mTitleExtra, mDescriptionExtra, mNoteExtra;
+    String mPrimaryKeyExtra, mNoteExtra, mLocalVideoUriExtra, mIntervieweeExtra, mRoleExtra, mIntervieweePhotoUriExtra, mTitleExtra, mDescriptionExtra;
 
     // integers for use as request codes between Intents
     final int VIDEO_FROM_GALLERY = 1;
@@ -63,13 +68,14 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         setContentView(R.layout.activity_make_a_moment);
 
         // get all the Extra argument names from resources
-        mMomentExtra = getString(moment_extra);
-        mNameExtra = getString(R.string.name_extra);
-        mRoleExtra = getString(R.string.role_extra);
-        mPhotoUriExtra = getString(R.string.photo_uri_extra);
+        mPrimaryKeyExtra = getString(primary_key_extra);
+        mNoteExtra = getString(R.string.note_extra);
+        mLocalVideoUriExtra = getString(R.string.local_video_uri_extra);
+        mIntervieweeExtra = getString(R.string.interviewee_extra);
+        mRoleExtra = getString(R.string.interviewee_role_extra);
+        mIntervieweePhotoUriExtra = getString(R.string.interviewee_photo_uri_extra);
         mTitleExtra = getString(R.string.title_extra);
         mDescriptionExtra = getString(R.string.description_extra);
-        mNoteExtra = getString(R.string.note_extra);
 
         // get the toolbar and set it
         mToolbar = (Toolbar) findViewById(R.id.make_a_moment_toolbar);
@@ -79,8 +85,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // get the RecyclerView. this holds everything in this activity but the toolbar
         mRecyclerView = (RecyclerView) findViewById(R.id.make_a_moment_recyclerView);
 
-        // make a new moment
-        mMoment = new Moment();
+        // make a new managed Moment
+        mMoment = Moment.createMoment();
 
         // make a new mViewModelList
         mViewModelList = new ArrayList<Object>();
@@ -155,8 +161,15 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // add the titles and prompts to the beginning of the mViewModelList
         addTitlesAndPrompts();
 
-        // add all of the notes from the Moment
-        mViewModelList.addAll(mMoment.getNotes());
+        // get the list of Notes from the Moment
+        RealmList<Note> notes = mMoment.getNotes();
+
+        // add the Strings from the Notes to the mViewModelList
+        for(int i = 0; i < notes.size(); i++) {
+
+            mViewModelList.add(notes.get(i).getNote());
+
+        }
 
         // tell the adapter to update itself
         mMakeAMomentAdapter.notifyDataSetChanged();
@@ -236,7 +249,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // checks if the mMoment is sufficiently filled out to be submitted
 
         // if the user has provided a title, description, interviewee, and video then it's good
-        if (mMoment.getName() != null && mMoment.getDescription() != null
+        if (mMoment.getTitle() != null && mMoment.getDescription() != null
                 && mMoment.getInterviewee() != null && mMoment.getLocalVideoUri() != null) {
 
             return true;
@@ -266,9 +279,25 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                 // determine which implicit intent we're receiving from based on the resultCode
 
                 case INTERVIEWING_INTENT:
-                    // a Moment is being returned from InterviewingActivity
 
-                    mMoment = data.getParcelableExtra(mMomentExtra);
+                    // get the Strings returned from the InterviewingActivity
+                    final String interviewee = data.getStringExtra(mIntervieweeExtra);
+                    final String intervieweeRole = data.getStringExtra(mRoleExtra);
+                    final String intervieweePhotoUri = data.getStringExtra(mIntervieweePhotoUriExtra);
+
+                    // add these to the Moment and update them in Realm
+                    mMoment.persistUpdates(new PersistenceExecutor() {
+
+                        @Override
+                        public void execute() {
+
+                            mMoment.setInterviewee(interviewee);
+                            mMoment.setIntervieweeRole(intervieweeRole);
+                            mMoment.setIntervieweePhotoUri(intervieweePhotoUri);
+
+                        }
+
+                    });
 
                     // insert an interviewing_card in the mViewModelList
                     insertInterviewingCard();
@@ -279,10 +308,24 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     break;
 
                 case DESCRIPTION_INTENT:
-                    // a Moment is being returned from DescriptionActivity
 
-                    //get the Moment from the Intent
-                    mMoment = data.getParcelableExtra(mMomentExtra);
+                    // get the title and description from the DescriptionActivity
+                    final String title = data.getStringExtra(mTitleExtra);
+                    final String description = data.getStringExtra(mDescriptionExtra);
+
+                    // set the Moment's fields and update them in Realm
+                    mMoment.persistUpdates(new PersistenceExecutor() {
+
+                        @Override
+                        public void execute() {
+
+                            mMoment.setTitle(title);
+                            mMoment.setDescription(description);
+
+                        }
+
+                    });
+
 
                     // insert a description_card in place of section_prompt_text
                     insertDescriptionCard();
@@ -293,14 +336,29 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     break;
 
                 case NOTE_INTENT:
-                    // a note is being returned from NotesActivity. get it, add it to the mMoment, and refresh the Adapter
+                    // a note String is being returned from NotesActivity. get it, add it to the mMoment, and refresh the Adapter
 
-                    String note = data.getStringExtra(mNoteExtra);
+                    final String noteString = data.getStringExtra(mNoteExtra);
 
-                    mMoment.addNote(note);
+                    // make a new note and add it to realm and to the Moment
+                    mMoment.persistUpdates(new PersistenceExecutor() {
+
+                        @Override
+                        public void execute() {
+
+                            RealmList noteList = mMoment.getNotes();
+                            Note note = new Note();
+                            note.setNote(noteString);
+                            noteList.add(0, note);
+
+                        }
+
+                    });
 
                     // add it to the viewlist
-                    mViewModelList.add(note);
+                    RealmList<Note> notes = mMoment.getNotes();
+                    Note newNote = notes.get(0);
+                    mViewModelList.add(FIRST_NOTE_LOCATION, newNote.getNote());
 
                     mMakeAMomentAdapter.notifyDataSetChanged();
 
@@ -312,10 +370,19 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     // replace the section_prompt with a video_card
 
                     // get the Uri from the Intent
-                    Uri selectedVideoUri = data.getData();
+                    final String selectedVideoUri = data.getData().toString();
 
-                    // put it in the mMoment's localVideoUri field
-                    mMoment.setLocalVideoUri(selectedVideoUri);
+                    // update the Moment in Realm
+                    mMoment.persistUpdates(new PersistenceExecutor() {
+
+                        @Override
+                        public void execute() {
+
+                            mMoment.setLocalVideoUri(selectedVideoUri);
+
+                        }
+
+                    });
 
                     // replace the section_prompt with a video_card
                     insertVideoCard();
@@ -330,10 +397,19 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     // replace the section_prompt with a video_card
 
                     // get the Uri from the Intent
-                    Uri filmedVideoUri = data.getData();
+                    final String filmedVideoUri = data.getData().toString();
 
-                    // put it in the mMoment's localVideoUri field
-                    mMoment.setLocalVideoUri(filmedVideoUri);
+                    // update the Moment in Realm
+                    mMoment.persistUpdates(new PersistenceExecutor() {
+
+                        @Override
+                        public void execute() {
+
+                            mMoment.setLocalVideoUri(filmedVideoUri);
+
+                        }
+
+                    });
 
                     // replace the view with a video_card
                     insertVideoCard();
@@ -380,7 +456,10 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                                 // make an intent with the InterviewingActivity
                                 Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
 
-                                interviewingIntent.putExtra(mMomentExtra, mMoment);
+                                // attach the Moment's interviewee, interviewee role, and interviewee photo uri
+                                interviewingIntent.putExtra(mIntervieweeExtra, mMoment.getInterviewee());
+                                interviewingIntent.putExtra(mRoleExtra, mMoment.getIntervieweeRole());
+                                interviewingIntent.putExtra(mIntervieweePhotoUriExtra, mMoment.getIntervieweePhotoUri());
 
                                 startActivityForResult(interviewingIntent, INTERVIEWING_INTENT);
 
@@ -409,7 +488,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // make an Intent with the DescriptionActivity
         Intent descriptionIntent = new Intent(getBaseContext(), DescriptionActivity.class);
 
-        descriptionIntent.putExtra(mMomentExtra, mMoment);
+        // add the Moment's title and description to the Intent
+        descriptionIntent.putExtra(mTitleExtra, mMoment.getTitle());
+        descriptionIntent.putExtra(mDescriptionExtra, mMoment.getDescription());
 
         // start the Activity
         startActivityForResult(descriptionIntent, DESCRIPTION_INTENT);
@@ -505,9 +586,28 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                         switch(position) {
 
                             case 0:
-                                // user chose to delete... delete the note at the position from the mViewModelList
+                                // user chose to delete... delete the note at the position from the mViewModelList and from the mMoment's noteList
 
-                                // delete it
+                                // get the position where the notes begin
+                                int notesBegin = (mViewModelList.size()) - (mMoment.getNotes().size());
+
+                                // this is the index of the note in the mMoment noteList
+                                final int noteListIndex = notePosition - notesBegin;
+
+                                // delete the Note from the mMoment's noteList
+                                mMoment.persistUpdates(new PersistenceExecutor() {
+
+                                    @Override
+                                    public void execute() {
+
+                                        RealmList<Note> notes = mMoment.getNotes();
+                                        notes.remove(noteListIndex);
+
+                                    }
+
+                                });
+
+                                // delete it from the mViewModelList
                                 mViewModelList.remove(notePosition);
 
                                 // tell the Adapter to update the RecyclerView
@@ -537,8 +637,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // make the Intent
         Intent videoViewActivityIntent = new Intent(this, VideoViewActivity.class);
 
-        // bundle the Moment with it
-        videoViewActivityIntent.putExtra(mMomentExtra, mMoment);
+        // add the mMoment's primaryKey as an extra
+        videoViewActivityIntent.putExtra(mLocalVideoUriExtra, mMoment.getLocalVideoUri());
 
         // start the Activity
         startActivity(videoViewActivityIntent);
@@ -555,7 +655,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // make a new InterviewingCardData
         InterviewingCardData interviewingCardData = new InterviewingCardData(mMoment.getInterviewee());
 
-        // add the intervieweeRole if there is one
+        // add the mIntervieweeRole if there is one
         if(mMoment.getIntervieweeRole() != null) {
 
             interviewingCardData.setIntervieweeRole(mMoment.getIntervieweeRole());
@@ -565,7 +665,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // add the intervieweePhotoUri if there is one
         if(mMoment.getIntervieweePhotoUri() != null) {
 
-            interviewingCardData.setIntervieweePhotoUri(mMoment.getIntervieweePhotoUri());
+            interviewingCardData.setIntervieweePhotoUri(Uri.parse(mMoment.getIntervieweePhotoUri()));
 
         }
 
@@ -581,7 +681,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // inserts a filled out description_card in place of the corresponding section_prompt_text
 
         // mMoment is guaranteed to have the necessary fields so just fill out a DescriptionCardData
-        DescriptionCardData descriptionCardData = new DescriptionCardData(mMoment.getName(), mMoment.getDescription());
+        DescriptionCardData descriptionCardData = new DescriptionCardData(mMoment.getTitle(), mMoment.getDescription());
 
         // replace the prompt with the DescriptionCardData
         mViewModelList.set(3, descriptionCardData);
@@ -597,7 +697,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // mMoment is guaranteed to have the necessary field so just fill out a VideoCardData
 
         // make a new VideoCardData with it
-        VideoCardData videoCardData = new VideoCardData(mMoment.getLocalVideoUri());
+        VideoCardData videoCardData = new VideoCardData(Uri.parse(mMoment.getLocalVideoUri()));
 
         // replace the prompt with the VideoCardData
         mViewModelList.set(5, videoCardData);
