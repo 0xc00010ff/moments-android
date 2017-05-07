@@ -1,13 +1,10 @@
 package com.tikkunolam.momentsintime;
 
-import android.net.Uri;
-
 import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 public class Moment extends RealmObject {
@@ -223,7 +220,7 @@ public class Moment extends RealmObject {
 
     }
 
-    public void executeRealm(final RealmExecutor executor) {
+    public void persistUpdates(final PersistenceExecutor executor) {
         // method for executing Realm assignments and queries
 
         Realm realm = Realm.getDefaultInstance();
@@ -239,7 +236,7 @@ public class Moment extends RealmObject {
 
     }
 
-    public static Moment getMoment() {
+    public static Moment createMoment() {
         // returns a new managed Moment
 
         Realm realm = Realm.getDefaultInstance();

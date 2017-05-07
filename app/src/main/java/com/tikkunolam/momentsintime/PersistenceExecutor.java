@@ -1,7 +1,7 @@
 package com.tikkunolam.momentsintime;
 
 
-public interface RealmExecutor {
+public interface PersistenceExecutor {
 
     void execute();
 

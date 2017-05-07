@@ -17,12 +17,9 @@ import android.view.View;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
-import io.realm.Realm;
 import io.realm.RealmList;
 
-import static android.os.Build.VERSION_CODES.N;
 import static com.tikkunolam.momentsintime.R.string.primary_key_extra;
 
 public class MakeAMomentActivity extends AppCompatActivity implements HolderInteractionListener{
@@ -89,7 +86,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         mRecyclerView = (RecyclerView) findViewById(R.id.make_a_moment_recyclerView);
 
         // make a new managed Moment
-        mMoment = Moment.getMoment();
+        mMoment = Moment.createMoment();
 
         // make a new mViewModelList
         mViewModelList = new ArrayList<Object>();
@@ -289,7 +286,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     final String intervieweePhotoUri = data.getStringExtra(mIntervieweePhotoUriExtra);
 
                     // add these to the Moment and update them in Realm
-                    mMoment.executeRealm(new RealmExecutor() {
+                    mMoment.persistUpdates(new PersistenceExecutor() {
 
                         @Override
                         public void execute() {
@@ -317,7 +314,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     final String description = data.getStringExtra(mDescriptionExtra);
 
                     // set the Moment's fields and update them in Realm
-                    mMoment.executeRealm(new RealmExecutor() {
+                    mMoment.persistUpdates(new PersistenceExecutor() {
 
                         @Override
                         public void execute() {
@@ -344,7 +341,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     final String noteString = data.getStringExtra(mNoteExtra);
 
                     // make a new note and add it to realm and to the Moment
-                    mMoment.executeRealm(new RealmExecutor() {
+                    mMoment.persistUpdates(new PersistenceExecutor() {
 
                         @Override
                         public void execute() {
@@ -376,7 +373,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     final String selectedVideoUri = data.getData().toString();
 
                     // update the Moment in Realm
-                    mMoment.executeRealm(new RealmExecutor() {
+                    mMoment.persistUpdates(new PersistenceExecutor() {
 
                         @Override
                         public void execute() {
@@ -403,7 +400,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     final String filmedVideoUri = data.getData().toString();
 
                     // update the Moment in Realm
-                    mMoment.executeRealm(new RealmExecutor() {
+                    mMoment.persistUpdates(new PersistenceExecutor() {
 
                         @Override
                         public void execute() {
@@ -598,7 +595,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                                 final int noteListIndex = notePosition - notesBegin;
 
                                 // delete the Note from the mMoment's noteList
-                                mMoment.executeRealm(new RealmExecutor() {
+                                mMoment.persistUpdates(new PersistenceExecutor() {
 
                                     @Override
                                     public void execute() {
