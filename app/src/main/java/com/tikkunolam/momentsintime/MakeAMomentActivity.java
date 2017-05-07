@@ -30,6 +30,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     // tag for logging purposes
     final String TAG = "MakeAMomentActivity";
 
+    // location of first note
+    final int FIRST_NOTE_LOCATION = 8;
+
     // Strings for use as Extra argument identifiers
     String mPrimaryKeyExtra, mNoteExtra, mLocalVideoUriExtra, mIntervieweeExtra, mRoleExtra, mIntervieweePhotoUriExtra, mTitleExtra, mDescriptionExtra;
 
@@ -358,7 +361,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     // add it to the viewlist
                     RealmList<Note> notes = mMoment.getNotes();
                     Note newNote = notes.get(0);
-                    mViewModelList.add(8, newNote.getNote());
+                    mViewModelList.add(FIRST_NOTE_LOCATION, newNote.getNote());
 
                     mMakeAMomentAdapter.notifyDataSetChanged();
 
