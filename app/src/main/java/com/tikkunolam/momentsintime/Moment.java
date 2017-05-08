@@ -1,5 +1,7 @@
 package com.tikkunolam.momentsintime;
 
+import android.content.Context;
+
 import java.util.UUID;
 
 import io.realm.Realm;
@@ -43,6 +45,9 @@ public class Moment extends RealmObject {
 
     // the local video file uri
     private String localVideoUri;
+
+    // the local video file path
+    private String localVideoFilePath;
 
     // the url of the video thumbnail
     private String pictureUrl;
@@ -124,6 +129,12 @@ public class Moment extends RealmObject {
     public String getLocalVideoUri() {
 
         return localVideoUri;
+
+    }
+
+    public String getLocalVideoFilePath() {
+
+        return localVideoFilePath;
 
     }
 
@@ -214,6 +225,12 @@ public class Moment extends RealmObject {
 
     }
 
+    public void setLocalVideoFilePath(String localVideoFilePath) {
+
+        this.localVideoFilePath = localVideoFilePath;
+
+    }
+
     public void setNotes(RealmList<Note> notes) {
 
         this.notes = notes;
@@ -252,6 +269,14 @@ public class Moment extends RealmObject {
         realm.commitTransaction();
 
         return moment;
+
+    }
+
+    public void uploadMoment(Context applicationContext) {
+
+        VimeoNetworker vimeoNetworker = new VimeoNetworker(applicationContext);
+
+        vimeoNetworker.uploadMoment(localVideoFilePath, primaryKey, applicationContext);
 
     }
 

@@ -2,9 +2,12 @@ package com.tikkunolam.momentsintime;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.io.IOException;
@@ -17,6 +20,10 @@ import org.json.JSONArray;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import static com.tikkunolam.momentsintime.R.string.local_video_uri_extra;
+import static com.tikkunolam.momentsintime.R.string.video;
+import static com.tikkunolam.momentsintime.R.string.video_file_extra;
 
 /**
  * OKHTTP NETWORKING CLASS FOR API CALLS
@@ -32,7 +39,7 @@ public class VimeoNetworker {
     private final String TAG = "Networking";
 
     // strings for intent extra arguments/parameters
-    String videoUriExtra;
+    String videoFileExtra;
 
     // app access token for authenticating requests
     private String mAccessToken;
@@ -74,7 +81,7 @@ public class VimeoNetworker {
         mApiVersion = applicationContext.getString(R.string.api_version);
 
         // set the intent extras' argument names
-        videoUriExtra = applicationContext.getString(R.string.video_uri_extra);
+        videoFileExtra = applicationContext.getString(R.string.video_file_extra);
 
 
 
@@ -232,12 +239,13 @@ public class VimeoNetworker {
         }
     }
 
-    public void uploadVideo(Uri uri, Context context) {
+    public void uploadMoment(String videoFile, String momentPrimaryKey, Context context) {
         // upload a mMoment to Vimeo using the UploadService
 
         // start the UploadService and pass it the videoUri
         Intent uploadIntent = new Intent(context, UploadService.class);
-        uploadIntent.putExtra(videoUriExtra, uri);
+
+        uploadIntent.putExtra(videoFileExtra, videoFile);
         context.startService(uploadIntent);
 
     }
