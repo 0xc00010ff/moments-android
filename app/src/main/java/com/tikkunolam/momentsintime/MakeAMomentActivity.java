@@ -141,7 +141,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                 if(isMomentComplete()) {
 
                     // submit the Moment
-                    Log.d(TAG, "submitting the Moment");
                     submitMoment();
                     finish();
 
@@ -457,8 +456,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     public void onInterviewingPromptClick() {
         // deal with acquiring an interviewee, adding it to the Moment, and refreshing the Adapter
 
-        Log.d(TAG, "opening the InterviewingActivity");
-
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .title(R.string.interviewing)
                 .items(R.array.interviewing_dialog_array)
@@ -508,8 +505,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     public void onDescriptionPromptClick() {
         // deal with acquiring a description/title, adding it to the Moment, and refreshing the Adapter
 
-        Log.d(TAG, "opening the DescriptionActivity");
-
         // make an Intent with the DescriptionActivity
         Intent descriptionIntent = new Intent(getBaseContext(), DescriptionActivity.class);
 
@@ -525,8 +520,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     public void onVideoPromptClick() {
         // deal with loading a FilmVideoIntent, adding the localVideoUri to the Moment, and refreshing
 
-        Log.d(TAG, "expressing a video Intent");
-
         // express an implicit intent to film a video
         Intent filmVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 
@@ -537,8 +530,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
     public void onUploadPromptClick() {
         // deal with loading a FindVideoIntent, adding the localVideoUri to the Moment, and refreshing
-
-        Log.d(TAG, "expressing a fetch video Intent");
 
         // if the API level > 21 then READ_EXTERNAL_STORAGE isn't automatic and should be requested
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -563,8 +554,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
     public void onNotesPromptClick() {
         // deal with acquiring a new note, adding it to the Moment, and refreshing the Adapter
-
-        Log.d(TAG, "loading a NoteActivity");
 
         // make an Intent with the NoteActivity
         Intent noteIntent = new Intent(getBaseContext(), NoteActivity.class);

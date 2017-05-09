@@ -91,8 +91,6 @@ public class UploadService extends IntentService {
         // wait for the debugger
         android.os.Debug.waitForDebugger();
 
-        Log.d(TAG, "FUCK");
-
         // strings for intent extra arguments/parameters
         mVideoFileExtra = getString(R.string.video_file_extra);
         mPrimaryKeyExtra = getString(R.string.primary_key_extra);
@@ -234,7 +232,6 @@ public class UploadService extends IntentService {
 
             // transform the response to string for logging and JSON purposes
             String responseString = responseBody.string();
-            Log.d(TAG, "generateUploadTicket: response: " + responseString);
 
             // create a JSONObject and extract the useful fields
             JSONObject jsonObject = new JSONObject(responseString);

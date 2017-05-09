@@ -127,7 +127,6 @@ public class NoteActivity extends AppCompatActivity {
 
                     // turn the save menu item white to indicate it is now clickable
                     mSaveMenuItem.setEnabled(true);
-                    Log.d(TAG, "SAVE ENABLED");
 
                 }
 
@@ -136,7 +135,6 @@ public class NoteActivity extends AppCompatActivity {
 
                     // turn the save menu item grey to indicate it isn't clickable
                     mSaveMenuItem.setEnabled(true);
-                    Log.d(TAG, "SAVE DISABLED");
 
                 }
 

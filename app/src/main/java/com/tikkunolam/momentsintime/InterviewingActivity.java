@@ -231,7 +231,6 @@ public class InterviewingActivity extends AppCompatActivity {
 
                     // change the color of the save menu item to white, to indicate it's clickable
                     mSaveMenuItem.setEnabled(true);
-                    Log.d(TAG, "SAVE ENABLED");
 
                 }
 
@@ -240,7 +239,6 @@ public class InterviewingActivity extends AppCompatActivity {
 
                     // change the color of the save menu to grey, to indicate it's not clickable
                     mSaveMenuItem.setEnabled(false);
-                    Log.d(TAG, "SAVE DISABLED");
 
                 }
 
