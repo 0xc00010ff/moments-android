@@ -116,6 +116,7 @@ public class FileDealer {
 
     public static String getDataColumn(Context context, Uri uri, String selection,
                                        String[] selectionArgs) {
+        // get the data column from the ContentProvider associated with the Uri
 
         Cursor cursor = null;
         final String column = "_data";
@@ -125,6 +126,7 @@ public class FileDealer {
 
         try {
 
+            // get a cursor for the data column of the ContentProvider
             cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
 
             if (cursor != null && cursor.moveToFirst()) {

@@ -39,7 +39,7 @@ public class VimeoNetworker {
     private final String TAG = "Networking";
 
     // strings for intent extra arguments/parameters
-    String videoFileExtra;
+    String videoFileExtra, mPrimaryKeyExtra;
 
     // app access token for authenticating requests
     private String mAccessToken;
@@ -82,6 +82,7 @@ public class VimeoNetworker {
 
         // set the intent extras' argument names
         videoFileExtra = applicationContext.getString(R.string.video_file_extra);
+        mPrimaryKeyExtra = applicationContext.getString(R.string.primary_key_extra);
 
 
 
@@ -240,12 +241,18 @@ public class VimeoNetworker {
     }
 
     public void uploadMoment(String videoFile, String momentPrimaryKey, Context context) {
-        // upload a mMoment to Vimeo using the UploadService
+        // upload a mMoment to Vimeo using the UploadService in the background
 
-        // start the UploadService and pass it the videoUri
+        // make an intent with UploadService
         Intent uploadIntent = new Intent(context, UploadService.class);
 
+        // add the Moment's video file
         uploadIntent.putExtra(videoFileExtra, videoFile);
+
+        // add the Moment's primaryKey
+        uploadIntent.putExtra(mPrimaryKeyExtra, momentPrimaryKey);
+
+        // start the service
         context.startService(uploadIntent);
 
     }

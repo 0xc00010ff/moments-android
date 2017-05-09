@@ -26,6 +26,10 @@ import android.content.CursorLoader;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -739,7 +743,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         // tell the Adapter to update the list on screen
         mMakeAMomentAdapter.notifyDataSetChanged();
-
 
     }
 

@@ -7,6 +7,8 @@ import java.util.UUID;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
 
 public class Moment extends RealmObject {
@@ -21,6 +23,9 @@ public class Moment extends RealmObject {
 
     @PrimaryKey
     private String primaryKey;
+
+    // the state of the Moment
+    private String state;
 
     // the title of the Moment
     private String title;
@@ -80,6 +85,12 @@ public class Moment extends RealmObject {
     public String getPrimaryKey() {
 
         return primaryKey;
+
+    }
+
+    public String getState() {
+
+        return state;
 
     }
 
@@ -161,6 +172,12 @@ public class Moment extends RealmObject {
     public void setPrimaryKey(String primaryKey) {
 
         this.primaryKey = primaryKey;
+
+    }
+
+    public void setState(String state) {
+
+        this.state = state;
 
     }
 
@@ -272,7 +289,32 @@ public class Moment extends RealmObject {
 
     }
 
+    public static Moment findMoment(final String primaryKey) {
+        // finds a moment from the primaryKey and returns it
+
+        Realm realm = Realm.getDefaultInstance();
+
+        realm.beginTransaction();
+
+        RealmQuery<Moment> query = realm.where(Moment.class);
+
+        // construct the query to find the Moment that matches primaryKey
+        query.equalTo("primaryKey", primaryKey);
+
+        // get the results
+        RealmResults<Moment> results = query.findAll();
+
+        // get the first Moment from results... will only be one
+        Moment moment = results.first();
+
+        realm.commitTransaction();
+
+        return moment;
+
+    }
+
     public void uploadMoment(Context applicationContext) {
+        // grab a VimeoNetworker to handle upload
 
         VimeoNetworker vimeoNetworker = new VimeoNetworker(applicationContext);
 
@@ -280,5 +322,19 @@ public class Moment extends RealmObject {
 
     }
 
-}
+    public MomentStateEnum getMomentState() {
+        // return the state of the Moment
 
+        // if a state has been set, return the MomentStateEnum equivalent
+        return (state != null) ? MomentStateEnum.valueOf(state) : null;
+
+    }
+
+    public void setEnumState(MomentStateEnum state) {
+        // set the state of the Moment
+
+        this.state = state.name();
+
+    }
+
+}
