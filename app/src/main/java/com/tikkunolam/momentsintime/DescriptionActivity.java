@@ -160,7 +160,6 @@ public class DescriptionActivity extends AppCompatActivity {
 
                     // set the Save button to white
                     mSaveMenuItem.setEnabled(true);
-                    Log.d(TAG, "SAVE ENABLED");
 
                 }
 
@@ -169,7 +168,6 @@ public class DescriptionActivity extends AppCompatActivity {
 
                     // set the save button to grey
                     mSaveMenuItem.setEnabled(false);
-                    Log.d(TAG, "SAVE DISABLED");
 
                 }
 

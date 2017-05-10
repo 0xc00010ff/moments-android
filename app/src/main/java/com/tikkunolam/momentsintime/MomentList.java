@@ -17,6 +17,9 @@ public class MomentList {
     // keeps up with the last loaded page of Vimeo videos
     private int mCurrentPage;
 
+    // signifies if there is a next page or not
+    private boolean mNextPageExists;
+
     /**
      * CONSTRUCTORS
      */
@@ -28,6 +31,7 @@ public class MomentList {
         mVimeoNetworker = new VimeoNetworker(applicationContext);
 
         mCurrentPage = 0;
+        mNextPageExists = true;
 
     }
 
@@ -46,12 +50,21 @@ public class MomentList {
     public void getCommunityMoments() {
         // update the moments list by fetching the Community Videos list
 
-        // fetch the current page of videos
-        mMoments.addAll(mVimeoNetworker.getCommunityMoments(mCurrentPage + 1));
+        // if there is a next page to fetch fetch the Moments
 
-        // increment mCurrentPage
-        mCurrentPage++;
+        if(mNextPageExists) {
 
+            // get a GetMomentsResponse from the VimeoNetworker
+            GetMomentsResponse getMomentsResponse = mVimeoNetworker.getCommunityMoments(mCurrentPage + 1);
+
+            mNextPageExists = getMomentsResponse.nextPageExists();
+
+            mMoments.addAll(getMomentsResponse.getMomentList());
+
+            // increment mCurrentPage
+            mCurrentPage++;
+
+        }
 
     }
 

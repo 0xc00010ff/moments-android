@@ -95,8 +95,7 @@ public class MainActivity extends AppCompatActivity
     // the callback method that will be called when the MomentPrompt is clicked in the CommunityFragment RecyclerView
     public void onMomentPromptClick() {
 
-        // do whatever to share
-        Log.d(TAG, "MOMENT PROMPT CLICKED");
+
 
     }
 

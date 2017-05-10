@@ -1,7 +1,16 @@
 package com.tikkunolam.momentsintime;
 
+import android.Manifest;
+import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,9 +22,17 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.content.CursorLoader;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import io.realm.RealmList;
@@ -124,7 +141,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                 if(isMomentComplete()) {
 
                     // submit the Moment
-                    Log.d(TAG, "submitting the Moment");
                     submitMoment();
                     finish();
 
@@ -267,6 +283,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     private void submitMoment() {
         // submits the Moment
 
+        // deal with the uploading of the Moment
+        mMoment.uploadMoment(this.getApplicationContext());
+
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -358,6 +377,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     // add it to the viewlist
                     RealmList<Note> notes = mMoment.getNotes();
                     Note newNote = notes.get(0);
+
                     mViewModelList.add(FIRST_NOTE_LOCATION, newNote.getNote());
 
                     mMakeAMomentAdapter.notifyDataSetChanged();
@@ -372,6 +392,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     // get the Uri from the Intent
                     final String selectedVideoUri = data.getData().toString();
 
+                    // get the file path from the uri
+                    final String filePath = FileDealer.getPath(this, Uri.parse(selectedVideoUri));
+
                     // update the Moment in Realm
                     mMoment.persistUpdates(new PersistenceExecutor() {
 
@@ -379,6 +402,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                         public void execute() {
 
                             mMoment.setLocalVideoUri(selectedVideoUri);
+                            mMoment.setLocalVideoFilePath(filePath);
 
                         }
 
@@ -432,8 +456,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     public void onInterviewingPromptClick() {
         // deal with acquiring an interviewee, adding it to the Moment, and refreshing the Adapter
 
-        Log.d(TAG, "opening the InterviewingActivity");
-
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .title(R.string.interviewing)
                 .items(R.array.interviewing_dialog_array)
@@ -483,8 +505,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     public void onDescriptionPromptClick() {
         // deal with acquiring a description/title, adding it to the Moment, and refreshing the Adapter
 
-        Log.d(TAG, "opening the DescriptionActivity");
-
         // make an Intent with the DescriptionActivity
         Intent descriptionIntent = new Intent(getBaseContext(), DescriptionActivity.class);
 
@@ -500,8 +520,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     public void onVideoPromptClick() {
         // deal with loading a FilmVideoIntent, adding the localVideoUri to the Moment, and refreshing
 
-        Log.d(TAG, "expressing a video Intent");
-
         // express an implicit intent to film a video
         Intent filmVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 
@@ -513,7 +531,19 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     public void onUploadPromptClick() {
         // deal with loading a FindVideoIntent, adding the localVideoUri to the Moment, and refreshing
 
-        Log.d(TAG, "expressing a fetch video Intent");
+        // if the API level > 21 then READ_EXTERNAL_STORAGE isn't automatic and should be requested
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (shouldShowRequestPermissionRationale(
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                // Explain to the user why we need to read the contacts
+            }
+
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    1);
+        }
 
         Intent intent = new Intent();
         intent.setType("video/*");
@@ -524,8 +554,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
     public void onNotesPromptClick() {
         // deal with acquiring a new note, adding it to the Moment, and refreshing the Adapter
-
-        Log.d(TAG, "loading a NoteActivity");
 
         // make an Intent with the NoteActivity
         Intent noteIntent = new Intent(getBaseContext(), NoteActivity.class);
@@ -704,7 +732,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         // tell the Adapter to update the list on screen
         mMakeAMomentAdapter.notifyDataSetChanged();
-
 
     }
 

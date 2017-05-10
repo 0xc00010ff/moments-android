@@ -19,6 +19,10 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 
 
@@ -149,6 +153,26 @@ public class MyMomentsFragment extends Fragment{
 
     }
 
+    @Override
+    public void onStart() {
+
+        super.onStart();
+
+        // register this fragment for EventBus message delivery
+        EventBus.getDefault().register(this);
+
+    }
+
+    @Override
+    public void onStop() {
+
+        super.onStop();
+
+        // unregister this fragment for EventBus message delivery
+        EventBus.getDefault().unregister(this);
+
+    }
+
     public void setUpRecyclerView(){
         /**
          * SET UP THE RECYCLERVIEW
@@ -194,6 +218,17 @@ public class MyMomentsFragment extends Fragment{
                         }
                 )
         );
+
+    }
+
+    /**
+     * EVENTBUS CALLBACKS
+     */
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(UploadFinishedMessage event) {
+        // an UploadService finished.. do whatever to handle that
+        // update the Moment by primaryKey and reload the RecyclerView
 
     }
 

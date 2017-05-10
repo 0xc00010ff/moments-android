@@ -13,6 +13,10 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 
 
@@ -238,27 +242,40 @@ public class CommunityFragment extends Fragment {
     private void insertMomentPrompts(int position, boolean repeating) {
         // either inserts one MomentPrompt at position, or a MomentPrompt at every [position]th position in mViewModeList
 
-        if(repeating) {
-            // add a MomentPrompt at every [position]th position
+        if(mViewModelList.size() >= position) {
+            // if the list is large enough to insert a prompt at that position
 
-            for(int i = 0; i > mViewModelList.size(); i++) {
+            if(repeating) {
+                // add a MomentPrompt at every [position]th position
 
-                if ((position - 1) % i == 0) {
+                for(int i = 0; i > mViewModelList.size(); i++) {
 
-                    MomentPrompt momentPrompt = new MomentPrompt(mContext);
-                    mViewModelList.add(i, momentPrompt);
+                    if ((position - 1) % i == 0) {
+
+                        MomentPrompt momentPrompt = new MomentPrompt(mContext);
+                        mViewModelList.add(i, momentPrompt);
+
+                    }
 
                 }
+
+            }
+
+            else {
+                // add a single MomentPrompt at position
+
+                MomentPrompt momentPrompt = new MomentPrompt(mContext);
+                mViewModelList.add(position, momentPrompt);
 
             }
 
         }
 
         else {
-            // add a single MomentPrompt at position
+            // otherwise just put it at the end
 
             MomentPrompt momentPrompt = new MomentPrompt(mContext);
-            mViewModelList.add(position, momentPrompt);
+            mViewModelList.add(mViewModelList.size(), momentPrompt);
 
         }
 
