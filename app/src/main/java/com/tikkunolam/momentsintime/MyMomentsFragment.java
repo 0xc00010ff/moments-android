@@ -1,7 +1,9 @@
 package com.tikkunolam.momentsintime;
 
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -25,11 +27,19 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
+import static android.app.Activity.RESULT_OK;
+
 
 public class MyMomentsFragment extends Fragment{
 
     // tag for logging purposes
     private final String TAG = "My Moments Fragment";
+
+    // Strings for use as extra argument identifiers
+    String mPrimaryKeyExtra;
+
+    // integer identifiers for Intent requestCodes
+    final int MAKE_A_MOMENT_REQUEST_CODE = 1;
 
     // list of Moments
     private MomentList mMomentList;
@@ -95,8 +105,8 @@ public class MyMomentsFragment extends Fragment{
 
             public void onClick(View view) {
 
-                // tell the Activity we want to make a new Moment
-                mActivityCallback.onNewMomentClick();
+                // load a MakeAMomentActivity for result
+                onNewMomentClick();
 
             }
 
@@ -108,9 +118,9 @@ public class MyMomentsFragment extends Fragment{
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                // when the fab is clicked tell the MainActivity to load the MakeAMomentActivity
+                // when the fab is clicked load a MakeAMomentActivity for result
 
-                mActivityCallback.onNewMomentClick();
+                onNewMomentClick();
 
             }
 
@@ -137,6 +147,9 @@ public class MyMomentsFragment extends Fragment{
     public void onActivityCreated(Bundle savedInstanceState) {
 
         super.onActivityCreated(savedInstanceState);
+
+        // fetch the mPrimaryKeyExtra
+        mPrimaryKeyExtra = getString(R.string.primary_key_extra);
 
         // create a new asynchronous task to fill the mMomentList
         AsyncFetchMyMoments asyncFetchMyMoments = new AsyncFetchMyMoments();
@@ -218,6 +231,36 @@ public class MyMomentsFragment extends Fragment{
                         }
                 )
         );
+
+    }
+
+    private void onNewMomentClick() {
+
+        // make a new Intent with the MakeAMomentActivity
+        Intent makeAMomentIntent = new Intent(getActivity(), MakeAMomentActivity.class);
+
+        // start it
+        this.startActivityForResult(makeAMomentIntent, MAKE_A_MOMENT_REQUEST_CODE);
+
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // called when returning from a StartActivityForResult
+
+        if(resultCode == RESULT_OK) {
+
+            if(requestCode == MAKE_A_MOMENT_REQUEST_CODE) {
+                // the user made a Moment. it was saved to Realm fetch it and display it
+
+                // get the primaryKey for the Moment created by the MakeAMomentActivity
+                String primaryKey = data.getStringExtra(mPrimaryKeyExtra);
+
+                // find the Moment in Realm and add it to the MomentList
+                Moment.findMoment(primaryKey);
+            }
+
+        }
+
 
     }
 

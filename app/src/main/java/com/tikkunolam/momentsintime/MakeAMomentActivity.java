@@ -48,7 +48,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     final int FIRST_NOTE_LOCATION = 8;
 
     // Strings for use as Extra argument identifiers
-    String mPrimaryKeyExtra, mNoteExtra, mLocalVideoUriExtra, mIntervieweeExtra, mRoleExtra, mIntervieweePhotoUriExtra, mTitleExtra, mDescriptionExtra;
+    String mPrimaryKeyExtra, mNoteExtra, mLocalVideoUriExtra, mIntervieweeExtra, mRoleExtra, mIntervieweePhotoUriExtra,
+            mTitleExtra, mDescriptionExtra;
 
     // integers for use as request codes between Intents
     final int VIDEO_FROM_GALLERY = 1;
@@ -142,6 +143,11 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                     // submit the Moment
                     submitMoment();
+
+                    // signify the operation went through and send the primaryKey of the Moment back to the calling fragment
+                    Intent MyMomentsIntent = new Intent(this, MyMomentsFragment.class);
+                    MyMomentsIntent.putExtra(mPrimaryKeyExtra, mMoment.getPrimaryKey());
+                    setResult(RESULT_OK, MyMomentsIntent);
                     finish();
 
                 }
