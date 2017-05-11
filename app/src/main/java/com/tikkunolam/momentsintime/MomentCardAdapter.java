@@ -116,42 +116,21 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             case MOMENT:
                 // fill a momentCardHolder
 
-                MomentCardHolder momentCardHolder = (MomentCardHolder) holder;
-
-                // get the mMoment corresponding to the list position
                 Moment moment = (Moment) mViewModelList.get(position);
 
-                // use Picasso to fill the videoPreviewImageView from the mMoment's picture url
-                // fill this before the rest so the loading doesn't look silly
-                Picasso.with(mContext).load(moment.getPictureUrl()).into(momentCardHolder.videoPreviewImageView);
+                if(moment.getState() != null) {
+                    // this is a local Moment. bind accordingly
 
-                // set the text in the videoNameTextView from the mMoment
-                momentCardHolder.videoNameTextView.setText(moment.getTitle());
-
-                // if there is a description set it, otherwise delete the view
-                String description = moment.getDescription();
-
-                if(!description.equals("")) {
-
-                    momentCardHolder.videoDescriptionTextView.setText(description);
+                    bindLocalMoment(holder, position);
 
                 }
+
                 else {
+                    // this is a community Moment. bind accordingly
 
-                    momentCardHolder.videoDescriptionTextView.setVisibility(View.GONE);
+                    bindCommunityMoment(holder, position);
 
                 }
-
-                // set the onClick for the Moments
-                momentCardHolder.videoPreviewImageView.setOnClickListener(new View.OnClickListener() {
-
-                    public void onClick(View view) {
-
-                        mActivityCallback.onMomentSelect((Moment) mViewModelList.get(position));
-
-                    }
-
-                });
 
                 break;
 
@@ -170,6 +149,56 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 
         }
+
+    }
+
+    private void bindLocalMoment(RecyclerView.ViewHolder holder, final int position) {
+        // bind a local Moment to a MomentCardHolder
+
+        Moment moment = (Moment) mViewModelList.get(position);
+
+
+    }
+
+    private void bindCommunityMoment(RecyclerView.ViewHolder holder, final int position) {
+        // bind a Moment, received from Vimeo to a MomentCardHolder
+
+        Moment moment = (Moment) mViewModelList.get(position);
+
+        MomentCardHolder momentCardHolder = (MomentCardHolder) holder;
+
+        // use Picasso to fill the videoPreviewImageView from the mMoment's picture url
+        // fill this before the rest so the loading doesn't look silly
+        Picasso.with(mContext).load(moment.getPictureUrl()).into(momentCardHolder.videoPreviewImageView);
+
+        // set the text in the videoNameTextView from the mMoment
+        momentCardHolder.videoNameTextView.setText(moment.getTitle());
+
+        // if there is a description set it, otherwise delete the view
+        String description = moment.getDescription();
+
+        if(!description.equals("")) {
+
+            momentCardHolder.videoDescriptionTextView.setText(description);
+
+        }
+        else {
+
+            momentCardHolder.videoDescriptionTextView.setVisibility(View.GONE);
+
+        }
+
+        // set the onClick for the Moments
+        momentCardHolder.videoPreviewImageView.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+
+                mActivityCallback.onMomentSelect((Moment) mViewModelList.get(position));
+
+            }
+
+        });
+
 
     }
 

@@ -2,6 +2,8 @@ package com.tikkunolam.momentsintime;
 
 import android.content.Context;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import io.realm.Realm;
@@ -285,6 +287,8 @@ public class Moment extends RealmObject {
 
         realm.commitTransaction();
 
+        realm.close();
+
         return moment;
 
     }
@@ -309,7 +313,23 @@ public class Moment extends RealmObject {
 
         realm.commitTransaction();
 
+        realm.close();
+
         return moment;
+
+    }
+
+    public static ArrayList<Moment> getMyMoments() {
+
+        ArrayList<Moment> momentList = new ArrayList<>();
+
+        Realm realm = Realm.getDefaultInstance();
+
+        RealmResults<Moment> realmResults = realm.where(Moment.class).findAll();
+
+        momentList.addAll(realm.copyFromRealm(realmResults));
+
+        return momentList;
 
     }
 
