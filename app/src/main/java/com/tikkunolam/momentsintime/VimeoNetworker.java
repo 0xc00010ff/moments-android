@@ -379,4 +379,73 @@ public class VimeoNetworker {
 
     }
 
+    public Moment getSingleMoment(Uri videoUri) {
+        // returns a single Moment
+
+        OkHttpClient client = new OkHttpClient();
+        Response response = null;
+        Moment moment = new Moment();
+
+        try {
+            // try to retrieve the Moment from Vimeo
+
+            Request request = new Request.Builder()
+                    .url(mApiAddress + "/me" + videoUri)
+                    .addHeader("Authorization", "Bearer " + mAccessToken)
+                    .build();
+
+            // make the call and receive the response
+            response = client.newCall(request).execute();
+
+            // convert the body to a String
+            String responseString = response.body().string();
+
+            // convert the String to a JSONObject
+            JSONObject jsonResponse = new JSONObject(responseString);
+
+            // get the attributes that are one level deep
+            String name = jsonResponse.getString("name");
+            String description = jsonResponse.getString("description");
+
+            if(description.equals("null")) {
+                // API returns "null" so make it empty instead
+
+                description = "";
+
+            }
+
+            // get the pictures JSONObject (a list of the same pic in different sizes)
+            JSONObject picturesObject = jsonResponse.getJSONObject("pictures");
+            JSONArray sizesArray = picturesObject.getJSONArray("sizes");
+
+            // get the third picture. somewhere around 300 x 150
+            // this may need to be more robust, in case Vimeo is inconsistent
+            JSONObject picture = sizesArray.getJSONObject(4);
+
+            // get the url
+            String pictureUrl = picture.getString("link");
+
+            moment.setTitle(name);
+            moment.setDescription(description);
+            moment.setPictureUrl(pictureUrl);
+
+
+        }
+
+        catch(IOException exception) {
+
+            Log.e(TAG, exception.toString());
+
+        }
+
+        catch(JSONException jsonException) {
+
+            Log.e(TAG, jsonException.toString());
+
+        }
+
+        return moment;
+
+    }
+
 }

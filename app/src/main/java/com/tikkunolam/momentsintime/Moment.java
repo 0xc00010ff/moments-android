@@ -287,8 +287,6 @@ public class Moment extends RealmObject {
 
         realm.commitTransaction();
 
-        realm.close();
-
         return moment;
 
     }
@@ -312,8 +310,6 @@ public class Moment extends RealmObject {
         Moment moment = results.first();
 
         realm.commitTransaction();
-
-        realm.close();
 
         return moment;
 

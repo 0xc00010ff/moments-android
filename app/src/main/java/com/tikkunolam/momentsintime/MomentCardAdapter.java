@@ -1,32 +1,43 @@
 package com.tikkunolam.momentsintime;
 
 import android.content.Context;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import io.realm.Case;
+
 public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     // Adapter for populating the RecyclerViews with moment_cards
 
+    // tag for logging
+    final String TAG = "Moment Card Adapter";
+
     Context mContext;
+
+    // strings to fill in the state in the moment_card_with_state
+    String mStateInProgress, mStateUploading, mStateFailed, mStateLive;
 
     // reference to the Activity for making callbacks in onClick
     FragmentInteractionListener mActivityCallback;
 
-
     // ArrayList of objects, holding Moments and MomentPrompts
     ArrayList<Object> mViewModelList;
-
 
     // integers to identify the Object in the ArrayList
     final int MOMENT = 1;
     final int PROMPT = 2;
+    final int MOMENT_WITH_STATE = 3;
 
 
     public MomentCardAdapter(Context context, ArrayList<Object> viewModelList) {
@@ -34,6 +45,12 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         mContext = context;
         mActivityCallback = (MainActivity) context;
         mViewModelList = viewModelList;
+
+        // get the Strings from resources
+        mStateInProgress = context.getString(R.string.state_in_progress);
+        mStateUploading = context.getString(R.string.state_uploading);
+        mStateFailed = context.getString(R.string.state_failed);
+        mStateLive = context.getString(R.string.state_live);
 
     }
 
@@ -50,7 +67,20 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         if(mViewModelList.get(position) instanceof Moment) {
 
-            return MOMENT;
+            Moment moment = (Moment) mViewModelList.get(position);
+
+            if(moment.getState() != null) {
+                // there is a state
+
+                return MOMENT_WITH_STATE;
+
+            }
+
+            else {
+
+                return MOMENT;
+
+            }
 
         }
 
@@ -102,6 +132,17 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                 break;
 
+            case MOMENT_WITH_STATE:
+                // if it calls for a MOMENT_WITH_STATE, inflate a moment_card_with_state and pass it to a StateMomentCardHolder
+
+                // inflate a moment_card_with_state
+                View momentWithStateView = LayoutInflater
+                        .from(parent.getContext())
+                        .inflate(R.layout.moment_card_with_state, parent, false);
+
+                // set the viewHolder as a StateMomentCardHolder
+                viewHolder = new StateMomentCardHolder(mContext, momentWithStateView);
+
         }
 
         return viewHolder;
@@ -116,21 +157,18 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             case MOMENT:
                 // fill a momentCardHolder
 
-                Moment moment = (Moment) mViewModelList.get(position);
+                MomentCardHolder momentCardHolder = (MomentCardHolder) holder;
 
-                if(moment.getState() != null) {
-                    // this is a local Moment. bind accordingly
+                bindCommunityMoment(momentCardHolder, position);
 
-                    bindLocalMoment(holder, position);
+                break;
 
-                }
+            case MOMENT_WITH_STATE:
+                // fill a StateMomentCardHolder
 
-                else {
-                    // this is a community Moment. bind accordingly
+                StateMomentCardHolder stateMomentCardHolder = (StateMomentCardHolder) holder;
 
-                    bindCommunityMoment(holder, position);
-
-                }
+                bindLocalMoment(stateMomentCardHolder, position);
 
                 break;
 
@@ -152,20 +190,105 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     }
 
-    private void bindLocalMoment(RecyclerView.ViewHolder holder, final int position) {
+    private void bindLocalMoment(StateMomentCardHolder momentCardHolder, final int position) {
         // bind a local Moment to a MomentCardHolder
 
         Moment moment = (Moment) mViewModelList.get(position);
 
+        MomentStateEnum stateEnum = moment.getMomentState();
+
+        switch(stateEnum) {
+
+            case IN_PROGRESS:
+                // Moment is still being created
+
+                // if the Moment has a localVideoUri, fill the videoPreviewImageView with a preview from it
+                if(moment.getLocalVideoUri() != null) {
+
+                    // set the preview image with Glide, using the local video uri
+                    Glide.with(mContext).load(moment.getLocalVideoUri()).asBitmap().into(momentCardHolder.videoPreviewImageView);
+
+
+                }
+
+                // if the Moment has a title, fill that field in the holder
+                if(moment.getTitle() != null) {
+
+                    momentCardHolder.videoNameTextView.setText(moment.getTitle());
+
+                }
+
+                // otherwise collapse that view
+                else {
+
+                    momentCardHolder.videoNameTextView.setVisibility(View.GONE);
+
+                }
+
+                // if the Moment has a description, fill that field in the Holder
+                if(moment.getDescription() != null) {
+
+                    momentCardHolder.videoDescriptionTextView.setText(moment.getDescription());
+
+                }
+
+                // otherwise collapse that view
+                else {
+
+                    momentCardHolder.videoDescriptionTextView.setVisibility(View.GONE);
+
+                }
+
+                momentCardHolder.momentStateTextView.setText(mStateInProgress);
+                momentCardHolder.coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_yellow));
+
+                break;
+
+            case UPLOADING:
+                // Moment is uploading currently
+
+                // set the preview image with Glide, using the local video uri
+                Glide.with(mContext).load(moment.getLocalVideoUri()).asBitmap().into(momentCardHolder.videoPreviewImageView);
+
+                momentCardHolder.videoNameTextView.setText(moment.getTitle());
+                momentCardHolder.videoDescriptionTextView.setText(moment.getDescription());
+                momentCardHolder.momentStateTextView.setText(mStateUploading);
+                momentCardHolder.coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_blue));
+
+                break;
+
+            case FAILED:
+                // Moment upload failed
+
+                // set the preview image with Glide, using the local video uri
+                Glide.with(mContext).load(moment.getLocalVideoUri()).asBitmap().into(momentCardHolder.videoPreviewImageView);
+
+                momentCardHolder.videoNameTextView.setText(moment.getTitle());
+                momentCardHolder.videoDescriptionTextView.setText(moment.getDescription());
+                momentCardHolder.momentStateTextView.setText(mStateFailed);
+                momentCardHolder.coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_red));
+
+                break;
+
+            case LIVE:
+                // Moment is live on Vimeo
+
+                momentCardHolder.coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_green));
+                AsyncArgument asyncArgument = new AsyncArgument(moment, momentCardHolder);
+                AsyncMomentFetch asyncMomentFetch = new AsyncMomentFetch();
+                asyncMomentFetch.execute(asyncArgument);
+
+                break;
+
+        }
+
 
     }
 
-    private void bindCommunityMoment(RecyclerView.ViewHolder holder, final int position) {
+    private void bindCommunityMoment(MomentCardHolder momentCardHolder, final int position) {
         // bind a Moment, received from Vimeo to a MomentCardHolder
 
         Moment moment = (Moment) mViewModelList.get(position);
-
-        MomentCardHolder momentCardHolder = (MomentCardHolder) holder;
 
         // use Picasso to fill the videoPreviewImageView from the mMoment's picture url
         // fill this before the rest so the loading doesn't look silly
@@ -199,6 +322,70 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         });
 
+    }
+
+    protected class AsyncMomentFetch extends AsyncTask<AsyncArgument, Void, AsyncArgument> {
+
+        protected AsyncArgument doInBackground(AsyncArgument... asyncArgument) {
+
+            VimeoNetworker vimeoNetworker = new VimeoNetworker(mContext);
+
+            Moment newMoment = vimeoNetworker.getSingleMoment(Uri.parse(asyncArgument[0].getMoment().getVideoUri()));
+
+            asyncArgument[0].setMoment(newMoment);
+
+            return asyncArgument[0];
+
+        }
+
+        protected void onPostExecute(AsyncArgument asyncArgument) {
+
+            StateMomentCardHolder holder = asyncArgument.getHolder();
+            Moment moment = asyncArgument.getMoment();
+
+            if(moment.getDescription().equals("")) {
+
+                holder.videoDescriptionTextView.setVisibility(View.GONE);
+
+            }
+            holder.videoDescriptionTextView.setText(moment.getDescription());
+            holder.videoNameTextView.setText(moment.getTitle());
+            holder.momentStateTextView.setText(mStateLive);
+            Picasso.with(mContext).load(moment.getPictureUrl()).into(holder.videoPreviewImageView);
+
+        }
+
+    }
+
+    private class AsyncArgument {
+
+        Moment moment;
+        StateMomentCardHolder holder;
+
+        public AsyncArgument(Moment moment, StateMomentCardHolder holder) {
+
+            this.moment = moment;
+            this.holder = holder;
+
+        }
+
+        public Moment getMoment() {
+
+            return moment;
+
+        }
+
+        public StateMomentCardHolder getHolder() {
+
+            return holder;
+
+        }
+
+        public void setMoment(Moment moment) {
+
+            this.moment = moment;
+
+        }
 
     }
 

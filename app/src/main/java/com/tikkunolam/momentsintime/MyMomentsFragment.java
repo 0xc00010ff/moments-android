@@ -47,6 +47,9 @@ public class MyMomentsFragment extends Fragment{
     // list of Moments and Prompts to fill the RecyclerView
     ArrayList<Object> mViewModelList;
 
+    // a VimeoNetworker for network calls
+    VimeoNetworker mVimeoNetworker;
+
     // callback for the activity to handle fragment business
     FragmentInteractionListener mActivityCallback;
 
@@ -138,6 +141,9 @@ public class MyMomentsFragment extends Fragment{
         // set up the RecyclerView
         setUpRecyclerView();
 
+        // fill the mViewModelList with local Moments
+        fetchMoments();
+
         // inflate the layout for this fragment and return it
         return entireView;
 
@@ -151,9 +157,6 @@ public class MyMomentsFragment extends Fragment{
         // fetch the mPrimaryKeyExtra
         mPrimaryKeyExtra = getString(R.string.primary_key_extra);
 
-        // create a new asynchronous task to fill the mMomentList
-        AsyncFetchMyMoments asyncFetchMyMoments = new AsyncFetchMyMoments();
-        asyncFetchMyMoments.execute(mMomentList);
     }
 
     @Override
@@ -183,6 +186,20 @@ public class MyMomentsFragment extends Fragment{
 
         // unregister this fragment for EventBus message delivery
         EventBus.getDefault().unregister(this);
+
+    }
+
+    @Override
+    public void onResume() {
+
+        // call the superclass's constructor
+        super.onResume();
+
+        // refresh the mViewModelList with Moments
+        mMomentList.getMyMoments();
+        mViewModelList.clear();
+        mViewModelList.addAll(mMomentList.getMomentList());
+        mMomentCardAdapter.notifyDataSetChanged();
 
     }
 
@@ -218,19 +235,22 @@ public class MyMomentsFragment extends Fragment{
 
         }
 
-        // add the RecyclerItemClickListener to the RecyclerView items.
-        mMyMomentsRecyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(getContext(), mMyMomentsRecyclerView,
-                        new RecyclerItemClickListener.OnItemClickListener() {
-                            // what's to be done when a cell is clicked
-                            @Override
-                            public void onItemClick(View view, int position) {
-                                // tell the Activity what Moment was selected
-                                mActivityCallback.onMomentSelect(mMomentList.getMomentList().get(position));
-                            }
-                        }
-                )
-        );
+    }
+
+    private void fetchMoments() {
+        // fetches all the Moments and updates the screen with them
+
+        mMomentList.getMyMoments();
+
+        // clear the contents of the screen
+        mViewModelList.clear();
+
+        // add all the fetched Moments to the mViewModelList
+        mViewModelList.addAll(mMomentList.getMomentList());
+
+        // tell the Adapter to update itself
+        mMomentCardAdapter.notifyDataSetChanged();
+
 
     }
 
@@ -270,61 +290,9 @@ public class MyMomentsFragment extends Fragment{
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(UploadFinishedMessage event) {
-        // an UploadService finished.. do whatever to handle that
-        // update the Moment by primaryKey and reload the RecyclerView
+        // an UploadService finished.. reload the views
 
-    }
-
-    public class AsyncFetchMyMoments extends AsyncTask<MomentList, Void, Void> {
-        /**
-         * class for making asynchronous update to the mMomentList
-         * just updates the underlying list of Videos by fetching the Community Videos
-         * then the adapter is notified of the change
-         */
-
-        protected void onPreExecute() {
-
-            // show the mProgressBar while fetching Moments
-            mProgressBar.setVisibility(View.VISIBLE);
-
-        }
-
-        protected Void doInBackground(MomentList... momentList) {
-            // run this task in the background
-
-
-            // fetch the community videos to update the MomentList
-            momentList[0].getMyMoments();
-
-            //passes nothing to onPostExecute, but an argument is needed
-            return null;
-
-        }
-
-        protected void onPostExecute(Void ignoreThis) {
-            // execute on the UI thread when the background task completes
-            // Void argument is necessary, but not used
-
-
-            // stop the mProgressBar
-            mProgressBar.setVisibility(View.GONE);
-
-            mViewModelList.clear();
-
-            mViewModelList.addAll(mMomentList.getMomentList());
-
-            // notify the adapter the MomentList has changed
-            mMomentCardAdapter.notifyDataSetChanged();
-
-            // if there are still no Moments, display the no_moments layout
-            if(mViewModelList.size() < 1) {
-
-                // make it visible
-                mNoMomentsLinearLayout.setVisibility(View.VISIBLE);
-
-            }
-
-        }
+        fetchMoments();
 
     }
 

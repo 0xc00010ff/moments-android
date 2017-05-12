@@ -14,6 +14,7 @@
     <string name="video_fetch_uri">/me/videos</string>
     <string name="page_number_parameter">page=</string>
     <string name="per_page_parameter">per_page=</string>
+    <string name="single_video_fetch_uri"></string>
 
 
     <!--UI STRINGS-->
@@ -59,6 +60,14 @@
     <string name="interviewing_name_hint">Name</string>
     <string name="interviewing_role_hint">Role</string>
     <string name="add_a_picture">Add a Picture (optional)</string>
+
+    <!--strings for the moment_card_with_state-->
+    <string name="state_in_progress">In Progress</string>
+    <string name="state_uploading">Uploading...</string>
+    <string name="state_failed">Upload failed! Tap to retry</string>
+    <string name="state_live">Live</string>
+    <string name="moment_title">Title</string>
+    <string name="moment_description"></string>
 
     <!--STRINGS THAT HELP WITH COORDINATION-->
 

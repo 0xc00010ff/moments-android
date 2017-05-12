@@ -70,6 +70,8 @@ public class MomentList {
 
     public void getMyMoments() {
         // update the moments list
+
+        mMoments.clear();
         mMoments = Moment.getMyMoments();
 
     }

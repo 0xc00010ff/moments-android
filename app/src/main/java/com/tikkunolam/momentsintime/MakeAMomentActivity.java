@@ -106,6 +106,18 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // make a new managed Moment
         mMoment = Moment.createMoment();
 
+        // set the Moment's status to IN_PROGRESS
+        mMoment.persistUpdates(new PersistenceExecutor() {
+
+            @Override
+            public void execute() {
+
+                mMoment.setEnumState(MomentStateEnum.IN_PROGRESS);
+
+            }
+
+        });
+
         // make a new mViewModelList
         mViewModelList = new ArrayList<Object>();
 
@@ -143,6 +155,17 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                     // submit the Moment
                     submitMoment();
+
+                    // set its status to UPLOADING
+                    final MomentStateEnum momentState = MomentStateEnum.UPLOADING;
+                    mMoment.persistUpdates(new PersistenceExecutor() {
+                        @Override
+                        public void execute() {
+
+                            mMoment.setEnumState(momentState);
+
+                        }
+                    });
 
                     // signify the operation went through and send the primaryKey of the Moment back to the calling fragment
                     Intent MyMomentsIntent = new Intent(this, MyMomentsFragment.class);
