@@ -88,9 +88,6 @@ public class UploadService extends IntentService {
         // do the upload work
         // probably send incremental progress update for a progress bar
 
-        // wait for the debugger
-        android.os.Debug.waitForDebugger();
-
         // strings for intent extra arguments/parameters
         mVideoFileExtra = getString(R.string.video_file_extra);
         mPrimaryKeyExtra = getString(R.string.primary_key_extra);

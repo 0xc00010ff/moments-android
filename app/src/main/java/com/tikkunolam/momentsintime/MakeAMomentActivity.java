@@ -182,6 +182,24 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
     }
 
+    @Override
+    public void onBackPressed() {
+        // when the user hits back
+        // delete the Moment that was being created if it doesn't have any fields
+
+        // call the superclass's method
+        super.onBackPressed();
+
+        if(mMoment.getInterviewee() == null && mMoment.getTitle() == null && mMoment.getDescription() == null && mMoment.getLocalVideoUri() == null) {
+            // the Moment doesn't have an interviewee, title, description, or video... delete it.
+
+            mMoment.endItAll();
+
+        }
+
+
+    }
+
     public void setUpRecyclerView() {
         // sets up the RecyclerView with the MakeAMomentAdapter and mViewModelList
 

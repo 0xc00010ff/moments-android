@@ -17,6 +17,8 @@ import java.util.ArrayList;
 
 import io.realm.Case;
 
+import static com.tikkunolam.momentsintime.R.drawable.camera;
+
 public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     // Adapter for populating the RecyclerViews with moment_cards
 
@@ -343,15 +345,34 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             StateMomentCardHolder holder = asyncArgument.getHolder();
             Moment moment = asyncArgument.getMoment();
 
-            if(moment.getDescription().equals("")) {
+            // if there is a description, set the holder's value with it
+            // otherwise collapse the description_textView
+            if(moment.getDescription() != null) {
+
+                if(moment.getDescription().equals("")) {
+
+                    holder.videoDescriptionTextView.setVisibility(View.GONE);
+
+                }
+
+                else {
+
+                    holder.videoDescriptionTextView.setText(moment.getDescription());
+
+                }
+
+            }
+
+            else {
 
                 holder.videoDescriptionTextView.setVisibility(View.GONE);
 
             }
-            holder.videoDescriptionTextView.setText(moment.getDescription());
+
+            // set the rest of the holder's values
             holder.videoNameTextView.setText(moment.getTitle());
             holder.momentStateTextView.setText(mStateLive);
-            Picasso.with(mContext).load(moment.getPictureUrl()).into(holder.videoPreviewImageView);
+            Picasso.with(mContext).load(moment.getPictureUrl()).error(mContext.getResources().getDrawable(R.drawable.camera)).into(holder.videoPreviewImageView);
 
         }
 

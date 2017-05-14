@@ -110,6 +110,7 @@ public class VimeoNetworker {
             Request request = new Request.Builder()
                     .url(mApiAddress + mVideoFetchUri + "?" + mPageNumberParameter + pageNumberString + "&" + mPerPageParameter + mVideosPerPage)
                     .addHeader("Authorization", "Bearer " + mAccessToken)
+                    .addHeader("Accept", mApiVersion)
                     .build();
 
             // make the call and receive the response
@@ -194,6 +195,7 @@ public class VimeoNetworker {
             Request request = new Request.Builder()
                     .url(mApiAddress + "/me" + videoUri)
                     .addHeader("Authorization", "Bearer " + mAccessToken)
+                    .addHeader("Accept", mApiVersion)
                     .build();
 
             // make the call and receive the response
@@ -392,6 +394,7 @@ public class VimeoNetworker {
             Request request = new Request.Builder()
                     .url(mApiAddress + "/me" + videoUri)
                     .addHeader("Authorization", "Bearer " + mAccessToken)
+                    .addHeader("Accept", mApiVersion)
                     .build();
 
             // make the call and receive the response

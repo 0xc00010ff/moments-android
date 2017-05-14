@@ -353,4 +353,33 @@ public class Moment extends RealmObject {
 
     }
 
+    public void endItAll() {
+        // the Moment deletes itself from Realm
+
+        Realm realm = Realm.getDefaultInstance();
+
+
+        realm.executeTransaction(new Realm.Transaction() {
+
+            @Override
+            public void execute(Realm realm) {
+
+                if(notes != null) {
+                    // if there are notes, delete them from their table
+
+                    notes.deleteAllFromRealm();
+
+                }
+
+                // Moment finds itself by primaryKey and deletes itself
+                RealmResults<Moment> realmResults = realm.where(Moment.class).equalTo("primaryKey", primaryKey).findAll();
+                realmResults.deleteAllFromRealm();
+
+
+            }
+
+        });
+
+    }
+
 }
