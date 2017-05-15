@@ -15,6 +15,7 @@
     <string name="page_number_parameter">page=</string>
     <string name="per_page_parameter">per_page=</string>
     <string name="single_video_fetch_uri">/videos/</string>
+    <string name="video_availability">available</string>
 
 
     <!--UI STRINGS-->
