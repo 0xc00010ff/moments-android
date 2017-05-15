@@ -53,6 +53,9 @@ public class UploadService extends IntentService {
     // upload uri
     private String mVideoFetchUri;
 
+    // add metadata uri
+    private String mVideoUri;
+
     // to be included in headers to let Vimeo know what version of the API we expect
     private String mApiVersion;
 
@@ -67,6 +70,9 @@ public class UploadService extends IntentService {
 
     // the final location of the uploaded video
     String mFinalUri;
+
+    // the Moment we're working with
+    Moment mMoment;
 
 
     /**
@@ -101,6 +107,9 @@ public class UploadService extends IntentService {
         // upload uri
         mVideoFetchUri = getString(R.string.video_fetch_uri);
 
+        // update metadata uri
+        mVideoUri = getString(R.string.single_video_fetch_uri);
+
         // to be included in headers to let Vimeo know what version of the API we expect
         mApiVersion = getString(R.string.api_version);
 
@@ -109,6 +118,8 @@ public class UploadService extends IntentService {
 
         // the primaryKey
         mPrimaryKeyString = intent.getStringExtra(mPrimaryKeyExtra);
+
+        mMoment = Moment.findMoment(mPrimaryKeyString);
 
         boolean success;
 
@@ -124,6 +135,15 @@ public class UploadService extends IntentService {
                 // if the upload went through, complete the upload and receive the final location of the video in mFinalUri
 
                 success = completeUpload();
+
+                if(success) {
+                    // if the upload completion went through and we received the final Uri...
+                    // ... update the video's title and description on Vimeo
+
+                    success = updateMetadata();
+
+
+                }
 
             }
 
@@ -366,6 +386,55 @@ public class UploadService extends IntentService {
             return success;
 
         }
+
+    }
+
+    protected boolean updateMetadata() {
+        // add the title and description to the video on Vimeo
+
+        OkHttpClient client = new OkHttpClient();
+        Response response = null;
+        boolean success = false;
+
+        // try to update the metadata. return whether operation was successful
+        try {
+
+            // build the body for the PATCH request
+            RequestBody patchBody = new FormBody.Builder()
+                    .add("name", mMoment.getTitle())
+                    .add("description", mMoment.getDescription())
+                    .build();
+
+            // build the request with patchBody
+            Request request = new Request.Builder()
+                    .url(mApiAddress + mFinalUri)
+                    .addHeader("Authorization", "Bearer " + mAccessToken)
+                    .addHeader("Accept", mApiVersion)
+                    .patch(patchBody)
+                    .build();
+
+            // execute the request
+            response = client.newCall(request).execute();
+
+            // get the response code to determine if the request went through properly
+            int responseCode = response.code();
+
+            if(responseCode == RESPONSE_OKAY) {
+
+                success = true;
+
+            }
+
+        }
+
+        catch(IOException exception) {
+
+            Log.e(TAG, exception.toString());
+
+        }
+
+        // return whether or not the request was successful
+        return success;
 
     }
 

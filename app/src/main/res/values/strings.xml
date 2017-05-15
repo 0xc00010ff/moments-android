@@ -14,7 +14,7 @@
     <string name="video_fetch_uri">/me/videos</string>
     <string name="page_number_parameter">page=</string>
     <string name="per_page_parameter">per_page=</string>
-    <string name="single_video_fetch_uri"></string>
+    <string name="single_video_fetch_uri">/videos/</string>
 
 
     <!--UI STRINGS-->
