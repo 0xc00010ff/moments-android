@@ -95,7 +95,6 @@ public class UploadService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         // do the upload work
-        // probably send incremental progress update for a progress bar
 
         // strings for intent extra arguments/parameters
         mVideoFileExtra = getString(R.string.video_file_extra);
@@ -271,13 +270,13 @@ public class UploadService extends IntentService {
 
         catch(IOException exception) {
 
-            Log.d(TAG, "generateUploadTicket: " + exception.toString());
+            Log.e(TAG, "generateUploadTicket: " + exception.toString());
 
         }
 
         catch(JSONException exception) {
 
-            Log.d(TAG, "generateUploadTicket: " + exception.toString());
+            Log.e(TAG, "generateUploadTicket: " + exception.toString());
 
         }
 

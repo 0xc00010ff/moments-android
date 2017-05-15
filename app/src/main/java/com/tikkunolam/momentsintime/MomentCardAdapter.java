@@ -68,6 +68,7 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         // determine what type of object is in the current position of the list
 
         if(mViewModelList.get(position) instanceof Moment) {
+            // if the Object is a Moment, determine if it has a state and return a ViewType accordingly
 
             Moment moment = (Moment) mViewModelList.get(position);
 
@@ -327,6 +328,7 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     protected class AsyncMomentFetch extends AsyncTask<AsyncArgument, Void, AsyncArgument> {
+        // fetches a Moment off of Vimeo when it's Live and fills the Holder that's passed in
 
         protected AsyncArgument doInBackground(AsyncArgument... asyncArgument) {
 
@@ -379,6 +381,7 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     private class AsyncArgument {
+        // a class for passing the results of the AsyncTask's doInBackground to its onPostExecute
 
         Moment moment;
         StateMomentCardHolder holder;
