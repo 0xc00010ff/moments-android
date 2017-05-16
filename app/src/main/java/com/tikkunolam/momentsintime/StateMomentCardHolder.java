@@ -40,6 +40,9 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
     // the ImageView for the mMoment preview
     ImageView videoPreviewImageView;
 
+    // the play button ImageView
+    ImageView playButtonImageView;
+
     // the three dots for the delete dialog
     ImageView dotsImageView;
 
@@ -75,6 +78,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         videoDescriptionTextView = (TextView) view.findViewById(R.id.video_description_textView);
         shareTextView = (TextView) view.findViewById(R.id.share_textView);
         dotsImageView = (ImageView) view.findViewById(R.id.dots_imageView);
+        playButtonImageView = (ImageView) view.findViewById(R.id.play_button_imageView);
 
 
     }
@@ -121,6 +125,9 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
     private void configureInProgress(Moment moment) {
         // configures the views with an IN_PROGRESS Moment
 
+        // hide the shareTextView
+        shareTextView.setVisibility(View.INVISIBLE);
+
         // if the Moment has a localVideoUri, fill the videoPreviewImageView with a preview from it
         if(moment.getLocalVideoUri() != null) {
 
@@ -162,10 +169,18 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         momentStateTextView.setText(mStateInProgress);
         coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_yellow));
 
+        // set all the onClickListeners
+        setOnCardClick(moment);
+        setOnVideoClick(moment);
+        setOnDotsClick(moment);
+
     }
 
     private void configureUploading(Moment moment) {
         // configures the views with an UPLOADING Moment
+
+        // hide the shareTextView
+        shareTextView.setVisibility(View.INVISIBLE);
 
         // set the preview image with Glide, using the local video uri
         Glide.with(mContext).load(moment.getLocalVideoUri()).asBitmap().into(videoPreviewImageView);
@@ -175,10 +190,18 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         momentStateTextView.setText(mStateUploading);
         coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_blue));
 
+        // set all the onClickListeners
+        setOnCardClick(moment);
+        setOnVideoClick(moment);
+        setOnDotsClick(moment);
+
     }
 
     private void configureFailed(Moment moment) {
         // configures the views with a FAILED Moment
+
+        // hide the shareTextView
+        shareTextView.setVisibility(View.INVISIBLE);
 
         // set the preview image with Glide, using the local video uri
         Glide.with(mContext).load(moment.getLocalVideoUri()).asBitmap().into(videoPreviewImageView);
@@ -187,6 +210,11 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         videoDescriptionTextView.setText(moment.getDescription());
         momentStateTextView.setText(mStateFailed);
         coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_red));
+
+        // set all the onClickListeners
+        setOnCardClick(moment);
+        setOnVideoClick(moment);
+        setOnDotsClick(moment);
 
     }
 
@@ -198,6 +226,12 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         AsyncMomentFetch asyncMomentFetch = new AsyncMomentFetch();
 
         asyncMomentFetch.execute(moment);
+
+        // set all the onClickListeners
+        setOnCardClick(moment);
+        setOnVideoClick(moment);
+        setOnDotsClick(moment);
+        setOnShareClick(moment);
 
     }
 
@@ -252,6 +286,74 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
             Picasso.with(mContext).load(moment.getPictureUrl()).error(mContext.getResources().getDrawable(R.drawable.camera)).into(videoPreviewImageView);
 
         }
+
+    }
+
+    /**
+     * THE ONCLICKS
+     */
+
+    private void setOnCardClick(final Moment moment) {
+        // sets a listener on the entire card that will call the Activity's onMyMomentCardClick method
+
+        wholeCardView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                mActivityCallback.onMyMomentCardClick(moment);
+
+            }
+
+        });
+
+    }
+
+    private void setOnShareClick(final Moment moment) {
+        // sets a listener on the share button that will call the Activity's onMyShareClick method
+
+        shareTextView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                mActivityCallback.onMyShareClick(moment);
+
+            }
+
+        });
+
+    }
+
+    private void setOnVideoClick(final Moment moment) {
+        // sets a listener on the play button that will call the Activity's onVideoSelect method
+
+        playButtonImageView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                mActivityCallback.onVideoSelect(moment);
+
+            }
+
+        });
+
+    }
+
+    private void setOnDotsClick(final Moment moment) {
+        // sets a listener on the dots that will call the Activity's onMyDotsClick method
+
+        dotsImageView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                mActivityCallback.onMyDotsClick(moment);
+
+            }
+
+        });
 
     }
 
