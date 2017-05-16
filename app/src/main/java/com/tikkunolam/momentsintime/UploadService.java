@@ -53,6 +53,12 @@ public class UploadService extends IntentService {
     // upload uri
     private String mVideoFetchUri;
 
+    // add metadata uri
+    private String mVideoUri;
+
+    // String to match the status of the video returned by Vimeo if it's available
+    private String mVideoAvailable;
+
     // to be included in headers to let Vimeo know what version of the API we expect
     private String mApiVersion;
 
@@ -67,6 +73,9 @@ public class UploadService extends IntentService {
 
     // the final location of the uploaded video
     String mFinalUri;
+
+    // the Moment we're working with
+    Moment mMoment;
 
 
     /**
@@ -86,10 +95,6 @@ public class UploadService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         // do the upload work
-        // probably send incremental progress update for a progress bar
-
-        // wait for the debugger
-        android.os.Debug.waitForDebugger();
 
         // strings for intent extra arguments/parameters
         mVideoFileExtra = getString(R.string.video_file_extra);
@@ -104,14 +109,22 @@ public class UploadService extends IntentService {
         // upload uri
         mVideoFetchUri = getString(R.string.video_fetch_uri);
 
+        // update metadata uri
+        mVideoUri = getString(R.string.single_video_fetch_uri);
+
         // to be included in headers to let Vimeo know what version of the API we expect
         mApiVersion = getString(R.string.api_version);
+
+        // matches the available status returned by Vimeo
+        mVideoAvailable = getString(R.string.video_availability);
 
         // the path for the local mMoment file
         mVideoFileString = intent.getStringExtra(mVideoFileExtra);
 
         // the primaryKey
         mPrimaryKeyString = intent.getStringExtra(mPrimaryKeyExtra);
+
+        mMoment = Moment.findMoment(mPrimaryKeyString);
 
         boolean success;
 
@@ -128,6 +141,15 @@ public class UploadService extends IntentService {
 
                 success = completeUpload();
 
+                if(success) {
+                    // if the upload completion went through and we received the final Uri...
+                    // ... update the video's title and description on Vimeo
+
+                    success = updateMetadata();
+
+
+                }
+
             }
 
         }
@@ -142,7 +164,9 @@ public class UploadService extends IntentService {
 
         // if the upload was successful
         if(success) {
-            // update the Moment's state enum to LIVE, and set its videoUri
+            // wait until the video is available on Vimeo then update the Moment's state enum to LIVE, and set its videoUri
+
+            waitForAvailability();
 
             // make a LIVE MomentStateEnum
             final MomentStateEnum momentStateEnum = LIVE;
@@ -246,13 +270,13 @@ public class UploadService extends IntentService {
 
         catch(IOException exception) {
 
-            Log.d(TAG, "generateUploadTicket: " + exception.toString());
+            Log.e(TAG, "generateUploadTicket: " + exception.toString());
 
         }
 
         catch(JSONException exception) {
 
-            Log.d(TAG, "generateUploadTicket: " + exception.toString());
+            Log.e(TAG, "generateUploadTicket: " + exception.toString());
 
         }
 
@@ -369,6 +393,127 @@ public class UploadService extends IntentService {
             return success;
 
         }
+
+    }
+
+    protected boolean updateMetadata() {
+        // add the title and description to the video on Vimeo
+
+        OkHttpClient client = new OkHttpClient();
+        Response response = null;
+        boolean success = false;
+
+        // try to update the metadata. return whether operation was successful
+        try {
+
+            // build the body for the PATCH request
+            RequestBody patchBody = new FormBody.Builder()
+                    .add("name", mMoment.getTitle())
+                    .add("description", mMoment.getDescription())
+                    .build();
+
+            // build the request with patchBody
+            Request request = new Request.Builder()
+                    .url(mApiAddress + mFinalUri)
+                    .addHeader("Authorization", "Bearer " + mAccessToken)
+                    .addHeader("Accept", mApiVersion)
+                    .patch(patchBody)
+                    .build();
+
+            // execute the request
+            response = client.newCall(request).execute();
+
+            // get the response code to determine if the request went through properly
+            int responseCode = response.code();
+
+            if(responseCode == RESPONSE_OKAY) {
+
+                success = true;
+
+            }
+
+        }
+
+        catch(IOException exception) {
+
+            Log.e(TAG, exception.toString());
+
+        }
+
+        // return whether or not the request was successful
+        return success;
+
+    }
+
+    public void waitForAvailability() {
+        /**
+         * after a Moment has been uploaded to Vimeo, it may not actually be available for playback
+         * it will not return a thumbnail, title, description, or be able to play
+         * so this method just requests the video once a minute, checks if it's available, and when it is... exits
+         */
+
+        boolean available = false;
+        OkHttpClient client = new OkHttpClient();
+        Response response;
+
+        try {
+
+            while(!available) {
+                // while the video isn't available, ask for it every minute
+
+                // wait a minute
+                Thread.sleep(60000);
+
+                // request the video
+                Request request = new Request.Builder()
+                        .url(mApiAddress + mFinalUri)
+                        .addHeader("Authorization", "Bearer " + mAccessToken)
+                        .addHeader("Accept", mApiVersion)
+                        .build();
+
+                // receive the response
+                response = client.newCall(request).execute();
+
+                // convert it to a String
+                String responseString = response.body().string();
+
+                // convert it to JSON
+                JSONObject jsonObject = new JSONObject(responseString);
+
+                // grab the status of the video
+                String availability = jsonObject.getString("status");
+
+                // if the status == "available" set available to true ---> exit the loop and method
+                if(availability.equals(mVideoAvailable)) {
+
+                    available = true;
+
+                }
+
+            }
+
+        }
+
+        catch(InterruptedException exception) {
+            // the thread was interrupted. not a big deal.
+            // this method will just end and the Moment will be updated to Live
+
+            Log.e(TAG, exception.toString());
+
+        }
+
+        catch(IOException exception) {
+
+            Log.e(TAG, exception.toString());
+
+        }
+
+        catch(JSONException exception) {
+
+            Log.e(TAG, exception.toString());
+
+        }
+
 
     }
 

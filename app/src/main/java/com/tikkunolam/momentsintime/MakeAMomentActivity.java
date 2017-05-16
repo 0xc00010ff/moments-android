@@ -48,7 +48,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     final int FIRST_NOTE_LOCATION = 8;
 
     // Strings for use as Extra argument identifiers
-    String mPrimaryKeyExtra, mNoteExtra, mLocalVideoUriExtra, mIntervieweeExtra, mRoleExtra, mIntervieweePhotoUriExtra, mTitleExtra, mDescriptionExtra;
+    String mPrimaryKeyExtra, mNoteExtra, mLocalVideoUriExtra, mIntervieweeExtra, mRoleExtra, mIntervieweePhotoUriExtra,
+            mTitleExtra, mDescriptionExtra;
 
     // integers for use as request codes between Intents
     final int VIDEO_FROM_GALLERY = 1;
@@ -105,6 +106,18 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // make a new managed Moment
         mMoment = Moment.createMoment();
 
+        // set the Moment's status to IN_PROGRESS
+        mMoment.persistUpdates(new PersistenceExecutor() {
+
+            @Override
+            public void execute() {
+
+                mMoment.setEnumState(MomentStateEnum.IN_PROGRESS);
+
+            }
+
+        });
+
         // make a new mViewModelList
         mViewModelList = new ArrayList<Object>();
 
@@ -142,6 +155,22 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                     // submit the Moment
                     submitMoment();
+
+                    // set its status to UPLOADING
+                    final MomentStateEnum momentState = MomentStateEnum.UPLOADING;
+                    mMoment.persistUpdates(new PersistenceExecutor() {
+                        @Override
+                        public void execute() {
+
+                            mMoment.setEnumState(momentState);
+
+                        }
+                    });
+
+                    // signify the operation went through and send the primaryKey of the Moment back to the calling fragment
+                    Intent MyMomentsIntent = new Intent(this, MyMomentsFragment.class);
+                    MyMomentsIntent.putExtra(mPrimaryKeyExtra, mMoment.getPrimaryKey());
+                    setResult(RESULT_OK, MyMomentsIntent);
                     finish();
 
                 }
@@ -150,6 +179,24 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         }
 
         return true;
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        // when the user hits back
+        // delete the Moment that was being created if it doesn't have any fields
+
+        // call the superclass's method
+        super.onBackPressed();
+
+        if(mMoment.getInterviewee() == null && mMoment.getTitle() == null && mMoment.getDescription() == null && mMoment.getLocalVideoUri() == null) {
+            // the Moment doesn't have an interviewee, title, description, or video... delete it.
+
+            mMoment.endItAll();
+
+        }
+
 
     }
 

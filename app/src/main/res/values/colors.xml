@@ -10,4 +10,7 @@
     <color name="background">#f2f2f2</color>
     <color name="cardBackground">#ffffff</color>
     <color name="shadow">#52000000</color>
+    <color name="green">#55D07E</color>
+    <color name="red">#D90005</color>
+    <color name="yellow">#FCC670</color>
 </resources>

@@ -18,9 +18,6 @@ public class MainActivity extends AppCompatActivity
     // tag for logging purposes
     private final String TAG = "MainActivity";
 
-    // integer identifiers for Activity results
-    final int NEW_MOMENT = 1;
-
     // strings for intent extra arguments
     String mPrimaryKeyExtra;
     String mVimeoVideoUriExtra;
@@ -79,22 +76,8 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    // the callback method that will be called when the FloatingActionButton or NoMomentPrompt in MyMomentsFragment is clicked
-    public void onNewMomentClick() {
-        // open the MakeAMomentActivity
-
-        // create the Intent
-        Intent makeAMomentIntent = new Intent(getBaseContext(), MakeAMomentActivity.class);
-
-        // open the activity
-        startActivityForResult(makeAMomentIntent, NEW_MOMENT);
-
-
-    }
-
     // the callback method that will be called when the MomentPrompt is clicked in the CommunityFragment RecyclerView
     public void onMomentPromptClick() {
-
 
 
     }

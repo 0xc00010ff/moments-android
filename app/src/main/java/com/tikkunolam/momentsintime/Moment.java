@@ -2,6 +2,8 @@ package com.tikkunolam.momentsintime;
 
 import android.content.Context;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import io.realm.Realm;
@@ -313,6 +315,20 @@ public class Moment extends RealmObject {
 
     }
 
+    public static ArrayList<Moment> getMyMoments() {
+
+        ArrayList<Moment> momentList = new ArrayList<>();
+
+        Realm realm = Realm.getDefaultInstance();
+
+        RealmResults<Moment> realmResults = realm.where(Moment.class).findAll();
+
+        momentList.addAll(realm.copyFromRealm(realmResults));
+
+        return momentList;
+
+    }
+
     public void uploadMoment(Context applicationContext) {
         // grab a VimeoNetworker to handle upload
 
@@ -334,6 +350,35 @@ public class Moment extends RealmObject {
         // set the state of the Moment
 
         this.state = state.name();
+
+    }
+
+    public void endItAll() {
+        // the Moment deletes itself from Realm
+
+        Realm realm = Realm.getDefaultInstance();
+
+
+        realm.executeTransaction(new Realm.Transaction() {
+
+            @Override
+            public void execute(Realm realm) {
+
+                if(notes != null) {
+                    // if there are notes, delete them from their table
+
+                    notes.deleteAllFromRealm();
+
+                }
+
+                // Moment finds itself by primaryKey and deletes itself
+                RealmResults<Moment> realmResults = realm.where(Moment.class).equalTo("primaryKey", primaryKey).findAll();
+                realmResults.deleteAllFromRealm();
+
+
+            }
+
+        });
 
     }
 
