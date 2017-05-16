@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     // the callback method that will be called when Videos are selected
-    public void onMomentSelect(Moment moment) {
+    public void onVideoSelect(Moment moment) {
         // open a new Activity to view the Moment
 
         // create the Intent
@@ -75,6 +75,39 @@ public class MainActivity extends AppCompatActivity
         startActivity(videoIntent);
 
     }
+
+    // the callback method that will be called when a MomentCard is clicked from MyMoments
+    public void onMyMomentCardClick(Moment moment) {
+
+
+    }
+
+    // the callback method that will be called when the share button is clicked in a
+    public void onMyShareClick(Moment moment) {
+
+
+
+    }
+
+    public void onCommunityShareClick(Moment moment) {
+
+
+
+    }
+
+    // the callback method that will be called when the dots are clicked in a MyMoments MomentCard
+    public void onMyDotsClick(Moment moment) {
+
+
+
+    }
+
+    // the callback method that will be called when the dots are clicked in a Community MomentCard
+    public void onCommunityDotsClick(Moment moment) {
+
+
+    }
+
 
     // the callback method that will be called when the MomentPrompt is clicked in the CommunityFragment RecyclerView
     public void onMomentPromptClick() {
