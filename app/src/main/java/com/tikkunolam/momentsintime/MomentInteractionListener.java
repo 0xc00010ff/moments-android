@@ -1,8 +1,8 @@
 package com.tikkunolam.momentsintime;
 
-public interface FragmentInteractionListener {
+public interface MomentInteractionListener {
     /**
-     * interface common to the Fragments to share information with the MainActivity
+     * interface for the Moments to notify an Activity of clicks within it
      */
 
     // when a play button is clicked in a MomentCard
@@ -25,5 +25,4 @@ public interface FragmentInteractionListener {
 
     // when the moment_prompt is clicked
     void onMomentPromptClick();
-
 }

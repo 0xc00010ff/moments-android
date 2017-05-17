@@ -47,12 +47,6 @@ public class MyMomentsFragment extends Fragment{
     // list of Moments and Prompts to fill the RecyclerView
     ArrayList<Object> mViewModelList;
 
-    // a VimeoNetworker for network calls
-    VimeoNetworker mVimeoNetworker;
-
-    // callback for the activity to handle fragment business
-    FragmentInteractionListener mActivityCallback;
-
     // MomentCardAdapter for the RecyclerView
     MomentCardAdapter mMomentCardAdapter;
 
@@ -156,16 +150,6 @@ public class MyMomentsFragment extends Fragment{
 
         // fetch the mPrimaryKeyExtra
         mPrimaryKeyExtra = getString(R.string.primary_key_extra);
-
-    }
-
-    @Override
-    public void onAttach(Context context) {
-
-        super.onAttach(context);
-
-        // get the reference to the activity for the callback
-        mActivityCallback = (FragmentInteractionListener) context;
 
     }
 

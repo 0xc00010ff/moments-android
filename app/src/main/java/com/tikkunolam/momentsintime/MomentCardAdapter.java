@@ -1,24 +1,13 @@
 package com.tikkunolam.momentsintime;
 
 import android.content.Context;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bumptech.glide.Glide;
-import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
-
-import io.realm.Case;
-
-import static android.R.attr.configure;
-import static com.tikkunolam.momentsintime.R.drawable.camera;
 
 public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     // Adapter for populating the RecyclerViews with moment_cards
@@ -32,7 +21,7 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     String mStateInProgress, mStateUploading, mStateFailed, mStateLive;
 
     // reference to the Activity for making callbacks in onClick
-    FragmentInteractionListener mActivityCallback;
+    MomentInteractionListener mActivityCallback;
 
     // ArrayList of objects, holding Moments and MomentPrompts
     ArrayList<Object> mViewModelList;

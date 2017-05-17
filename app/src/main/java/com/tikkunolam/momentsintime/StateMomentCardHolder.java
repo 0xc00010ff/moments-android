@@ -23,7 +23,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
     Context mContext;
 
     // activity reference through which callbacks are made
-    FragmentInteractionListener mActivityCallback;
+    MomentInteractionListener mActivityCallback;
 
     // Strings to be filled from resources and to fill the momentStateTextView
     String mStateInProgress, mStateUploading, mStateFailed, mStateLive;
@@ -190,8 +190,6 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         momentStateTextView.setText(mStateUploading);
         coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_blue));
 
-        // set all the onClickListeners
-        setOnCardClick(moment);
         setOnVideoClick(moment);
         setOnDotsClick(moment);
 
@@ -211,8 +209,6 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         momentStateTextView.setText(mStateFailed);
         coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_red));
 
-        // set all the onClickListeners
-        setOnCardClick(moment);
         setOnVideoClick(moment);
         setOnDotsClick(moment);
 

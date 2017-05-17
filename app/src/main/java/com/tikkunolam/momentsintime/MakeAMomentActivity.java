@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import io.realm.RealmList;
+import io.realm.RealmResults;
 
 import static com.tikkunolam.momentsintime.R.string.primary_key_extra;
 
@@ -99,24 +100,39 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         mToolbar = (Toolbar) findViewById(R.id.make_a_moment_toolbar);
         setSupportActionBar(mToolbar);
 
+        // fetch the primaryKey that may have been passed in
+        String primaryKey = getIntent().getStringExtra(mPrimaryKeyExtra);
+
+        // if there's no primaryKey, they're making a new Moment, so create a Moment and set its state to IN_PROGRESS
+        if(primaryKey == null) {
+
+            // make a new managed Moment
+            mMoment = Moment.createMoment();
+
+            // set the Moment's status to IN_PROGRESS
+            mMoment.persistUpdates(new PersistenceExecutor() {
+
+                @Override
+                public void execute() {
+
+                    mMoment.setEnumState(MomentStateEnum.IN_PROGRESS);
+
+                }
+
+            });
+
+        }
+
+        // otherwise they're editing a Moment.. find it
+        else {
+
+            mMoment = Moment.findMoment(primaryKey);
+
+        }
+
 
         // get the RecyclerView. this holds everything in this activity but the toolbar
         mRecyclerView = (RecyclerView) findViewById(R.id.make_a_moment_recyclerView);
-
-        // make a new managed Moment
-        mMoment = Moment.createMoment();
-
-        // set the Moment's status to IN_PROGRESS
-        mMoment.persistUpdates(new PersistenceExecutor() {
-
-            @Override
-            public void execute() {
-
-                mMoment.setEnumState(MomentStateEnum.IN_PROGRESS);
-
-            }
-
-        });
 
         // make a new mViewModelList
         mViewModelList = new ArrayList<Object>();
@@ -127,6 +143,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // set up the mViewModelList
         setUpViewModelList();
 
+        fillViewsFromMoment(mMoment);
 
     }
 
@@ -224,16 +241,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // add the titles and prompts to the beginning of the mViewModelList
         addTitlesAndPrompts();
 
-        // get the list of Notes from the Moment
-        RealmList<Note> notes = mMoment.getNotes();
-
-        // add the Strings from the Notes to the mViewModelList
-        for(int i = 0; i < notes.size(); i++) {
-
-            mViewModelList.add(notes.get(i).getNote());
-
-        }
-
         // tell the adapter to update itself
         mMakeAMomentAdapter.notifyDataSetChanged();
 
@@ -285,6 +292,43 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         String notesPrompt = getBaseContext().getResources().getString(R.string.notes_prompt);
         mPrompts.add(new SectionPrompt(notesPrompt));
 
+
+    }
+
+    private void fillViewsFromMoment(Moment moment) {
+
+        // if there's an interviewee, add the interviewee card
+        if(moment.getInterviewee() != null) {
+
+            insertInterviewingCard();
+
+        }
+
+        if(moment.getDescription() != null) {
+
+            insertDescriptionCard();
+
+        }
+
+        if(moment.getLocalVideoUri() != null) {
+
+            insertVideoCard();
+
+        }
+
+    }
+
+    private void addNotesFromMoment(Moment moment) {
+        // add all the Notes from the Moment to the mViewModelList
+
+        RealmList<Note> notes = moment.getNotes();
+
+        // add every Note to the mViewModelList
+        for(Note note: notes) {
+
+            mViewModelList.add(FIRST_NOTE_LOCATION, note.getNote());
+
+        }
 
     }
 

@@ -18,10 +18,13 @@ public class MomentCardHolder extends RecyclerView.ViewHolder{
     Context mContext;
 
     // activity reference through which callbacks are made
-    FragmentInteractionListener mActivityCallback;
+    MomentInteractionListener mActivityCallback;
 
     // the ImageView for the mMoment preview
     ImageView videoPreviewImageView;
+
+    // the ImageView for the dots
+    ImageView dotsImageView;
 
     // the textView for the mMoment name
     TextView videoNameTextView;
@@ -45,7 +48,7 @@ public class MomentCardHolder extends RecyclerView.ViewHolder{
         videoNameTextView = (TextView) view.findViewById(R.id.video_name_textView);
         videoDescriptionTextView = (TextView) view.findViewById(R.id.video_description_textView);
         shareTextView = (TextView) view.findViewById(R.id.share_textView);
-
+        dotsImageView = (ImageView) view.findViewById(R.id.dots_imageView);
 
     }
 
@@ -84,6 +87,31 @@ public class MomentCardHolder extends RecyclerView.ViewHolder{
             }
 
         });
+
+        // set the onClick for the share
+        shareTextView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                mActivityCallback.onCommunityShareClick(moment);
+
+            }
+
+        });
+
+        // set the onClick for the dots
+        dotsImageView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                mActivityCallback.onCommunityDotsClick(moment);
+
+            }
+
+        });
+
 
     }
 

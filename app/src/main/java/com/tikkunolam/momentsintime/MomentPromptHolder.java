@@ -17,7 +17,7 @@ public class MomentPromptHolder extends RecyclerView.ViewHolder {
      */
 
     // reference to the MainActivity for callbacks
-    FragmentInteractionListener mActivityCallback;
+    MomentInteractionListener mActivityCallback;
 
     // the Moment prompt TextView
     TextView moment_prompt_textView;
