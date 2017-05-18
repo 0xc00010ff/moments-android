@@ -13,6 +13,8 @@ import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
 
+import static com.tikkunolam.momentsintime.MomentStateEnum.UPLOADING;
+
 public class Moment extends RealmObject {
     /**
      * this class is a model for the main tool within the app
@@ -312,6 +314,22 @@ public class Moment extends RealmObject {
         realm.commitTransaction();
 
         return moment;
+
+    }
+
+    public static ArrayList<Moment> findUploadingMoments() {
+
+        ArrayList<Moment> momentList = new ArrayList<>();
+
+        Realm realm = Realm.getDefaultInstance();
+
+        RealmQuery<Moment> query = realm.where(Moment.class).equalTo("state", UPLOADING.name());
+
+        RealmResults<Moment> moments = query.findAll();
+
+        momentList.addAll(realm.copyFromRealm(moments));
+
+        return momentList;
 
     }
 

@@ -10,6 +10,11 @@
         <item name="android:textColorSecondary">@color/background</item>
         <item name="android:actionMenuTextAppearance">@style/CustomActionBar</item>
         <item name="android:actionMenuTextColor">@drawable/menu_text_color</item>
+        <item name="md_dark_theme">false</item>
+        <item name="md_title_gravity">center</item>
+        <item name="md_content_gravity">center</item>
+        <item name="md_items_gravity">center</item>
+
     </style>
 
     <!--style exists only to change the size and color of the text in the MakeAMomentActivity and subsequent Activities-->

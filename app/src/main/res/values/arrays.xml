@@ -6,7 +6,6 @@
 
         <item>Pick from Facebook</item>
         <item>Enter Manually</item>
-        <item>Cancel</item>
 
     </string-array>
 
@@ -15,7 +14,6 @@
 
         <item>Edit Video</item>
         <item>Delete Video</item>
-        <item>Cancel</item>
 
     </string-array>
 
@@ -23,7 +21,6 @@
     <string-array name="note_dialog_array">
 
         <item>Delete Note</item>
-        <item>Cancel</item>
 
     </string-array>
 
@@ -32,7 +29,6 @@
 
         <item>Share on Facebook</item>
         <item>Message...</item>
-        <item>Cancel</item>
 
     </string-array>
 
@@ -40,7 +36,6 @@
     <string-array name="my_moments_dots_dialog_array">
 
         <item>Delete Moment</item>
-        <item>Cancel</item>
 
     </string-array>
 
@@ -49,7 +44,6 @@
 
         <item>Share</item>
         <item>Report</item>
-        <item>Cancel</item>
 
     </string-array>
 

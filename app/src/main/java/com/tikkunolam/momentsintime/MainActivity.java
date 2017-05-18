@@ -2,6 +2,7 @@ package com.tikkunolam.momentsintime;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -15,7 +16,9 @@ import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 
 import static android.os.Build.VERSION_CODES.M;
 
@@ -141,21 +144,20 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
                                 break;
 
-                            case 2:
-                                // user chose to cancel... auto dismiss is on so do nothing
-
-                                break;
-
                         }
 
                     }
 
                 })
+                .positiveText(getString(R.string.dialog_cancel))
+                .positiveColor(getResources().getColor(R.color.red))
                 .show();
 
     }
 
-    public void onCommunityShareClick(Moment moment) {
+    public void onCommunityShareClick(final Moment moment) {
+
+        final Context context = this;
 
         // produce the dialog that presents sharing options
         MaterialDialog dialog = new MaterialDialog.Builder(this)
@@ -170,15 +172,28 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
                             case 0:
                                 // user chose to share on Facebook
 
+                                // show the comming soon dialog
+                                MaterialDialog anotherDialog = new MaterialDialog.Builder(context)
+                                        .title(getString(R.string.in_development_title))
+                                        .content(getString(R.string.in_development_content))
+                                        .positiveText(getString(R.string.in_development_ok))
+                                        .positiveColor(getResources().getColor(R.color.actionBlue))
+                                        .show();
+
                                 break;
 
                             case 1:
                                 // user chose to share through message
 
-                                break;
+                                // make an Intent for sending an sms
+                                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                                sendIntent.setData(Uri.parse("sms:"));
 
-                            case 2:
-                                // user chose to cancel... auto dismiss is on so do nothing
+                                // add a message to it
+                                sendIntent.putExtra("sms_body", getString(R.string.sms_message) + moment.getVideoUrl());
+
+                                // start the Activity
+                                startActivity(sendIntent);
 
                                 break;
 
@@ -187,12 +202,16 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
                     }
 
                 })
+                .positiveText(getString(R.string.dialog_cancel))
+                .positiveColor(getResources().getColor(R.color.actionBlue))
                 .show();
 
     }
 
     // the callback method that will be called when the dots are clicked in a MyMoments MomentCard
     public void onMyDotsClick(final Moment moment) {
+
+        final Context context = this;
 
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .items(R.array.my_moments_dots_dialog_array)
@@ -217,26 +236,40 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
                                 else {
                                     // tell the user not to do that
 
+                                    dialog.hide();
+
+                                    MaterialDialog dontDialog = new MaterialDialog.Builder(context)
+                                            .title(getString(R.string.cant_delete_title))
+                                            .titleGravity(GravityEnum.CENTER)
+                                            .content(getString(R.string.cant_delete_content))
+                                            .contentGravity(GravityEnum.CENTER)
+                                            .positiveText(getString(R.string.cant_delete_ok))
+                                            .itemsGravity(GravityEnum.CENTER)
+                                            .positiveColor(getResources().getColor(R.color.colorPrimary))
+                                            .theme(Theme.LIGHT)
+                                            .show();
+
 
                                 }
 
 
                                 break;
 
-                            case 1:
-                                // the user chose to cancel. auto dismiss is on so do nothing
-
                         }
 
                     }
 
                 })
+                .positiveText(getString(R.string.dialog_cancel))
+                .positiveColor(getResources().getColor(R.color.actionBlue))
                 .show();
 
     }
 
     // the callback method that will be called when the dots are clicked in a Community MomentCard
-    public void onCommunityDotsClick(Moment moment) {
+    public void onCommunityDotsClick(final Moment moment) {
+
+        final Context context = this;
 
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .items(R.array.community_moments_dots_dialog_array)
@@ -250,21 +283,68 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
                             case 0:
                                 // user chose to share
 
+                                MaterialDialog newDialog = new MaterialDialog.Builder(context)
+                                        .items(R.array.moment_share_dialog_array)
+                                        .itemsCallback(new MaterialDialog.ListCallback() {
+
+                                            @Override
+                                            public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+
+                                                switch(position) {
+
+                                                    case 0:
+                                                        // user chose facebook
+
+                                                        // show the comming soon dialog
+                                                        MaterialDialog anotherDialog = new MaterialDialog.Builder(context)
+                                                                .title(getString(R.string.in_development_title))
+                                                                .content(getString(R.string.in_development_content))
+                                                                .positiveText(getString(R.string.in_development_ok))
+                                                                .positiveColor(getResources().getColor(R.color.actionBlue))
+                                                                .show();
+
+                                                        break;
+                                                    case 1:
+                                                        // user chose Message
+
+                                                        // make an Intent for sending an sms
+                                                        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                                                        sendIntent.setData(Uri.parse("sms:"));
+
+                                                        // add a message to it
+                                                        sendIntent.putExtra("sms_body", getString(R.string.sms_message) + moment.getVideoUrl());
+
+                                                        // start the Activity
+                                                        startActivity(sendIntent);
+                                                }
+
+                                            }
+
+                                        })
+                                        .show();
+
                                 break;
 
                             case 1:
                                 // user chose to report. compose an email.
 
-                                break;
+                                Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                                emailIntent.setType("text/html");
+                                emailIntent.putExtra(Intent.EXTRA_EMAIL, getString(R.string.email_recipient));
+                                emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
+                                emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_content) + " " + moment.getVideoUrl());
 
-                            case 2:
-                                // user chose to cancel. auto dismiss is on so do nothing
+                                startActivity(emailIntent);
+
+                                break;
 
                         }
 
                     }
 
                 })
+                .positiveText(getString(R.string.dialog_cancel))
+                .positiveColor(getResources().getColor(R.color.actionBlue))
                 .show();
 
 

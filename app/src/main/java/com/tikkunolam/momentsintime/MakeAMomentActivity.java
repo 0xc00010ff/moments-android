@@ -677,16 +677,13 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                                 break;
 
-                            case 2:
-                                // user chose to cancel. auto dismiss is on so do nothing
-
-                                break;
-
                         }
 
                     }
 
                 })
+                .positiveText(getString(R.string.dialog_cancel))
+                .positiveColor(getResources().getColor(R.color.actionBlue))
                 .show();
 
     }
