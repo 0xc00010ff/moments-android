@@ -2,6 +2,7 @@ package com.tikkunolam.momentsintime;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
@@ -12,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -22,10 +24,16 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
     // tag for logging purposes
     private final String TAG = "MainActivity";
 
+    Context mContext = this;
+
     // strings for intent extra arguments
     String mPrimaryKeyExtra;
     String mVimeoVideoUriExtra;
     String mLocalVideoUriExtra;
+
+    // the Fragments in the ViewPager
+    Fragment communityFragment;
+    myMomentInterface myMomentsFragment;
 
     // integers for request codes from startActivityForResult
     final int MAKE_A_MOMENT_REQUEST_CODE = 1;
@@ -184,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
     }
 
     // the callback method that will be called when the dots are clicked in a MyMoments MomentCard
-    public void onMyDotsClick(Moment moment) {
+    public void onMyDotsClick(final Moment moment) {
 
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .items(R.array.my_moments_dots_dialog_array)
@@ -198,6 +206,20 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
                             case 0:
                                 // the user chose to delete the Moment. tell the Moment to delete itself and..
                                 // ..tell the MyMomentsFragment to reload its mViewModelList
+
+                                if(moment.getMomentState() != MomentStateEnum.UPLOADING) {
+
+                                    AsyncDeleteMoment asyncDeleteMoment = new AsyncDeleteMoment();
+                                    asyncDeleteMoment.execute(moment);
+
+                                }
+
+                                else {
+                                    // tell the user not to do that
+
+
+                                }
+
 
                                 break;
 
@@ -255,6 +277,38 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
     }
 
+    private class AsyncDeleteMoment extends AsyncTask<Moment, Void, Boolean> {
+
+        protected Boolean doInBackground(Moment... moment) {
+
+            Boolean deleted = false;
+
+            deleted = moment[0].endItAll(mContext);
+
+            return deleted;
+
+        }
+
+        protected void onPostExecute(Boolean deleted) {
+
+            if(deleted) {
+                // it was deleted successfully. tell the fragment to reload its mViewModelList
+
+                myMomentsFragment.refreshListFromActivity();
+
+            }
+
+            else {
+                // it wasn't deleted successfully
+
+                // display a dialog saying something went wrong
+
+            }
+
+        }
+
+    }
+
     private class PagerAdapter extends FragmentPagerAdapter {
         //bind fragments to ViewPager for the TabLayout
 
@@ -292,9 +346,36 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
         }
 
         @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+
+            Fragment createdFragment = (Fragment) super.instantiateItem(container, position);
+
+            // save the appropriate reference depending on position
+            switch (position) {
+
+                case 0:
+
+                    communityFragment = (CommunityFragment) createdFragment;
+
+                    break;
+
+                case 1:
+
+                    myMomentsFragment = (MyMomentsFragment) createdFragment;
+
+                    break;
+
+            }
+
+            return createdFragment;
+
+        }
+
+        @Override
         public int getCount(){
 
             return mNumOfTabs;
+
         }
 
         @Override
@@ -304,6 +385,15 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
             return tabTitles[position];
 
         }
+    }
+
+    /**
+     * INTERFACES TO THE FRAGMENTS
+     */
+    public interface myMomentInterface {
+
+        void refreshListFromActivity();
+
     }
 
 }

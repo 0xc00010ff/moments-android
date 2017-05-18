@@ -353,32 +353,44 @@ public class Moment extends RealmObject {
 
     }
 
-    public void endItAll() {
-        // the Moment deletes itself from Realm
+    public boolean endItAll(Context context) {
+        // the Moment deletes itself from Realm and from Vimeo if it's live
 
         Realm realm = Realm.getDefaultInstance();
 
+        boolean deleteFromRealm = true;
 
-        realm.executeTransaction(new Realm.Transaction() {
 
-            @Override
-            public void execute(Realm realm) {
+        // delete the Moment from Vimeo if it's live
+        if (getMomentState() == MomentStateEnum.LIVE) {
+            // delete from Vimeo
+            VimeoNetworker vimeoNetworker = new VimeoNetworker(context);
+            deleteFromRealm = vimeoNetworker.deleteMoment(this);
 
-                if(notes != null) {
-                    // if there are notes, delete them from their table
+        }
 
-                    notes.deleteAllFromRealm();
+
+        //delete the Moment from Realm
+
+        if(deleteFromRealm) {
+
+            realm.executeTransaction(new Realm.Transaction() {
+
+                @Override
+                public void execute(Realm realm) {
+
+                    // Moment finds itself by primaryKey and deletes itself
+                    RealmResults<Moment> realmResults = realm.where(Moment.class).equalTo("primaryKey", primaryKey).findAll();
+                    realmResults.deleteAllFromRealm();
+
 
                 }
 
-                // Moment finds itself by primaryKey and deletes itself
-                RealmResults<Moment> realmResults = realm.where(Moment.class).equalTo("primaryKey", primaryKey).findAll();
-                realmResults.deleteAllFromRealm();
+            });
 
+        }
 
-            }
-
-        });
+        return deleteFromRealm;
 
     }
 

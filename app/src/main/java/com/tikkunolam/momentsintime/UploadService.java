@@ -21,6 +21,7 @@ import org.json.JSONObject;
 
 import static com.tikkunolam.momentsintime.MomentStateEnum.FAILED;
 import static com.tikkunolam.momentsintime.MomentStateEnum.LIVE;
+import static com.tikkunolam.momentsintime.MomentStateEnum.UPLOADING;
 
 
 public class UploadService extends IntentService {
@@ -77,6 +78,9 @@ public class UploadService extends IntentService {
     // the Moment we're working with
     Moment mMoment;
 
+    // to keep track of if the video has finished uploading, for handling business in onDestroy
+    boolean uploaded;
+
 
     /**
      * CONSTRUCTOR
@@ -95,6 +99,9 @@ public class UploadService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         // do the upload work
+
+        // the video has not finished uploading yet
+        uploaded = false;
 
         // strings for intent extra arguments/parameters
         mVideoFileExtra = getString(R.string.video_file_extra);
@@ -379,6 +386,9 @@ public class UploadService extends IntentService {
             // it worked
             success = true;
 
+            // signify that the upload has completed
+            uploaded = true;
+
         }
 
         catch(IOException exception) {
@@ -514,6 +524,53 @@ public class UploadService extends IntentService {
 
         }
 
+
+    }
+
+    @Override
+    public void onDestroy() {
+
+        // call the superclass's method
+        super.onDestroy();
+
+        // if the Moment has finished uploading
+        if(uploaded = true) {
+
+            // but its state hasn't been updated from UPLOADING
+            if(mMoment.getMomentState() == UPLOADING) {
+
+                // update it to LIVE
+                mMoment.persistUpdates(new PersistenceExecutor() {
+
+                    @Override
+                    public void execute() {
+
+                        mMoment.setEnumState(LIVE);
+
+                    }
+
+                });
+
+            }
+
+        }
+
+        // if it hasn't finished uploading
+        else {
+
+            // indicate that it has failed
+            mMoment.persistUpdates(new PersistenceExecutor() {
+
+                @Override
+                public void execute() {
+
+                    mMoment.setEnumState(FAILED);
+
+                }
+
+            });
+
+        }
 
     }
 

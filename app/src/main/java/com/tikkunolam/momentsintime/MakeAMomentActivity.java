@@ -210,7 +210,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         if(mMoment.getInterviewee() == null && mMoment.getTitle() == null && mMoment.getDescription() == null && mMoment.getLocalVideoUri() == null) {
             // the Moment doesn't have an interviewee, title, description, or video... delete it.
 
-            mMoment.endItAll();
+            mMoment.endItAll(this);
 
         }
 

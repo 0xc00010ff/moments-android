@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import static android.app.Activity.RESULT_OK;
 
 
-public class MyMomentsFragment extends Fragment{
+public class MyMomentsFragment extends Fragment implements MainActivity.myMomentInterface{
 
     // tag for logging purposes
     private final String TAG = "My Moments Fragment";
@@ -277,6 +277,28 @@ public class MyMomentsFragment extends Fragment{
         // an UploadService finished.. reload the views
 
         fetchMoments();
+
+    }
+
+    /**
+     * METHODS TO BE CALLED FROM THE PARENT ACTIVITY
+     */
+
+    public void refreshListFromActivity() {
+        // called from the MainActivity when it has changed some underlying data and the Fragment needs to refresh
+
+
+        // clear the contents of the screen
+        mViewModelList.clear();
+
+        // fetch the local Moments
+        mMomentList.getMyMoments();
+
+        // add all the fetched Moments to the mViewModelList
+        mViewModelList.addAll(mMomentList.getMomentList());
+
+        // tell the Adapter to update itself
+        mMomentCardAdapter.notifyDataSetChanged();
 
     }
 

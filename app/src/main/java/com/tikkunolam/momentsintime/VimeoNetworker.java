@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -448,6 +449,46 @@ public class VimeoNetworker {
         }
 
         return moment;
+
+    }
+
+    public boolean deleteMoment(Moment moment) {
+        // deletes the Moment from Vimeo
+
+        OkHttpClient client = new OkHttpClient();
+        Response response = null;
+        boolean success = false;
+
+        // try to delete the video
+        try{
+
+            Request request = new Request.Builder()
+                    .url(mApiAddress + moment.getVideoUri())
+                    .addHeader("Authorization", "Bearer " + mAccessToken)
+                    .addHeader("Accept", mApiVersion)
+                    .delete()
+                    .build();
+
+            response = client.newCall(request).execute();
+
+            Log.d(TAG, "wah happen");
+
+            success = true;
+
+        }
+
+        catch(IOException exception) {
+
+            Log.e(TAG, exception.toString());
+
+        }
+
+        if(response != null) {
+
+            response.body().close();
+
+        }
+        return success;
 
     }
 
