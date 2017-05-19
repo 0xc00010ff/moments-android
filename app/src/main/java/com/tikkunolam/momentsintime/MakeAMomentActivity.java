@@ -630,6 +630,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
             }
 
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+
         }
 
         // express an implicit intent to film a video
