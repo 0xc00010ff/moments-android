@@ -24,13 +24,9 @@ public class FileDealer {
 
     final static String TAG = "FileDealer";
 
-    Context mContext;
 
-    public FileDealer(Context context) {
+    public FileDealer() {
 
-        // class is just static methods, so empty constructor
-
-        mContext = context;
 
     }
 

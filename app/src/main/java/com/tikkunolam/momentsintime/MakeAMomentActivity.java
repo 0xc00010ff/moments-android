@@ -485,7 +485,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     final String selectedVideoUri = data.getData().toString();
 
                     // get the file path from the uri
-                    FileDealer fileDealer = new FileDealer(this);
+                    FileDealer fileDealer = new FileDealer();
                     final String filePath = fileDealer.getPath(this, Uri.parse(selectedVideoUri));
 
                     // update the Moment in Realm
@@ -513,11 +513,13 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     // replace the section_prompt with a video_card
 
                     // get the Uri from the Intent
-                    final String filmedVideoUri = data.getData().toString();
+                    String filmedVideoUri = data.getData().toString();
 
-                    fileDealer = new FileDealer(this);
+                    // get a FileDealer
+                    fileDealer = new FileDealer();
 
-                    String filmedVideoPath = fileDealer.getPath(this, Uri.parse(filmedVideoUri));
+                    // get the path of the video from the FileDealer
+                    final String filmedVideoPath = fileDealer.getPath(this, Uri.parse(filmedVideoUri));
 
                     // update the Moment in Realm
                     mMoment.persistUpdates(new PersistenceExecutor() {
@@ -525,7 +527,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                         @Override
                         public void execute() {
 
-                            mMoment.setLocalVideoFilePath(filmedVideoUri);
+                            mMoment.setLocalVideoFilePath(filmedVideoPath);
 
                         }
 

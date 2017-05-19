@@ -204,7 +204,7 @@ public class InterviewingActivity extends AppCompatActivity {
 
                 // get the photo's Uri from the Intent and set the mIntervieweePhotoUri with it
                 Uri photoUri = data.getData();
-                FileDealer fileDealer = new FileDealer(this);
+                FileDealer fileDealer = new FileDealer();
                 mIntervieweePhotoFile = fileDealer.getPath(this, photoUri);
 
                 // add the picture to the screen
