@@ -9,25 +9,34 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class FileDealer {
     /**
      * Class for dealing with files and Uris
      */
 
-    public FileDealer() {
+    final static String TAG = "FileDealer";
+
+    Context mContext;
+
+    public FileDealer(Context context) {
 
         // class is just static methods, so empty constructor
+
+        mContext = context;
 
     }
 
 
 
-    public static String getPath(final Context context, final Uri uri) {
+    public String getPath(final Context context, final Uri uri) {
         // takes a Uri and returns the path to the file, whatever/wherever that file may be
 
         // determines if the API Level is >= 19
@@ -114,7 +123,7 @@ public class FileDealer {
         return null;
     }
 
-    public static String getDataColumn(Context context, Uri uri, String selection,
+    public String getDataColumn(Context context, Uri uri, String selection,
                                        String[] selectionArgs) {
         // get the data column from the ContentProvider associated with the Uri
 
@@ -148,21 +157,21 @@ public class FileDealer {
 
     }
 
-    public static boolean isExternalStorageDocument(Uri uri) {
+    public boolean isExternalStorageDocument(Uri uri) {
         // checks the authority to determine if it's in external storage
 
         return "com.android.externalstorage.documents".equals(uri.getAuthority());
 
     }
 
-    public static boolean isDownloadsDocument(Uri uri) {
+    public boolean isDownloadsDocument(Uri uri) {
         // checks the authority to determine if it's in downloads
 
         return "com.android.providers.downloads.documents".equals(uri.getAuthority());
 
     }
 
-    public static boolean isMediaDocument(Uri uri) {
+    public boolean isMediaDocument(Uri uri) {
         // checks the authority to determine if it's in Media
 
         return "com.android.providers.media.documents".equals(uri.getAuthority());
@@ -170,7 +179,7 @@ public class FileDealer {
     }
 
 
-    public static byte[] fullyReadFileToBytes(File file) throws IOException {
+    public byte[] fullyReadFileToBytes(File file) throws IOException {
         // takes a file and reads it into a byte array
 
         // get the size of the file

@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Moments In Time</string>
+    <string name="app_directory">momentsintime</string>
 
     <!--API DETAILS-->
 
@@ -102,11 +103,11 @@
     <string name="note_extra">note</string>
     <string name="interviewee_extra">interviewee</string>
     <string name="interviewee_role_extra">role</string>
-    <string name="interviewee_photo_uri_extra">intervieweePhoto</string>
+    <string name="interviewee_photo_file_extra">intervieweePhoto</string>
     <string name="title_extra">title</string>
     <string name="description_extra"></string>
     <string name="primary_key_extra">primaryKey</string>
-    <string name="local_video_uri_extra">localVideo</string>
+    <string name="local_video_file_extra">localVideo</string>
     <string name="vimeo_video_uri_extra">vimeoVideo</string>
     <string name="video_file_extra">videoFile</string>
 

@@ -13,6 +13,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+
 public class StateMomentCardHolder extends RecyclerView.ViewHolder{
     /**
      * this class is a holder for the moment_cards that compose the Community RecyclerView
@@ -129,12 +131,14 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         shareTextView.setVisibility(View.INVISIBLE);
 
         // if the Moment has a localVideoUri, fill the videoPreviewImageView with a preview from it
-        if(moment.getLocalVideoUri() != null) {
+        if(moment.getLocalVideoFilePath() != null) {
+
+            // gets the video file path string from the Moment and makes a file with it
+            File videoFile = new File(moment.getLocalVideoFilePath());
 
             // set the preview image with Glide, using the local video uri
-            Glide.with(mContext).load(moment.getLocalVideoUri()).asBitmap().into(videoPreviewImageView);
+            Glide.with(mContext).load(Uri.fromFile(videoFile)).asBitmap().into(videoPreviewImageView);
 
-            // set an onClickListener on the play button to play the video
 
         }
 
@@ -182,8 +186,11 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         // hide the shareTextView
         shareTextView.setVisibility(View.INVISIBLE);
 
+        // gets the video file path string from the Moment and makes a file with it
+        File videoFile = new File(moment.getLocalVideoFilePath());
+
         // set the preview image with Glide, using the local video uri
-        Glide.with(mContext).load(moment.getLocalVideoUri()).asBitmap().into(videoPreviewImageView);
+        Glide.with(mContext).load(Uri.fromFile(videoFile)).asBitmap().into(videoPreviewImageView);
 
         videoNameTextView.setText(moment.getTitle());
         videoDescriptionTextView.setText(moment.getDescription());
@@ -201,8 +208,11 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         // hide the shareTextView
         shareTextView.setVisibility(View.INVISIBLE);
 
-        // set the preview image with Glide, using the local video uri
-        Glide.with(mContext).load(moment.getLocalVideoUri()).asBitmap().into(videoPreviewImageView);
+        // gets the video file path string from the Moment and makes a file with it
+        File videoFile = new File(moment.getLocalVideoFilePath());
+
+        // set the preview image with Glide, using the local video file
+        Glide.with(mContext).load(Uri.fromFile(videoFile)).asBitmap().into(videoPreviewImageView);
 
         videoNameTextView.setText(moment.getTitle());
         videoDescriptionTextView.setText(moment.getDescription());

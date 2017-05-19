@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.widget.VideoView;
 import android.widget.MediaController;
 
+import java.io.File;
+
 public class VideoViewActivity extends AppCompatActivity {
 
     // the mMoment that was passed in
@@ -15,10 +17,10 @@ public class VideoViewActivity extends AppCompatActivity {
 
     // strings for intent extra arguments
     String mPrimaryKeyExtra;
-    String mLocalVideoUriExtra;
+    String mLocalVideoFileExtra;
     String mVimeoVideoUriExtra;
 
-    String mLocalVideoUri;
+    String mLocalVideoFile;
     String mVimeoVideoUri;
 
     // ui references
@@ -34,14 +36,14 @@ public class VideoViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video_view);
 
         // fetch the string for Intent Extra argument from resources
-        mLocalVideoUriExtra = getString(R.string.local_video_uri_extra);
+        mLocalVideoFileExtra = getString(R.string.local_video_file_extra);
         mVimeoVideoUriExtra = getString(R.string.vimeo_video_uri_extra);
 
         // get the VideoView
         mVideoView = (VideoView) findViewById(R.id.videoView);
 
         // get the mLocalVideoUri if there is one
-        mLocalVideoUri = getIntent().getStringExtra(mLocalVideoUriExtra);
+        mLocalVideoFile = getIntent().getStringExtra(mLocalVideoFileExtra);
 
         // get the mVimeoVideoUri if there is one
         mVimeoVideoUri = getIntent().getStringExtra(mVimeoVideoUriExtra);
@@ -59,11 +61,13 @@ public class VideoViewActivity extends AppCompatActivity {
 
     private void setUpVideoView( ) {
 
-        if(mLocalVideoUri != null) {
+        if(mLocalVideoFile != null) {
             // there's a local video so set up the MediaController with that
 
+            File videoFile = new File(mLocalVideoFile);
+
             // set the video path
-            mVideoView.setVideoURI(Uri.parse(mLocalVideoUri));
+            mVideoView.setVideoURI(Uri.fromFile(videoFile));
 
             // set up the MediaController
             mMediaController = new MediaController(this);

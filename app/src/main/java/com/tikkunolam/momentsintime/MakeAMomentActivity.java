@@ -31,6 +31,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     final int FIRST_NOTE_LOCATION = 8;
 
     // Strings for use as Extra argument identifiers
-    String mPrimaryKeyExtra, mNoteExtra, mLocalVideoUriExtra, mIntervieweeExtra, mRoleExtra, mIntervieweePhotoUriExtra,
+    String mPrimaryKeyExtra, mNoteExtra, mLocalVideoFileExtra, mIntervieweeExtra, mRoleExtra, mIntervieweePhotoFileExtra,
             mTitleExtra, mDescriptionExtra;
 
     // integers for use as request codes between Intents
@@ -89,10 +90,10 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // get all the Extra argument names from resources
         mPrimaryKeyExtra = getString(primary_key_extra);
         mNoteExtra = getString(R.string.note_extra);
-        mLocalVideoUriExtra = getString(R.string.local_video_uri_extra);
+        mLocalVideoFileExtra = getString(R.string.local_video_file_extra);
         mIntervieweeExtra = getString(R.string.interviewee_extra);
         mRoleExtra = getString(R.string.interviewee_role_extra);
-        mIntervieweePhotoUriExtra = getString(R.string.interviewee_photo_uri_extra);
+        mIntervieweePhotoFileExtra = getString(R.string.interviewee_photo_file_extra);
         mTitleExtra = getString(R.string.title_extra);
         mDescriptionExtra = getString(R.string.description_extra);
 
@@ -207,7 +208,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // call the superclass's method
         super.onBackPressed();
 
-        if(mMoment.getInterviewee() == null && mMoment.getTitle() == null && mMoment.getDescription() == null && mMoment.getLocalVideoUri() == null) {
+        if(mMoment.getInterviewee() == null && mMoment.getTitle() == null && mMoment.getDescription() == null && mMoment.getLocalVideoFilePath() == null) {
             // the Moment doesn't have an interviewee, title, description, or video... delete it.
 
             mMoment.endItAll(this);
@@ -310,7 +311,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         }
 
-        if(moment.getLocalVideoUri() != null) {
+        if(moment.getLocalVideoFilePath() != null) {
 
             insertVideoCard();
 
@@ -357,7 +358,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         // if the user has provided a title, description, interviewee, and video then it's good
         if (mMoment.getTitle() != null && mMoment.getDescription() != null
-                && mMoment.getInterviewee() != null && mMoment.getLocalVideoUri() != null) {
+                && mMoment.getInterviewee() != null && mMoment.getLocalVideoFilePath() != null) {
 
             return true;
 
@@ -393,7 +394,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     // get the Strings returned from the InterviewingActivity
                     final String interviewee = data.getStringExtra(mIntervieweeExtra);
                     final String intervieweeRole = data.getStringExtra(mRoleExtra);
-                    final String intervieweePhotoUri = data.getStringExtra(mIntervieweePhotoUriExtra);
+                    final String intervieweePhotoFile = data.getStringExtra(mIntervieweePhotoFileExtra);
 
                     // add these to the Moment and update them in Realm
                     mMoment.persistUpdates(new PersistenceExecutor() {
@@ -403,7 +404,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                             mMoment.setInterviewee(interviewee);
                             mMoment.setIntervieweeRole(intervieweeRole);
-                            mMoment.setIntervieweePhotoUri(intervieweePhotoUri);
+                            mMoment.setIntervieweePhotoUri(intervieweePhotoFile);
 
                         }
 
@@ -484,7 +485,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     final String selectedVideoUri = data.getData().toString();
 
                     // get the file path from the uri
-                    final String filePath = FileDealer.getPath(this, Uri.parse(selectedVideoUri));
+                    FileDealer fileDealer = new FileDealer(this);
+                    final String filePath = fileDealer.getPath(this, Uri.parse(selectedVideoUri));
 
                     // update the Moment in Realm
                     mMoment.persistUpdates(new PersistenceExecutor() {
@@ -492,7 +494,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                         @Override
                         public void execute() {
 
-                            mMoment.setLocalVideoUri(selectedVideoUri);
                             mMoment.setLocalVideoFilePath(filePath);
 
                         }
@@ -514,13 +515,17 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     // get the Uri from the Intent
                     final String filmedVideoUri = data.getData().toString();
 
+                    fileDealer = new FileDealer(this);
+
+                    String filmedVideoPath = fileDealer.getPath(this, Uri.parse(filmedVideoUri));
+
                     // update the Moment in Realm
                     mMoment.persistUpdates(new PersistenceExecutor() {
 
                         @Override
                         public void execute() {
 
-                            mMoment.setLocalVideoUri(filmedVideoUri);
+                            mMoment.setLocalVideoFilePath(filmedVideoUri);
 
                         }
 
@@ -572,7 +577,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                                 // attach the Moment's interviewee, interviewee role, and interviewee photo uri
                                 interviewingIntent.putExtra(mIntervieweeExtra, mMoment.getInterviewee());
                                 interviewingIntent.putExtra(mRoleExtra, mMoment.getIntervieweeRole());
-                                interviewingIntent.putExtra(mIntervieweePhotoUriExtra, mMoment.getIntervieweePhotoUri());
+                                interviewingIntent.putExtra(mIntervieweePhotoFileExtra, mMoment.getIntervieweePhotoFile());
 
                                 startActivityForResult(interviewingIntent, INTERVIEWING_INTENT);
 
@@ -610,6 +615,20 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
     public void onVideoPromptClick() {
         // deal with loading a FilmVideoIntent, adding the localVideoUri to the Moment, and refreshing
+
+        // if the API level > 21 then READ_EXTERNAL_STORAGE isn't automatic and should be requested
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (shouldShowRequestPermissionRationale(
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                // Explain to the user why we need to read the contacts
+            }
+
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    1);
+        }
 
         // express an implicit intent to film a video
         Intent filmVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
@@ -754,7 +773,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         Intent videoViewActivityIntent = new Intent(this, VideoViewActivity.class);
 
         // add the mMoment's primaryKey as an extra
-        videoViewActivityIntent.putExtra(mLocalVideoUriExtra, mMoment.getLocalVideoUri());
+        videoViewActivityIntent.putExtra(mLocalVideoFileExtra, mMoment.getLocalVideoFilePath());
 
         // start the Activity
         startActivity(videoViewActivityIntent);
@@ -779,9 +798,10 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         }
 
         // add the intervieweePhotoUri if there is one
-        if(mMoment.getIntervieweePhotoUri() != null) {
+        if(mMoment.getIntervieweePhotoFile() != null) {
 
-            interviewingCardData.setIntervieweePhotoUri(Uri.parse(mMoment.getIntervieweePhotoUri()));
+            File intervieweePhotoFile = new File(mMoment.getIntervieweePhotoFile());
+            interviewingCardData.setIntervieweePhotoUri(Uri.fromFile(intervieweePhotoFile));
 
         }
 
@@ -812,8 +832,11 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         // mMoment is guaranteed to have the necessary field so just fill out a VideoCardData
 
+        // get the video file
+        File videoFile = new File(mMoment.getLocalVideoFilePath());
+
         // make a new VideoCardData with it
-        VideoCardData videoCardData = new VideoCardData(Uri.parse(mMoment.getLocalVideoUri()));
+        VideoCardData videoCardData = new VideoCardData(Uri.fromFile(videoFile));
 
         // replace the prompt with the VideoCardData
         mViewModelList.set(5, videoCardData);
