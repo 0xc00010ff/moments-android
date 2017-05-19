@@ -332,9 +332,10 @@ public class UploadService extends IntentService {
         // try to convert the file to a byte array and make the request
         try{
 
-            // read the file into the byte array
+
             FileDealer fileDealer = new FileDealer();
 
+            // read the file into the byte array
             bytes = fileDealer.fullyReadFileToBytes(file);
 
             // make the upload request

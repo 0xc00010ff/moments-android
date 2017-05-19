@@ -31,7 +31,6 @@ public class FileDealer {
     }
 
 
-
     public String getPath(final Context context, final Uri uri) {
         // takes a Uri and returns the path to the file, whatever/wherever that file may be
 
