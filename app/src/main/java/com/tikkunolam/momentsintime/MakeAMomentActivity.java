@@ -486,7 +486,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                     FileDealer fileDealer = new FileDealer();
 
-                    // get the file path from the uri
                     final String filePath = fileDealer.getPath(this, Uri.parse(selectedVideoUri));
 
                     // update the Moment in Realm
@@ -527,7 +526,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                         @Override
                         public void execute() {
-                            
+
                             mMoment.setLocalVideoFilePath(filmedVideoPath);
 
                         }
