@@ -72,6 +72,11 @@
     <string name="topic_prompt">Choose a topic or make your own</string>
     <string name="topic_prompt_highlight">make your own</string>
 
+    <!--strings for the CreateTopicActivity-->
+    <string name="create_topic_toolbar_title">Create a Topic</string>
+    <string name="topic_headline">Headline(short and sweet)</string>
+    <string name="topic_question">Question/Theme</string>
+
     <!--strings for the moment_card_with_state-->
     <string name="state_in_progress">In Progress</string>
     <string name="state_uploading">Uploading...</string>
@@ -110,7 +115,7 @@
     <string name="interviewee_role_extra">role</string>
     <string name="interviewee_photo_file_extra">intervieweePhoto</string>
     <string name="title_extra">title</string>
-    <string name="description_extra"></string>
+    <string name="description_extra">description</string>
     <string name="primary_key_extra">primaryKey</string>
     <string name="local_video_file_extra">localVideo</string>
     <string name="vimeo_video_uri_extra">vimeoVideo</string>

@@ -1,5 +1,6 @@
 package com.tikkunolam.momentsintime;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,7 +38,7 @@ public class TopicActivity extends AppCompatActivity implements TopicAdapter.Top
     String mTitle, mDescription;
 
     // integer identifiers for request codes
-    int mTopicRequest = 1;
+    final int TOPIC_REQUEST = 1;
 
     // list of the objects to fill the RecyclerView
     ArrayList<Object> mViewModelList;
@@ -203,6 +204,43 @@ public class TopicActivity extends AppCompatActivity implements TopicAdapter.Top
 
     }
 
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // called upon returning from another Activity called with an implicit Intent
+
+        // if the operation we asked for was completed successfully
+        if(resultCode == RESULT_OK) {
+
+            // if the Activity we're returning from is one indicated by TOPIC_REQUEST request code
+            if(requestCode == TOPIC_REQUEST) {
+                // fill the mTitle and mDescription from the result
+
+                // get the title
+                mTitle = data.getStringExtra(mTitleExtra);
+
+                // get the description
+                mDescription = data.getStringExtra(mDescriptionExtra);
+
+                // return to the MakeAMomentActivity, title and description in tow
+                Intent makeAMomentIntent = new Intent(this, MakeAMomentActivity.class);
+
+                // attach the title and description
+                makeAMomentIntent.putExtra(mTitleExtra, mTitle);
+                makeAMomentIntent.putExtra(mDescriptionExtra, mDescription);
+
+                // notify that the transaction was successful
+                setResult(RESULT_OK, makeAMomentIntent);
+
+                // return to the calling Activity
+                finish();
+
+
+
+            }
+
+        }
+
+    }
+
     public void onTopicClick(int position) {
         // a topic was clicked
 
@@ -213,6 +251,19 @@ public class TopicActivity extends AppCompatActivity implements TopicAdapter.Top
 
         mDescription = topicCardData.getDescription();
 
+        // return to the MakeAMomentActivity, title and description in tow
+        Intent makeAMomentIntent = new Intent(this, MakeAMomentActivity.class);
+
+        // attach the title and description
+        makeAMomentIntent.putExtra(mTitleExtra, mTitle);
+        makeAMomentIntent.putExtra(mDescriptionExtra, mDescription);
+
+        // notify that the transaction was successful
+        setResult(RESULT_OK, makeAMomentIntent);
+
+        // return to the calling Activity
+        finish();
+
 
     }
 
@@ -220,6 +271,9 @@ public class TopicActivity extends AppCompatActivity implements TopicAdapter.Top
         // the prompt at the top was clicked
 
         // open the CreateTopicActivity
+        Intent createTopicIntent = new Intent(this, CreateTopicActivity.class);
+
+        startActivityForResult(createTopicIntent, TOPIC_REQUEST);
 
 
     }

@@ -317,6 +317,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         }
 
+        // add what notes may already exist
+        addNotesFromMoment(moment);
+
     }
 
     private void addNotesFromMoment(Moment moment) {
