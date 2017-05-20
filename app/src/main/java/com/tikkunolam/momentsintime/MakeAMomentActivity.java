@@ -21,8 +21,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.content.CursorLoader;
+import android.view.WindowManager;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -81,6 +83,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     ArrayList<SectionTitle> mTitles;
     ArrayList<SectionPrompt> mPrompts;
 
+    // a boolean indicating whether the views should be clickable or not
+    boolean mClickable = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +137,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         }
 
+        // determine if the views on screen should be clickable and set mClickable accordingly
+        evaluateClickability();
 
         // get the RecyclerView. this holds everything in this activity but the toolbar
         mRecyclerView = (RecyclerView) findViewById(R.id.make_a_moment_recyclerView);
@@ -157,6 +164,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         mSaveMenuItem = menu.findItem(R.id.make_a_moment_submit);
         mSaveMenuItem.setEnabled(false);
+
+        enableDisableMomentSubmission();
 
         return true;
 
@@ -216,14 +225,13 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         }
 
-
     }
 
     public void setUpRecyclerView() {
         // sets up the RecyclerView with the MakeAMomentAdapter and mViewModelList
 
         // set up the adapter
-        mMakeAMomentAdapter = new MakeAMomentAdapter(this, mViewModelList);
+        mMakeAMomentAdapter = new MakeAMomentAdapter(this, mViewModelList, mClickable);
 
         // set the MakeAMomentAdapter on the mRecyclerView
         mRecyclerView.setAdapter(mMakeAMomentAdapter);
@@ -342,8 +350,12 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         if(isMomentComplete()) {
 
-            // turn MenuItem white
-            mSaveMenuItem.setEnabled(true);
+            if(mClickable) {
+
+                // turn MenuItem white
+                mSaveMenuItem.setEnabled(true);
+
+            }
 
         }
 
@@ -846,6 +858,16 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         // tell the Adapter to update the list on screen
         mMakeAMomentAdapter.notifyDataSetChanged();
+
+    }
+
+    public void evaluateClickability() {
+
+        if(mMoment.getMomentState() == MomentStateEnum.LIVE || mMoment.getMomentState() == MomentStateEnum.UPLOADING) {
+
+            mClickable = false;
+
+        }
 
     }
 

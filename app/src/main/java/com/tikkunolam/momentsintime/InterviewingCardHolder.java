@@ -21,11 +21,14 @@ public class InterviewingCardHolder extends RecyclerView.ViewHolder{
     TextView mIntervieweeNameTextView;
     TextView mIntervieweeRoleTextView;
 
+    // boolean indicating whether the onClickListeners should be set
+    boolean mClickable = true;
+
     /**
      * CONSTRUCTORS
      */
 
-    public InterviewingCardHolder(Context context, View view) {
+    public InterviewingCardHolder(Context context, View view, boolean clickable) {
 
         // call the superclass's constructor
         super(view);
@@ -33,25 +36,31 @@ public class InterviewingCardHolder extends RecyclerView.ViewHolder{
         // set the HolderInteractionListener with the context
         mActivityCallback = (HolderInteractionListener) context;
 
+        mClickable = clickable;
+
         // set all the views
         mInterviewingCardView = (CardView) view;
         mIntervieweePhotoImageView = (ImageView) view.findViewById(R.id.interviewing_card_imageView);
         mIntervieweeNameTextView = (TextView) view.findViewById(R.id.interviewing_card_name_textView);
         mIntervieweeRoleTextView = (TextView) view.findViewById(R.id.interviewing_card_role_textView);
 
-        // set an onclicklistener on the CardView
-        mInterviewingCardView.setOnClickListener(new View.OnClickListener() {
+        if(mClickable) {
 
-            public void onClick(View view) {
-                // tell the Activity that the card was clicked
+            // set an onclicklistener on the CardView
+            mInterviewingCardView.setOnClickListener(new View.OnClickListener() {
 
-                // use the same callback as when a SectionPrompt for interviewing is clicked
-                // the InterviewingActivity determines whether the user is re-entering with data
-                mActivityCallback.onInterviewingPromptClick();
+                public void onClick(View view) {
+                    // tell the Activity that the card was clicked
 
-            }
+                    // use the same callback as when a SectionPrompt for interviewing is clicked
+                    // the InterviewingActivity determines whether the user is re-entering with data
+                    mActivityCallback.onInterviewingPromptClick();
 
-        });
+                }
+
+            });
+
+        }
 
     }
 }

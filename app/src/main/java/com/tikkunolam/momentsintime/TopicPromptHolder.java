@@ -51,7 +51,7 @@ public class TopicPromptHolder extends RecyclerView.ViewHolder{
 
     private void applyListener() {
 
-        String text = (String) topicPromptTextView.getText();
+        String text = topicPromptTextView.getText().toString();
 
         // determine where our string to be highlighted begins
         int beginningOfHighlight = text.indexOf(mClickableText);
