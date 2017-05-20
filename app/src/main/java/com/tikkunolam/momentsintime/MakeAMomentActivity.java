@@ -46,9 +46,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     // tag for logging purposes
     final String TAG = "MakeAMomentActivity";
 
-    // location of first note
-    final int FIRST_NOTE_LOCATION = 8;
-
     // Strings for use as Extra argument identifiers
     String mPrimaryKeyExtra, mNoteExtra, mLocalVideoFileExtra, mIntervieweeExtra, mRoleExtra, mIntervieweePhotoFileExtra,
             mTitleExtra, mDescriptionExtra;
@@ -59,6 +56,10 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     final int INTERVIEWING_INTENT = 3;
     final int TOPIC_INTENT = 4;
     final int NOTE_INTENT = 5;
+
+    // positions in the mViewModelList
+    final int INTERVIEWING_TITLE = 0, INTERVIEWING_SLOT = 1, TOPIC_TITLE = 2, TOPIC_SLOT = 3,
+        VIDEO_TITLE = 4, VIDEO_SLOT = 5, NOTES_TITLE = 6, NOTES_PROMPT = 7, FIRST_NOTE_LOCATION = 8;
 
     // ui references
     Toolbar mToolbar;
@@ -808,7 +809,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         }
 
         // replace the prompt with the InterviewingCardData
-        mViewModelList.set(1, interviewingCardData);
+        mViewModelList.set(INTERVIEWING_SLOT, interviewingCardData);
 
         // tell the adapter to update the list on screen
         mMakeAMomentAdapter.notifyDataSetChanged();
@@ -822,7 +823,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         TopicCardData topicCardData = new TopicCardData(mMoment.getTitle(), mMoment.getDescription());
 
         // replace the prompt with the DescriptionCardData
-        mViewModelList.set(3, topicCardData);
+        mViewModelList.set(TOPIC_SLOT, topicCardData);
 
         // tell the adapter to update the list on screen
         mMakeAMomentAdapter.notifyDataSetChanged();
@@ -841,7 +842,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         VideoCardData videoCardData = new VideoCardData(Uri.fromFile(videoFile));
 
         // replace the prompt with the VideoCardData
-        mViewModelList.set(5, videoCardData);
+        mViewModelList.set(VIDEO_SLOT, videoCardData);
 
         // tell the Adapter to update the list on screen
         mMakeAMomentAdapter.notifyDataSetChanged();
