@@ -623,13 +623,13 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
-            if (shouldShowRequestPermissionRationale(
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                // Explain to the user why we need to read the contacts
+            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+                // Explain to the user why we need to read external storage
+
             }
 
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    1);
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         }
 
         // express an implicit intent to film a video

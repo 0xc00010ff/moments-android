@@ -244,10 +244,11 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
     protected class AsyncMomentFetch extends AsyncTask<Moment, Void, Moment> {
         // fetches a Moment off of Vimeo when it's Live and fills the views with the Moment
 
-        protected Moment doInBackground(Moment... momentArg) {
+        protected Moment doInBackground(Moment... moments) {
 
-            // take the Moment
-            Moment moment = momentArg[0];
+            // doInBackground is required to accept variadic arguments, but there will only ever be one...
+            // ... so take the Moment from position moments[0]
+            Moment moment = moments[0];
 
             VimeoNetworker vimeoNetworker = new VimeoNetworker(mContext);
 

@@ -359,11 +359,15 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
     private class AsyncDeleteMoment extends AsyncTask<Moment, Void, Boolean> {
 
-        protected Boolean doInBackground(Moment... moment) {
+        protected Boolean doInBackground(Moment... moments) {
+
+            // doInBackground requires variadic arguments, but there will only ever be one argument...
+            // ... so grab the Moment from moment[0]
+            Moment moment = moments[0];
 
             Boolean deleted = false;
 
-            deleted = moment[0].endItAll(mContext);
+            deleted = moment.endItAll(mContext);
 
             return deleted;
 
