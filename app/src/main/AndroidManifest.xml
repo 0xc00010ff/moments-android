@@ -27,7 +27,6 @@
         </activity>
         <activity android:name=".VideoViewActivity" />
         <activity android:name=".MakeAMomentActivity" />
-        <activity android:name=".DescriptionActivity" />
         <activity android:name=".NoteActivity" />
         <activity android:name=".InterviewingActivity" />
 

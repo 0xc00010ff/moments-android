@@ -276,8 +276,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // retrieve all the title strings and add them to mTitles as SectionTitles
         String interviewing = getBaseContext().getResources().getString(R.string.interviewing);
         mTitles.add(new SectionTitle(interviewing));
-        String description = getBaseContext().getResources().getString(R.string.description);
-        mTitles.add(new SectionTitle(description));
+        String topic = getBaseContext().getResources().getString(R.string.topic);
+        mTitles.add(new SectionTitle(topic));
         String video = getBaseContext().getResources().getString(R.string.video);
         mTitles.add(new SectionTitle(video));
         String notes = getBaseContext().getResources().getString(R.string.notes);
@@ -286,8 +286,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // retrieve all the prompt strings and add them to mPrompts as SectionPrompts
         String interviewingPrompt = getBaseContext().getResources().getString(R.string.interviewing_prompt);
         mPrompts.add(new SectionPrompt(interviewingPrompt));
-        String descriptionPrompt = getBaseContext().getResources().getString(R.string.description_prompt);
-        mPrompts.add(new SectionPrompt(descriptionPrompt));
+        String topicPrompt = getBaseContext().getResources().getString(R.string.add_topic_prompt);
+        mPrompts.add(new SectionPrompt(topicPrompt));
         String videoPrompt = getBaseContext().getResources().getString(R.string.video_prompt);
         mPrompts.add(new SectionPrompt(videoPrompt));
         String notesPrompt = getBaseContext().getResources().getString(R.string.notes_prompt);
@@ -423,7 +423,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                 case TOPIC_INTENT:
 
-                    // get the title and description from the DescriptionActivity
+                    // get the title and description from the TopicActivity
                     final String title = data.getStringExtra(mTitleExtra);
                     final String description = data.getStringExtra(mDescriptionExtra);
 
@@ -606,7 +606,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     public void onTopicPromptClick() {
         // deal with acquiring a description/title, adding it to the Moment, and refreshing the Adapter
 
-        // make an Intent with the DescriptionActivity
+        // make an Intent with the TopicActivity
         Intent topicIntent = new Intent(this, TopicActivity.class);
 
         // start the Activity

@@ -48,8 +48,7 @@ public class TopicCardHolder extends RecyclerView.ViewHolder{
 
                 public void onClick(View view) {
 
-                    // same callback as when an empty SectionPrompt for description is clicked
-                    // the DescriptionActivity determines if it was opened with a blank or filled description
+                    // alert the Activity a Topic was chosen
                     mActivityCallback.onTopicPromptClick();
 
                 }
