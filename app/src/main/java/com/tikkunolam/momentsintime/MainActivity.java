@@ -2,25 +2,44 @@ package com.tikkunolam.momentsintime;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 
-public class MainActivity extends AppCompatActivity
-    implements FragmentInteractionListener{
+import com.afollestad.materialdialogs.GravityEnum;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
+
+import static android.os.Build.VERSION_CODES.M;
+
+public class MainActivity extends AppCompatActivity implements MomentInteractionListener {
 
     // tag for logging purposes
     private final String TAG = "MainActivity";
 
+    Context mContext = this;
+
     // strings for intent extra arguments
     String mPrimaryKeyExtra;
     String mVimeoVideoUriExtra;
+    String mLocalVideoUriExtra;
+
+    // the Fragments in the ViewPager
+    Fragment communityFragment;
+    myMomentInterface myMomentsFragment;
+
+    // integers for request codes from startActivityForResult
+    final int MAKE_A_MOMENT_REQUEST_CODE = 1;
 
     // ui references
     Toolbar mToolbar;
@@ -39,6 +58,7 @@ public class MainActivity extends AppCompatActivity
         // get the string resources for the outgoing intent extras
         mPrimaryKeyExtra = getResources().getString(R.string.primary_key_extra);
         mVimeoVideoUriExtra = getString(R.string.vimeo_video_uri_extra);
+        mLocalVideoUriExtra = getString(R.string.local_video_uri_extra);
 
         //set the ActionBar to the toolbar we created
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -61,24 +81,311 @@ public class MainActivity extends AppCompatActivity
         mTabLayout.setupWithViewPager(mViewPager);
     }
 
+    /**
+     * CALLBACKS TO BE CALLED BY THE MOMENT
+     */
+
     // the callback method that will be called when Videos are selected
-    public void onMomentSelect(Moment moment) {
+    public void onVideoSelect(Moment moment) {
         // open a new Activity to view the Moment
 
         // create the Intent
         Intent videoIntent = new Intent(getBaseContext(), VideoViewActivity.class);
 
-        // add the Parcelable Moment to it
-        videoIntent.putExtra(mVimeoVideoUriExtra, moment.getVideoUri());
+        // if there is a Vimeo video uri then attach that to the Intent
+        if(moment.getVideoUri() != null) {
+
+            videoIntent.putExtra(mVimeoVideoUriExtra, moment.getVideoUri());
+
+        }
+
+        // otherwise attach the local video uri to it
+        else {
+
+            videoIntent.putExtra(mLocalVideoUriExtra, moment.getLocalVideoUri());
+
+        }
 
         // open the activity
         startActivity(videoIntent);
 
     }
 
+    // the callback method that will be called when a MomentCard is clicked from MyMoments
+    public void onMyMomentCardClick(Moment moment) {
+        // start a MakeAMomentActivity for result. Pass it the primary key of the Moment
+
+        Intent makeAMomentIntent = new Intent(this, MakeAMomentActivity.class);
+        makeAMomentIntent.putExtra(mPrimaryKeyExtra, moment.getPrimaryKey());
+        startActivityForResult(makeAMomentIntent, MAKE_A_MOMENT_REQUEST_CODE);
+
+    }
+
+    // the callback method that will be called when the share button is clicked in a
+    public void onMyShareClick(Moment moment) {
+
+        // produce the dialog that presents sharing options
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .items(R.array.moment_share_dialog_array)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+
+                        switch(position) {
+
+                            case 0:
+                                // user chose to share on Facebook
+
+                                break;
+
+                            case 1:
+                                // user chose to share through message
+
+                                break;
+
+                        }
+
+                    }
+
+                })
+                .positiveText(getString(R.string.dialog_cancel))
+                .positiveColor(getResources().getColor(R.color.red))
+                .show();
+
+    }
+
+    public void onCommunityShareClick(final Moment moment) {
+
+        final Context context = this;
+
+        // produce the dialog that presents sharing options
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .items(R.array.moment_share_dialog_array)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+
+                        switch(position) {
+
+                            case 0:
+                                // user chose to share on Facebook
+
+                                // show the comming soon dialog
+                                MaterialDialog anotherDialog = new MaterialDialog.Builder(context)
+                                        .title(getString(R.string.in_development_title))
+                                        .content(getString(R.string.in_development_content))
+                                        .positiveText(getString(R.string.in_development_ok))
+                                        .positiveColor(getResources().getColor(R.color.actionBlue))
+                                        .show();
+
+                                break;
+
+                            case 1:
+                                // user chose to share through message
+
+                                // make an Intent for sending an sms
+                                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                                sendIntent.setData(Uri.parse("sms:"));
+
+                                // add a message to it
+                                sendIntent.putExtra("sms_body", getString(R.string.sms_message) + moment.getVideoUrl());
+
+                                // start the Activity
+                                startActivity(sendIntent);
+
+                                break;
+
+                        }
+
+                    }
+
+                })
+                .positiveText(getString(R.string.dialog_cancel))
+                .positiveColor(getResources().getColor(R.color.actionBlue))
+                .show();
+
+    }
+
+    // the callback method that will be called when the dots are clicked in a MyMoments MomentCard
+    public void onMyDotsClick(final Moment moment) {
+
+        final Context context = this;
+
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .items(R.array.my_moments_dots_dialog_array)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+
+                        switch(position) {
+
+                            case 0:
+                                // the user chose to delete the Moment. tell the Moment to delete itself and..
+                                // ..tell the MyMomentsFragment to reload its mViewModelList
+
+                                if(moment.getMomentState() != MomentStateEnum.UPLOADING) {
+
+                                    AsyncDeleteMoment asyncDeleteMoment = new AsyncDeleteMoment();
+                                    asyncDeleteMoment.execute(moment);
+
+                                }
+
+                                else {
+                                    // tell the user not to do that
+
+                                    dialog.hide();
+
+                                    MaterialDialog dontDialog = new MaterialDialog.Builder(context)
+                                            .title(getString(R.string.cant_delete_title))
+                                            .titleGravity(GravityEnum.CENTER)
+                                            .content(getString(R.string.cant_delete_content))
+                                            .contentGravity(GravityEnum.CENTER)
+                                            .positiveText(getString(R.string.cant_delete_ok))
+                                            .itemsGravity(GravityEnum.CENTER)
+                                            .positiveColor(getResources().getColor(R.color.colorPrimary))
+                                            .theme(Theme.LIGHT)
+                                            .show();
+
+
+                                }
+
+
+                                break;
+
+                        }
+
+                    }
+
+                })
+                .positiveText(getString(R.string.dialog_cancel))
+                .positiveColor(getResources().getColor(R.color.actionBlue))
+                .show();
+
+    }
+
+    // the callback method that will be called when the dots are clicked in a Community MomentCard
+    public void onCommunityDotsClick(final Moment moment) {
+
+        final Context context = this;
+
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .items(R.array.community_moments_dots_dialog_array)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+
+                        switch(position) {
+
+                            case 0:
+                                // user chose to share
+
+                                MaterialDialog newDialog = new MaterialDialog.Builder(context)
+                                        .items(R.array.moment_share_dialog_array)
+                                        .itemsCallback(new MaterialDialog.ListCallback() {
+
+                                            @Override
+                                            public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+
+                                                switch(position) {
+
+                                                    case 0:
+                                                        // user chose facebook
+
+                                                        // show the comming soon dialog
+                                                        MaterialDialog anotherDialog = new MaterialDialog.Builder(context)
+                                                                .title(getString(R.string.in_development_title))
+                                                                .content(getString(R.string.in_development_content))
+                                                                .positiveText(getString(R.string.in_development_ok))
+                                                                .positiveColor(getResources().getColor(R.color.actionBlue))
+                                                                .show();
+
+                                                        break;
+                                                    case 1:
+                                                        // user chose Message
+
+                                                        // make an Intent for sending an sms
+                                                        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                                                        sendIntent.setData(Uri.parse("sms:"));
+
+                                                        // add a message to it
+                                                        sendIntent.putExtra("sms_body", getString(R.string.sms_message) + moment.getVideoUrl());
+
+                                                        // start the Activity
+                                                        startActivity(sendIntent);
+                                                }
+
+                                            }
+
+                                        })
+                                        .show();
+
+                                break;
+
+                            case 1:
+                                // user chose to report. compose an email.
+
+                                Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                                emailIntent.setType("text/html");
+                                emailIntent.putExtra(Intent.EXTRA_EMAIL, getString(R.string.email_recipient));
+                                emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
+                                emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_content) + " " + moment.getVideoUrl());
+
+                                startActivity(emailIntent);
+
+                                break;
+
+                        }
+
+                    }
+
+                })
+                .positiveText(getString(R.string.dialog_cancel))
+                .positiveColor(getResources().getColor(R.color.actionBlue))
+                .show();
+
+
+    }
+
+
     // the callback method that will be called when the MomentPrompt is clicked in the CommunityFragment RecyclerView
     public void onMomentPromptClick() {
 
+
+    }
+
+    private class AsyncDeleteMoment extends AsyncTask<Moment, Void, Boolean> {
+
+        protected Boolean doInBackground(Moment... moment) {
+
+            Boolean deleted = false;
+
+            deleted = moment[0].endItAll(mContext);
+
+            return deleted;
+
+        }
+
+        protected void onPostExecute(Boolean deleted) {
+
+            if(deleted) {
+                // it was deleted successfully. tell the fragment to reload its mViewModelList
+
+                myMomentsFragment.refreshListFromActivity();
+
+            }
+
+            else {
+                // it wasn't deleted successfully
+
+                // display a dialog saying something went wrong
+
+            }
+
+        }
 
     }
 
@@ -119,9 +426,36 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+
+            Fragment createdFragment = (Fragment) super.instantiateItem(container, position);
+
+            // save the appropriate reference depending on position
+            switch (position) {
+
+                case 0:
+
+                    communityFragment = (CommunityFragment) createdFragment;
+
+                    break;
+
+                case 1:
+
+                    myMomentsFragment = (MyMomentsFragment) createdFragment;
+
+                    break;
+
+            }
+
+            return createdFragment;
+
+        }
+
+        @Override
         public int getCount(){
 
             return mNumOfTabs;
+
         }
 
         @Override
@@ -131,6 +465,15 @@ public class MainActivity extends AppCompatActivity
             return tabTitles[position];
 
         }
+    }
+
+    /**
+     * INTERFACES TO THE FRAGMENTS
+     */
+    public interface myMomentInterface {
+
+        void refreshListFromActivity();
+
     }
 
 }

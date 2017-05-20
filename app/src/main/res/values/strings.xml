@@ -5,7 +5,7 @@
 
     <!--strings for individual configuration-->
     <string name="api_access_token">f410124bb5ab3bbb7c64936f98afc973</string>
-    <!--real Moments in Time Token: 7f737b3dd51c6b895f084f4cd03df2dd-->
+    <!--real Moments in Time Token: cbcd60a11d6c8dbad7310a4074312963-->
     <!--personal test token: f410124bb5ab3bbb7c64936f98afc973-->
 
     <!--string for api interaction-->
@@ -16,6 +16,10 @@
     <string name="per_page_parameter">per_page=</string>
     <string name="single_video_fetch_uri">/videos/</string>
     <string name="video_availability">available</string>
+
+    <!--strings for service interactions-->
+    <string name="shared_preferences">momentsInTimeSharedPreferences</string>
+    <string name="has_failed_flag">hasFailed</string>
 
 
     <!--UI STRINGS-->
@@ -69,6 +73,26 @@
     <string name="state_live">Live</string>
     <string name="moment_title">Title</string>
     <string name="moment_description"></string>
+
+    <!--strings for dialogs-->
+
+    <string name="dialog_cancel">Cancel</string>
+
+    <string name="cant_delete_title">Oh No!</string>
+    <string name="cant_delete_content">Sorry, but you\'ll need to wait until the upload is finished to modify this Moment</string>
+    <string name="cant_delete_ok">OK</string>
+
+    <string name="in_development_title">Coming Soon</string>
+    <string name="in_development_content">Feature in development. It will be ready in no time!</string>
+    <string name="in_development_ok">Cool!</string>
+
+    <!--String for the sms Intent-->
+    <string name="sms_message">Check out this story on Moments In Time! </string>
+
+    <!--Strings for the email Intent-->
+    <string name="email_subject">Moment Video Report</string>
+    <string name="email_recipient">justinmilrad@gmail.com</string>
+    <string name="email_content">Hello, I would like to report this video: </string>
 
     <!--STRINGS THAT HELP WITH COORDINATION-->
 

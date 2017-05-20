@@ -6,7 +6,6 @@
 
         <item>Pick from Facebook</item>
         <item>Enter Manually</item>
-        <item>Cancel</item>
 
     </string-array>
 
@@ -15,15 +14,36 @@
 
         <item>Edit Video</item>
         <item>Delete Video</item>
-        <item>Cancel</item>
 
     </string-array>
 
     <!--string array for when you click the dots in the note_card of MakeAMomentActivity-->
     <string-array name="note_dialog_array">
 
-        <item>DeleteNote</item>
-        <item>Cancel</item>
+        <item>Delete Note</item>
+
+    </string-array>
+
+    <!--string array for the share button in MomentCard-->
+    <string-array name="moment_share_dialog_array">
+
+        <item>Share on Facebook</item>
+        <item>Message...</item>
+
+    </string-array>
+
+    <!--string array for the dots in the MyMoments Card-->
+    <string-array name="my_moments_dots_dialog_array">
+
+        <item>Delete Moment</item>
+
+    </string-array>
+
+    <!--string array for the dots in the Community Moments Card-->
+    <string-array name="community_moments_dots_dialog_array">
+
+        <item>Share</item>
+        <item>Report</item>
 
     </string-array>
 

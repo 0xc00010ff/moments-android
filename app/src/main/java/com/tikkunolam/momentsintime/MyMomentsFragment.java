@@ -4,6 +4,7 @@ package com.tikkunolam.momentsintime;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -27,10 +28,14 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
+import io.realm.RealmResults;
+
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
+import static android.content.Context.MODE_WORLD_READABLE;
 
 
-public class MyMomentsFragment extends Fragment{
+public class MyMomentsFragment extends Fragment implements MainActivity.myMomentInterface{
 
     // tag for logging purposes
     private final String TAG = "My Moments Fragment";
@@ -41,17 +46,15 @@ public class MyMomentsFragment extends Fragment{
     // integer identifiers for Intent requestCodes
     final int MAKE_A_MOMENT_REQUEST_CODE = 1;
 
+    // Strings for use with SharedPreferences
+    String mSharedPreferencesName;
+    String mHasFailedFlagName;
+
     // list of Moments
     private MomentList mMomentList;
 
     // list of Moments and Prompts to fill the RecyclerView
     ArrayList<Object> mViewModelList;
-
-    // a VimeoNetworker for network calls
-    VimeoNetworker mVimeoNetworker;
-
-    // callback for the activity to handle fragment business
-    FragmentInteractionListener mActivityCallback;
 
     // MomentCardAdapter for the RecyclerView
     MomentCardAdapter mMomentCardAdapter;
@@ -144,6 +147,9 @@ public class MyMomentsFragment extends Fragment{
         // fill the mViewModelList with local Moments
         fetchMoments();
 
+        // switch any UPLOADING Moments that may have failed to FAILED if indicated by sharedPreference
+        switchToFailed();
+
         // inflate the layout for this fragment and return it
         return entireView;
 
@@ -157,15 +163,8 @@ public class MyMomentsFragment extends Fragment{
         // fetch the mPrimaryKeyExtra
         mPrimaryKeyExtra = getString(R.string.primary_key_extra);
 
-    }
-
-    @Override
-    public void onAttach(Context context) {
-
-        super.onAttach(context);
-
-        // get the reference to the activity for the callback
-        mActivityCallback = (FragmentInteractionListener) context;
+        mSharedPreferencesName = getString(R.string.shared_preferences);
+        mHasFailedFlagName = getString(R.string.has_failed_flag);
 
     }
 
@@ -293,6 +292,62 @@ public class MyMomentsFragment extends Fragment{
         // an UploadService finished.. reload the views
 
         fetchMoments();
+
+    }
+
+    /**
+     * METHODS TO BE CALLED FROM THE PARENT ACTIVITY
+     */
+
+    public void refreshListFromActivity() {
+        // called from the MainActivity when it has changed some underlying data and the Fragment needs to refresh
+
+
+        // clear the contents of the screen
+        mViewModelList.clear();
+
+        // fetch the local Moments
+        mMomentList.getMyMoments();
+
+        // add all the fetched Moments to the mViewModelList
+        mViewModelList.addAll(mMomentList.getMomentList());
+
+        // tell the Adapter to update itself
+        mMomentCardAdapter.notifyDataSetChanged();
+
+    }
+
+    // check if the flag was set by the service indicating an upload never finished. if so switch any UPLOADING Moments to FAILED
+    public void switchToFailed() {
+
+        // get the shared preferences
+        SharedPreferences sharedPreferences = getContext().getApplicationContext().getSharedPreferences(mSharedPreferencesName, MODE_PRIVATE);
+
+        Boolean shouldSwitch = sharedPreferences.getBoolean(mHasFailedFlagName, false);
+
+        // if a the UploadService started an upload and never finished it
+        if(shouldSwitch) {
+            // find all the Moments with UPLOADING state and switch them to FAILED
+
+            ArrayList<Moment> moments = Moment.findUploadingMoments();
+
+            for(final Moment moment: moments) {
+
+                moment.persistUpdates(new PersistenceExecutor() {
+
+                    @Override
+                    public void execute() {
+
+                        moment.setEnumState(MomentStateEnum.FAILED);
+
+                    }
+
+                });
+
+            }
+
+        }
+
 
     }
 

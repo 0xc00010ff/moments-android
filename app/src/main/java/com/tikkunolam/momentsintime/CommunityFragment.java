@@ -38,9 +38,6 @@ public class CommunityFragment extends Fragment {
     // list of Moments and MomentPrompts for the RecyclerView
     ArrayList<Object> mViewModelList;
 
-    // callback for the activity to handle fragment business
-    FragmentInteractionListener mActivityCallback;
-
     // listener for mCommunityRecyclerView's scroll
     EndlessRecyclerViewScrollListener mScrollListener;
 
@@ -111,9 +108,6 @@ public class CommunityFragment extends Fragment {
     public void onAttach(Context context) {
 
         super.onAttach(context);
-
-        // get the reference to the activity for the callback
-        mActivityCallback = (FragmentInteractionListener) context;
 
     }
 

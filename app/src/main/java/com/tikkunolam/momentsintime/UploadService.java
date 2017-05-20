@@ -2,6 +2,8 @@ package com.tikkunolam.momentsintime;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.File;
@@ -21,6 +23,7 @@ import org.json.JSONObject;
 
 import static com.tikkunolam.momentsintime.MomentStateEnum.FAILED;
 import static com.tikkunolam.momentsintime.MomentStateEnum.LIVE;
+import static com.tikkunolam.momentsintime.MomentStateEnum.UPLOADING;
 
 
 public class UploadService extends IntentService {
@@ -37,6 +40,9 @@ public class UploadService extends IntentService {
 
     // string for intent extra arguments/parameters
     String mVideoFileExtra, mPrimaryKeyExtra;
+
+    // strings for SharedPreferences
+    String sharedPreferencesName, hasFailedFlagName;
 
     // the video file to upload
     String mVideoFileString;
@@ -77,6 +83,9 @@ public class UploadService extends IntentService {
     // the Moment we're working with
     Moment mMoment;
 
+    // to keep track of if the video has finished uploading, for handling business in onDestroy
+    boolean uploaded;
+
 
     /**
      * CONSTRUCTOR
@@ -96,9 +105,16 @@ public class UploadService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         // do the upload work
 
+        // the video has not finished uploading yet
+        uploaded = false;
+
         // strings for intent extra arguments/parameters
         mVideoFileExtra = getString(R.string.video_file_extra);
         mPrimaryKeyExtra = getString(R.string.primary_key_extra);
+
+        // strings for SharedPreferences
+        sharedPreferencesName = getString(R.string.shared_preferences);
+        hasFailedFlagName = getString(R.string.has_failed_flag);
 
         // app access token for authenticating requests
         mAccessToken = getString(R.string.api_access_token);
@@ -128,6 +144,9 @@ public class UploadService extends IntentService {
 
         boolean success;
 
+        // indicate to any Activities that may be looking, the upload has not finished
+        indicateUploadNotFinished();
+
         // inform Vimeo we wish to upload a video, and receive a url to do so
         success = generateUploadTicket();
 
@@ -142,6 +161,10 @@ public class UploadService extends IntentService {
                 success = completeUpload();
 
                 if(success) {
+
+                    // tell the world that the upload has finished
+                    indicateUploadFinished();
+
                     // if the upload completion went through and we received the final Uri...
                     // ... update the video's title and description on Vimeo
 
@@ -345,6 +368,7 @@ public class UploadService extends IntentService {
         finally {
 
             response.body().close();
+
             return success;
 
         }
@@ -378,6 +402,9 @@ public class UploadService extends IntentService {
 
             // it worked
             success = true;
+
+            // signify that the upload has completed
+            uploaded = true;
 
         }
 
@@ -514,6 +541,80 @@ public class UploadService extends IntentService {
 
         }
 
+
+    }
+
+    @Override
+    public void onDestroy() {
+
+        // call the superclass's method
+        super.onDestroy();
+
+        // if the Moment has finished uploading
+        if(uploaded) {
+
+            // but its state hasn't been updated from UPLOADING
+            if(mMoment.getMomentState() == UPLOADING) {
+
+                // update it to LIVE
+                mMoment.persistUpdates(new PersistenceExecutor() {
+
+                    @Override
+                    public void execute() {
+
+                        mMoment.setEnumState(LIVE);
+
+                    }
+
+                });
+
+            }
+
+        }
+
+        // if it hasn't finished uploading
+        else {
+
+            // indicate that it has failed
+            mMoment.persistUpdates(new PersistenceExecutor() {
+
+                @Override
+                public void execute() {
+
+                    mMoment.setEnumState(FAILED);
+
+                }
+
+            });
+
+        }
+
+    }
+
+    // set a sharedPreferences value indicating upload hasn't finished
+    // happens before upload incase the app is killed, so the Moment can be updated to FAILED
+    private void indicateUploadNotFinished() {
+
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(sharedPreferencesName, MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        // indicate that upload has not finished
+        editor.putBoolean(hasFailedFlagName, true);
+        editor.commit();
+
+    }
+
+    // set the sharedPreference back, indicating the upload finished and the state is correct
+    private void indicateUploadFinished() {
+
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(sharedPreferencesName, MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        // indicate that upload has not finished
+        editor.putBoolean(hasFailedFlagName, false);
+        editor.commit();
 
     }
 
