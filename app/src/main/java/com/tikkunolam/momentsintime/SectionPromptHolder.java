@@ -96,7 +96,7 @@ public class SectionPromptHolder extends RecyclerView.ViewHolder {
                 @Override
                 public void onClick(View view) {
 
-                    mActivityCallback.onDescriptionPromptClick();
+                    mActivityCallback.onTopicPromptClick();
 
                 }
 

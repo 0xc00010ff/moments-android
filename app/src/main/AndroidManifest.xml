@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS"/>
+    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -29,8 +29,11 @@
         <activity android:name=".MakeAMomentActivity" />
         <activity android:name=".DescriptionActivity" />
         <activity android:name=".NoteActivity" />
-        <activity android:name=".InterviewingActivity"></activity>
-        <service android:name=".UploadService"></service>
+        <activity android:name=".InterviewingActivity" />
+
+        <service android:name=".UploadService" />
+
+        <activity android:name=".TopicActivity"></activity>
     </application>
 
 </manifest>

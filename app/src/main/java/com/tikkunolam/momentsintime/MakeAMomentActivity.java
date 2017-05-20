@@ -57,7 +57,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     final int VIDEO_FROM_GALLERY = 1;
     final int VIDEO_FROM_CAMERA = 2;
     final int INTERVIEWING_INTENT = 3;
-    final int DESCRIPTION_INTENT = 4;
+    final int TOPIC_INTENT = 4;
     final int NOTE_INTENT = 5;
 
     // ui references
@@ -307,7 +307,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         if(moment.getDescription() != null) {
 
-            insertDescriptionCard();
+            insertTopicCard();
 
         }
 
@@ -418,7 +418,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                     break;
 
-                case DESCRIPTION_INTENT:
+                case TOPIC_INTENT:
 
                     // get the title and description from the DescriptionActivity
                     final String title = data.getStringExtra(mTitleExtra);
@@ -438,8 +438,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     });
 
 
-                    // insert a description_card in place of section_prompt_text
-                    insertDescriptionCard();
+                    // insert a topic_card in place of section_prompt_text
+                    insertTopicCard();
 
                     // enable or disable submission depending on mMoment's contents
                     enableDisableMomentSubmission();
@@ -600,18 +600,14 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     }
 
     // the callback for when the description_prompt is clicked
-    public void onDescriptionPromptClick() {
+    public void onTopicPromptClick() {
         // deal with acquiring a description/title, adding it to the Moment, and refreshing the Adapter
 
         // make an Intent with the DescriptionActivity
-        Intent descriptionIntent = new Intent(getBaseContext(), DescriptionActivity.class);
-
-        // add the Moment's title and description to the Intent
-        descriptionIntent.putExtra(mTitleExtra, mMoment.getTitle());
-        descriptionIntent.putExtra(mDescriptionExtra, mMoment.getDescription());
+        Intent topicIntent = new Intent(this, TopicActivity.class);
 
         // start the Activity
-        startActivityForResult(descriptionIntent, DESCRIPTION_INTENT);
+        startActivityForResult(topicIntent, TOPIC_INTENT);
 
     }
 
@@ -816,14 +812,14 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
     }
 
-    private void insertDescriptionCard() {
-        // inserts a filled out description_card in place of the corresponding section_prompt_text
+    private void insertTopicCard() {
+        // inserts a filled out topic_card in place of the corresponding section_prompt_text
 
         // mMoment is guaranteed to have the necessary fields so just fill out a DescriptionCardData
-        DescriptionCardData descriptionCardData = new DescriptionCardData(mMoment.getTitle(), mMoment.getDescription());
+        TopicCardData topicCardData = new TopicCardData(mMoment.getTitle(), mMoment.getDescription());
 
         // replace the prompt with the DescriptionCardData
-        mViewModelList.set(3, descriptionCardData);
+        mViewModelList.set(3, topicCardData);
 
         // tell the adapter to update the list on screen
         mMakeAMomentAdapter.notifyDataSetChanged();
