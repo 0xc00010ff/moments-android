@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 import static com.tikkunolam.momentsintime.R.string.primary_key_extra;
 
 public class MakeAMomentActivity extends AppCompatActivity implements HolderInteractionListener{
@@ -708,6 +709,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                             case 1:
                                 // user chose to delete
+                                deleteVideo();
 
                                 break;
 
@@ -775,6 +777,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     }
 
                 })
+                .positiveText(getString(R.string.dialog_cancel))
+                .positiveColor(getResources().getColor(R.color.actionBlue))
                 .show();
 
 
@@ -858,6 +862,32 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         // tell the Adapter to update the list on screen
         mMakeAMomentAdapter.notifyDataSetChanged();
+
+    }
+
+    private void deleteVideo() {
+        // the user chose to delete the video... delete it from realm and re-insert the video prompt
+
+        // delete the video from the Moment
+        mMoment.persistUpdates(new PersistenceExecutor() {
+
+            @Override
+            public void execute() {
+
+                mMoment.setLocalVideoFilePath(null);
+
+            }
+
+        });
+
+        // re-insert the video prompt
+        String videoPrompt = getBaseContext().getResources().getString(R.string.video_prompt);
+        mViewModelList.remove(VIDEO_SLOT);
+        mViewModelList.add(VIDEO_SLOT, new SectionPrompt(videoPrompt));
+
+        // re-load the RecyclerView
+        mMakeAMomentAdapter.notifyDataSetChanged();
+
 
     }
 
