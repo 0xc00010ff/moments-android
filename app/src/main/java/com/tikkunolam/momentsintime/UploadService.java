@@ -551,7 +551,7 @@ public class UploadService extends IntentService {
         super.onDestroy();
 
         // if the Moment has finished uploading
-        if(uploaded = true) {
+        if(uploaded) {
 
             // but its state hasn't been updated from UPLOADING
             if(mMoment.getMomentState() == UPLOADING) {
