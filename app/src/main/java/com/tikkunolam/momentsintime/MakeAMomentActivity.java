@@ -46,9 +46,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     // tag for logging purposes
     final String TAG = "MakeAMomentActivity";
 
-    // location of first note
-    final int FIRST_NOTE_LOCATION = 8;
-
     // Strings for use as Extra argument identifiers
     String mPrimaryKeyExtra, mNoteExtra, mLocalVideoFileExtra, mIntervieweeExtra, mRoleExtra, mIntervieweePhotoFileExtra,
             mTitleExtra, mDescriptionExtra;
@@ -57,8 +54,12 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     final int VIDEO_FROM_GALLERY = 1;
     final int VIDEO_FROM_CAMERA = 2;
     final int INTERVIEWING_INTENT = 3;
-    final int DESCRIPTION_INTENT = 4;
+    final int TOPIC_INTENT = 4;
     final int NOTE_INTENT = 5;
+
+    // positions in the mViewModelList
+    final int INTERVIEWING_TITLE = 0, INTERVIEWING_SLOT = 1, TOPIC_TITLE = 2, TOPIC_SLOT = 3,
+        VIDEO_TITLE = 4, VIDEO_SLOT = 5, NOTES_TITLE = 6, NOTES_PROMPT = 7, FIRST_NOTE_LOCATION = 8;
 
     // ui references
     Toolbar mToolbar;
@@ -276,8 +277,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // retrieve all the title strings and add them to mTitles as SectionTitles
         String interviewing = getBaseContext().getResources().getString(R.string.interviewing);
         mTitles.add(new SectionTitle(interviewing));
-        String description = getBaseContext().getResources().getString(R.string.description);
-        mTitles.add(new SectionTitle(description));
+        String topic = getBaseContext().getResources().getString(R.string.topic);
+        mTitles.add(new SectionTitle(topic));
         String video = getBaseContext().getResources().getString(R.string.video);
         mTitles.add(new SectionTitle(video));
         String notes = getBaseContext().getResources().getString(R.string.notes);
@@ -286,8 +287,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // retrieve all the prompt strings and add them to mPrompts as SectionPrompts
         String interviewingPrompt = getBaseContext().getResources().getString(R.string.interviewing_prompt);
         mPrompts.add(new SectionPrompt(interviewingPrompt));
-        String descriptionPrompt = getBaseContext().getResources().getString(R.string.description_prompt);
-        mPrompts.add(new SectionPrompt(descriptionPrompt));
+        String topicPrompt = getBaseContext().getResources().getString(R.string.add_topic_prompt);
+        mPrompts.add(new SectionPrompt(topicPrompt));
         String videoPrompt = getBaseContext().getResources().getString(R.string.video_prompt);
         mPrompts.add(new SectionPrompt(videoPrompt));
         String notesPrompt = getBaseContext().getResources().getString(R.string.notes_prompt);
@@ -307,7 +308,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         if(moment.getDescription() != null) {
 
-            insertDescriptionCard();
+            insertTopicCard();
 
         }
 
@@ -316,6 +317,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
             insertVideoCard();
 
         }
+
+        // add what notes may already exist
+        addNotesFromMoment(moment);
 
     }
 
@@ -418,9 +422,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                     break;
 
-                case DESCRIPTION_INTENT:
+                case TOPIC_INTENT:
 
-                    // get the title and description from the DescriptionActivity
+                    // get the title and description from the TopicActivity
                     final String title = data.getStringExtra(mTitleExtra);
                     final String description = data.getStringExtra(mDescriptionExtra);
 
@@ -438,8 +442,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     });
 
 
-                    // insert a description_card in place of section_prompt_text
-                    insertDescriptionCard();
+                    // insert a topic_card in place of section_prompt_text
+                    insertTopicCard();
 
                     // enable or disable submission depending on mMoment's contents
                     enableDisableMomentSubmission();
@@ -600,18 +604,14 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     }
 
     // the callback for when the description_prompt is clicked
-    public void onDescriptionPromptClick() {
+    public void onTopicPromptClick() {
         // deal with acquiring a description/title, adding it to the Moment, and refreshing the Adapter
 
-        // make an Intent with the DescriptionActivity
-        Intent descriptionIntent = new Intent(getBaseContext(), DescriptionActivity.class);
-
-        // add the Moment's title and description to the Intent
-        descriptionIntent.putExtra(mTitleExtra, mMoment.getTitle());
-        descriptionIntent.putExtra(mDescriptionExtra, mMoment.getDescription());
+        // make an Intent with the TopicActivity
+        Intent topicIntent = new Intent(this, TopicActivity.class);
 
         // start the Activity
-        startActivityForResult(descriptionIntent, DESCRIPTION_INTENT);
+        startActivityForResult(topicIntent, TOPIC_INTENT);
 
     }
 
@@ -630,6 +630,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
             }
 
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+
         }
 
         // express an implicit intent to film a video
@@ -808,21 +809,21 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         }
 
         // replace the prompt with the InterviewingCardData
-        mViewModelList.set(1, interviewingCardData);
+        mViewModelList.set(INTERVIEWING_SLOT, interviewingCardData);
 
         // tell the adapter to update the list on screen
         mMakeAMomentAdapter.notifyDataSetChanged();
 
     }
 
-    private void insertDescriptionCard() {
-        // inserts a filled out description_card in place of the corresponding section_prompt_text
+    private void insertTopicCard() {
+        // inserts a filled out topic_card in place of the corresponding section_prompt_text
 
         // mMoment is guaranteed to have the necessary fields so just fill out a DescriptionCardData
-        DescriptionCardData descriptionCardData = new DescriptionCardData(mMoment.getTitle(), mMoment.getDescription());
+        TopicCardData topicCardData = new TopicCardData(mMoment.getTitle(), mMoment.getDescription());
 
         // replace the prompt with the DescriptionCardData
-        mViewModelList.set(3, descriptionCardData);
+        mViewModelList.set(TOPIC_SLOT, topicCardData);
 
         // tell the adapter to update the list on screen
         mMakeAMomentAdapter.notifyDataSetChanged();
@@ -841,7 +842,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         VideoCardData videoCardData = new VideoCardData(Uri.fromFile(videoFile));
 
         // replace the prompt with the VideoCardData
-        mViewModelList.set(5, videoCardData);
+        mViewModelList.set(VIDEO_SLOT, videoCardData);
 
         // tell the Adapter to update the list on screen
         mMakeAMomentAdapter.notifyDataSetChanged();

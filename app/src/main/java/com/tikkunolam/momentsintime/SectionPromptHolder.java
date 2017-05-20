@@ -31,7 +31,7 @@ public class SectionPromptHolder extends RecyclerView.ViewHolder {
     // Strings specified in resources as prompt strings
     // for matching purposes to determine the action of the listener applied in applyListener()
     String mInterviewingPrompt;
-    String mDescriptionPrompt;
+    String mTopicPrompt;
     String mVideoPrompt;
     String mNotesPrompt;
 
@@ -52,7 +52,7 @@ public class SectionPromptHolder extends RecyclerView.ViewHolder {
 
         // set all the prompt Strings from resources
         mInterviewingPrompt = context.getResources().getString(R.string.interviewing_prompt);
-        mDescriptionPrompt = context.getResources().getString(R.string.description_prompt);
+        mTopicPrompt = context.getResources().getString(R.string.add_topic_prompt);
         mVideoPrompt = context.getResources().getString(R.string.video_prompt);
         mNotesPrompt = context.getResources().getString(R.string.notes_prompt);
 
@@ -88,15 +88,15 @@ public class SectionPromptHolder extends RecyclerView.ViewHolder {
 
         }
 
-        else if(text.equals(mDescriptionPrompt)) {
-            // if it's description text apply a listener that calls the HolderInteractionListener's onDescriptionPromptClick
+        else if(text.equals(mTopicPrompt)) {
+            // if it's topic text apply a listener that calls the HolderInteractionListener's onTopicPromptClick
 
             mSectionPromptTextView.setOnClickListener(new OnClickListener() {
 
                 @Override
                 public void onClick(View view) {
 
-                    mActivityCallback.onDescriptionPromptClick();
+                    mActivityCallback.onTopicPromptClick();
 
                 }
 

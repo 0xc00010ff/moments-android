@@ -545,7 +545,7 @@ public class UploadService extends IntentService {
 
 
     }
-    
+
     // set a sharedPreferences value indicating upload hasn't finished
     // happens before upload incase the app is killed, so the Moment can be updated to FAILED
     private void indicateUploadNotFinished() {

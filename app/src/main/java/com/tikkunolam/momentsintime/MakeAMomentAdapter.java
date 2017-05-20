@@ -23,7 +23,7 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     ArrayList<Object> mViewModelList;
 
     // integer identifiers for the view types
-    final int SECTION_TITLE = 0, SECTION_PROMPT = 1, NOTE = 2, INTERVIEWING = 3, DESCRIPTION = 4, VIDEO = 5;
+    final int SECTION_TITLE = 0, SECTION_PROMPT = 1, NOTE = 2, INTERVIEWING = 3, TOPIC = 4, VIDEO = 5;
 
 
 
@@ -72,9 +72,9 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         }
 
-        else if(mViewModelList.get(position) instanceof DescriptionCardData) {
+        else if(mViewModelList.get(position) instanceof TopicCardData) {
 
-            return DESCRIPTION;
+            return TOPIC;
 
         }
 
@@ -153,15 +153,15 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                 break;
 
-            case DESCRIPTION:
+            case TOPIC:
 
-                // inflate a description_card layout
+                // inflate a topic_card layout
                 View descriptionCardView = LayoutInflater
                         .from(parent.getContext())
-                        .inflate(R.layout.description_card, parent, false);
+                        .inflate(R.layout.topic_card, parent, false);
 
                 // fill the ViewHolder with a DescriptionCardHolder
-                viewHolder = new DescriptionCardHolder(mContext, descriptionCardView);
+                viewHolder = new TopicCardHolder(mContext, descriptionCardView);
 
                 break;
 
@@ -279,19 +279,19 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                 break;
 
-            case DESCRIPTION:
+            case TOPIC:
                 // fill a DescriptionCardHolder
 
                 // cast the generic Holder to a DescriptionCardHolder
-                DescriptionCardHolder descriptionCardHolder = (DescriptionCardHolder) holder;
+                TopicCardHolder topicCardHolder = (TopicCardHolder) holder;
 
                 // cast the generic Object at mViewModelList(position) to a DescriptionCardData
-                DescriptionCardData descriptionCardData = (DescriptionCardData) mViewModelList.get(position);
+                TopicCardData topicCardData = (TopicCardData) mViewModelList.get(position);
 
                 // fill the DescriptionCardHolder's views
-                descriptionCardHolder.descriptionCardTitleTextView.setText(descriptionCardData.getTitle());
+                topicCardHolder.mTopicCardTitleTextView.setText(topicCardData.getTitle());
 
-                descriptionCardHolder.descriptionCardDescriptionTextView.setText(descriptionCardData.getDescription());
+                topicCardHolder.mTopicCardDescriptionTextView.setText(topicCardData.getDescription());
 
                 break;
 

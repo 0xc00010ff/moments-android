@@ -9,8 +9,8 @@ public interface HolderInteractionListener {
     // callback for when interviewing_prompt is clicked
     void onInterviewingPromptClick();
 
-    // callback for when description_prompt is clicked
-    void onDescriptionPromptClick();
+    // callback for when topic_prompt is clicked
+    void onTopicPromptClick();
 
     //callback for when video_prompt is clicked
     void onVideoPromptClick();

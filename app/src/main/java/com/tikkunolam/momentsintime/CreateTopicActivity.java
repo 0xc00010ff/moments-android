@@ -2,24 +2,17 @@ package com.tikkunolam.momentsintime;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
-import io.realm.Realm;
-import io.realm.RealmResults;
-
-public class DescriptionActivity extends AppCompatActivity {
-
-    // a tag for degugging purposes
-    final String TAG = "DescriptionActivity";
+public class CreateTopicActivity extends AppCompatActivity {
 
     // Strings for Extra argument identification
     String mTitleExtra, mDescriptionExtra;
@@ -32,43 +25,41 @@ public class DescriptionActivity extends AppCompatActivity {
 
     // ui references
     Toolbar mToolbar;
-    MaterialEditText mDescriptionTitleEditText;
-    MaterialEditText mDescriptionDescriptionEditText;
+    MaterialEditText mTopicHeadlineEditText;
+    MaterialEditText mTopicQuestionEditText;
 
     // "save" menu item
     MenuItem mSaveMenuItem;
 
+    // a TextWatcher to monitor for if the save menuItem should be enabled/disabled
+    TextWatcher mTextWatcher;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_description);
+        setContentView(R.layout.activity_create_topic);
 
         // fetch the Extra argument identifiers from resources
         mTitleExtra = getString(R.string.title_extra);
         mDescriptionExtra = getString(R.string.description_extra);
 
-        // set the mTitle and mDescription from the Intent extras if they were present
-        mTitle = getIntent().getStringExtra(mTitleExtra);
-        mDescription = getIntent().getStringExtra(mDescriptionExtra);
-
         // get the toolbar, get the activity title from resources, and set the toolbar title
-        mToolbar = (Toolbar) findViewById(R.id.description_toolbar);
-        mActivityTitle = getString(R.string.description_toolbar_title);
+        mToolbar = (Toolbar) findViewById(R.id.create_topic_toolbar);
+        mActivityTitle = getString(R.string.create_topic_toolbar_title);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(mActivityTitle);
 
         // get the MaterialEditTexts
-        mDescriptionTitleEditText = (MaterialEditText) findViewById(R.id.description_title_editText);
-        mDescriptionDescriptionEditText = (MaterialEditText) findViewById(R.id.description_description_editText);
+        mTopicHeadlineEditText = (MaterialEditText) findViewById(R.id.create_topic_headline_editText);
+        mTopicQuestionEditText = (MaterialEditText) findViewById(R.id.create_topic_question_editText);
 
-        // add a TextWatcher to both MaterialEditTexts to toggle the "save" MenuItem if conditions are right
-        TextWatcher mTextWatcher = buildTextWatcher();
+        // build a TextWatcher
+        mTextWatcher = buildTextWatcher();
 
-        mDescriptionTitleEditText.addTextChangedListener(mTextWatcher);
-
-        mDescriptionDescriptionEditText.addTextChangedListener(mTextWatcher);
-
+        // add the TextWatcher to the EditTexts
+        mTopicHeadlineEditText.addTextChangedListener(mTextWatcher);
+        mTopicQuestionEditText.addTextChangedListener(mTextWatcher);
 
     }
 
@@ -84,10 +75,6 @@ public class DescriptionActivity extends AppCompatActivity {
         // disable it until the TextWatcher determines it should be enabled
         mSaveMenuItem.setEnabled(false);
 
-        // fill the EditTexts
-        setViewsFromMoment();
-
-
         return true;
 
     }
@@ -100,23 +87,23 @@ public class DescriptionActivity extends AppCompatActivity {
                 // save was clicked
 
                 // get the text from mDescriptionTitleEditText
-                mTitle = mDescriptionTitleEditText.getText().toString();
+                mTitle = mTopicHeadlineEditText.getText().toString();
 
                 // get the text from mDescriptionDescriptionEditText
-                mDescription = mDescriptionDescriptionEditText.getText().toString();
+                mDescription = mTopicQuestionEditText.getText().toString();
 
                 if(mTitle != null && mTitle.length() >= 1 && mDescription != null && mDescription.length() >= 1) {
                     // if the user has entered information for title and description
 
                     // make an intent with the MakeAMomentActivity
-                    Intent makeAMomentIntent = new Intent(getBaseContext(), MakeAMomentActivity.class);
+                    Intent topicIntent = new Intent(getBaseContext(), TopicActivity.class);
 
                     // add the mTitle and mDescription to the Intent
-                    makeAMomentIntent.putExtra(mTitleExtra, mTitle);
-                    makeAMomentIntent.putExtra(mDescriptionExtra, mDescription);
+                    topicIntent.putExtra(mTitleExtra, mTitle);
+                    topicIntent.putExtra(mDescriptionExtra, mDescription);
 
                     // set the result
-                    setResult(RESULT_OK, makeAMomentIntent);
+                    setResult(RESULT_OK, topicIntent);
 
                     // return to the calling Activity
                     finish();
@@ -155,7 +142,7 @@ public class DescriptionActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
 
-                if( mDescriptionTitleEditText.getText().length() > 0 && mDescriptionDescriptionEditText.getText().length() > 0 ) {
+                if( mTopicHeadlineEditText.getText().length() > 0 && mTopicQuestionEditText.getText().length() > 0 ) {
                     // if both EditTexts now have text in them, then turn save white to indicate it's clickable
 
                     // set the Save button to white
@@ -163,7 +150,7 @@ public class DescriptionActivity extends AppCompatActivity {
 
                 }
 
-                else if( mDescriptionDescriptionEditText.getText().length() == 0 || mDescriptionTitleEditText.getText().length() == 0 ) {
+                else if( mTopicHeadlineEditText.getText().length() == 0 || mTopicQuestionEditText.getText().length() == 0 ) {
                     // if either of the EditTexts now have no text in them, then turn save grey to indicate it's not clickable
 
                     // set the save button to grey
@@ -179,22 +166,4 @@ public class DescriptionActivity extends AppCompatActivity {
 
     }
 
-    public void setViewsFromMoment() {
-        // fills the EditTexts from the Moment that's passed in if the values are present
-
-        if(mTitle != null) {
-
-            mDescriptionTitleEditText.setText(mTitle);
-
-        }
-
-        if(mDescription != null){
-
-            mDescriptionDescriptionEditText.setText(mDescription);
-
-        }
-
-    }
-
 }
-

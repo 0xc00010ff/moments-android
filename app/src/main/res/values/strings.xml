@@ -42,20 +42,14 @@
     <!--strings for the MakeAMomentActivity-->
     <string name="interviewing">Interviewing</string>
     <string name="interviewing_prompt">Select a special person to interview</string>
-    <string name="description">Description</string>
-    <string name="description_prompt">Add a title and description</string>
+    <string name="topic">Topic</string>
+    <string name="add_topic_prompt">Select a topic</string>
     <string name="video">Video</string>
     <string name="video_prompt">Start filming or upload a video</string>
     <string name="notes">Notes</string>
     <string name="notes_prompt">Add a new note</string>
     <string name="video_dialog_title">Video Options</string>
     <string name="note_dialog_title">Note</string>
-
-    <!--strings for the DescriptionActivity-->
-    <string name="description_title">Title</string>
-    <string name="description_toolbar_title">Description</string>
-    <string name="description_menu_item">SAVE</string>
-    <string name="description_description">Description</string>
 
     <!--strings for the NoteActivity-->
     <string name="note_hint">Note</string>
@@ -66,6 +60,19 @@
     <string name="interviewing_name_hint">Name</string>
     <string name="interviewing_role_hint">Role</string>
     <string name="add_a_picture">Add a Picture (optional)</string>
+
+    <!--strings for the TopicActivity-->
+    <string name="topic_toolbar_title">Topic</string>
+    <string name="topic_prompt">Choose a topic or make your own</string>
+    <string name="topic_prompt_highlight">make your own</string>
+
+    <!--strings for the CreateTopicActivity-->
+    <string name="create_topic_toolbar_title">Create a Topic</string>
+    <string name="topic_headline">Headline(short and sweet)</string>
+    <string name="topic_question">Question/Theme</string>
+
+    <!--strings for the save_menu-->
+    <string name="save_item">Save</string>
 
     <!--strings for the moment_card_with_state-->
     <string name="state_in_progress">In Progress</string>
@@ -105,7 +112,7 @@
     <string name="interviewee_role_extra">role</string>
     <string name="interviewee_photo_file_extra">intervieweePhoto</string>
     <string name="title_extra">title</string>
-    <string name="description_extra"></string>
+    <string name="description_extra">description</string>
     <string name="primary_key_extra">primaryKey</string>
     <string name="local_video_file_extra">localVideo</string>
     <string name="vimeo_video_uri_extra">vimeoVideo</string>
