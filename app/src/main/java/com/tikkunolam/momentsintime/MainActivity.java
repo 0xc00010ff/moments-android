@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
     // strings for intent extra arguments
     String mPrimaryKeyExtra;
     String mVimeoVideoUriExtra;
-    String mLocalVideoUriExtra;
+    String mLocalVideoFileExtra;
 
     // the Fragments in the ViewPager
     Fragment communityFragment;
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
         // get the string resources for the outgoing intent extras
         mPrimaryKeyExtra = getResources().getString(R.string.primary_key_extra);
         mVimeoVideoUriExtra = getString(R.string.vimeo_video_uri_extra);
-        mLocalVideoUriExtra = getString(R.string.local_video_uri_extra);
+        mLocalVideoFileExtra = getString(R.string.local_video_file_extra);
 
         //set the ActionBar to the toolbar we created
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
         // otherwise attach the local video uri to it
         else {
 
-            videoIntent.putExtra(mLocalVideoUriExtra, moment.getLocalVideoUri());
+            videoIntent.putExtra(mLocalVideoFileExtra, moment.getLocalVideoFilePath());
 
         }
 
@@ -359,11 +359,15 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
     private class AsyncDeleteMoment extends AsyncTask<Moment, Void, Boolean> {
 
-        protected Boolean doInBackground(Moment... moment) {
+        protected Boolean doInBackground(Moment... moments) {
+
+            // doInBackground requires variadic arguments, but there will only ever be one argument...
+            // ... so grab the Moment from moment[0]
+            Moment moment = moments[0];
 
             Boolean deleted = false;
 
-            deleted = moment[0].endItAll(mContext);
+            deleted = moment.endItAll(mContext);
 
             return deleted;
 

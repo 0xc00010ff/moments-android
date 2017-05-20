@@ -323,7 +323,12 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
         // get the shared preferences
         SharedPreferences sharedPreferences = getContext().getApplicationContext().getSharedPreferences(mSharedPreferencesName, MODE_PRIVATE);
 
+        // get the shouldSwitch value from them
         Boolean shouldSwitch = sharedPreferences.getBoolean(mHasFailedFlagName, false);
+
+        // reset it to false in SharedPreferences
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(mHasFailedFlagName, false);
 
         // if a the UploadService started an upload and never finished it
         if(shouldSwitch) {

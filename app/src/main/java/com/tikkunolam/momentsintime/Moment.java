@@ -44,7 +44,7 @@ public class Moment extends RealmObject {
     private String intervieweeRole;
 
     // the uri of the picture of the interviewee on phone
-    private String intervieweePhotoUri;
+    private String intervieweePhotoFile;
 
     // the video uri for any further operation on the video
     private String videoUri;
@@ -52,8 +52,6 @@ public class Moment extends RealmObject {
     // the video playback url
     private String videoUrl;
 
-    // the local video file uri
-    private String localVideoUri;
 
     // the local video file path
     private String localVideoFilePath;
@@ -122,9 +120,9 @@ public class Moment extends RealmObject {
 
     }
 
-    public String getIntervieweePhotoUri() {
+    public String getIntervieweePhotoFile() {
 
-        return intervieweePhotoUri;
+        return intervieweePhotoFile;
 
     }
 
@@ -138,12 +136,6 @@ public class Moment extends RealmObject {
     public String getVideoUrl() {
 
         return videoUrl;
-
-    }
-
-    public String getLocalVideoUri() {
-
-        return localVideoUri;
 
     }
 
@@ -234,17 +226,12 @@ public class Moment extends RealmObject {
 
     }
 
-    public void setIntervieweePhotoUri(String intervieweePhotoUri) {
+    public void setIntervieweePhotoUri(String intervieweePhotoFile) {
 
-        this.intervieweePhotoUri = intervieweePhotoUri;
-
-    }
-
-    public void setLocalVideoUri(String localVideoUri) {
-
-        this.localVideoUri = localVideoUri;
+        this.intervieweePhotoFile = intervieweePhotoFile;
 
     }
+
 
     public void setLocalVideoFilePath(String localVideoFilePath) {
 

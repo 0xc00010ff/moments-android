@@ -332,8 +332,10 @@ public class UploadService extends IntentService {
         // try to convert the file to a byte array and make the request
         try{
 
+            FileDealer fileDealer = new FileDealer();
+
             // read the file into the byte array
-            bytes = FileDealer.fullyReadFileToBytes(file);
+            bytes = fileDealer.fullyReadFileToBytes(file);
 
             // make the upload request
             OkHttpClient client = new OkHttpClient();
@@ -543,54 +545,7 @@ public class UploadService extends IntentService {
 
 
     }
-
-    @Override
-    public void onDestroy() {
-
-        // call the superclass's method
-        super.onDestroy();
-
-        // if the Moment has finished uploading
-        if(uploaded) {
-
-            // but its state hasn't been updated from UPLOADING
-            if(mMoment.getMomentState() == UPLOADING) {
-
-                // update it to LIVE
-                mMoment.persistUpdates(new PersistenceExecutor() {
-
-                    @Override
-                    public void execute() {
-
-                        mMoment.setEnumState(LIVE);
-
-                    }
-
-                });
-
-            }
-
-        }
-
-        // if it hasn't finished uploading
-        else {
-
-            // indicate that it has failed
-            mMoment.persistUpdates(new PersistenceExecutor() {
-
-                @Override
-                public void execute() {
-
-                    mMoment.setEnumState(FAILED);
-
-                }
-
-            });
-
-        }
-
-    }
-
+    
     // set a sharedPreferences value indicating upload hasn't finished
     // happens before upload incase the app is killed, so the Moment can be updated to FAILED
     private void indicateUploadNotFinished() {

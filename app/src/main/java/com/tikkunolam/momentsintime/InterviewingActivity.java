@@ -1,7 +1,13 @@
 package com.tikkunolam.momentsintime;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +24,8 @@ import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import java.io.File;
+
 import io.realm.Realm;
 
 public class InterviewingActivity extends AppCompatActivity {
@@ -25,6 +33,8 @@ public class InterviewingActivity extends AppCompatActivity {
     // tag for log statements
     final String TAG = "InterviewingActivity";
 
+
+    Context mContext = this;
     // ui references
     Toolbar mToolbar;
     MaterialEditText mNameEditText;
@@ -42,12 +52,12 @@ public class InterviewingActivity extends AppCompatActivity {
     String mActivityTitle;
 
     // Strings for Extra argument identification
-    String mIntervieweeExtra, mIntervieweeRoleExtra, mIntervieweePhotoUriExtra;
+    String mIntervieweeExtra, mIntervieweeRoleExtra, mIntervieweePhotoFileExtra;
 
     // Strings for holding the values set within this Activity
     String mIntervieweeName;
     String mIntervieweeRole;
-    String mIntervieweePhotoUri;
+    String mIntervieweePhotoFile;
 
     // request codes for implicit intent receipt
     final int PHOTO_REQUEST_CODE = 1;
@@ -61,12 +71,12 @@ public class InterviewingActivity extends AppCompatActivity {
         // get the Extra argument identifiers from resources
         mIntervieweeExtra = getString(R.string.interviewee_extra);
         mIntervieweeRoleExtra = getString(R.string.interviewee_role_extra);
-        mIntervieweePhotoUriExtra = getString(R.string.interviewee_photo_uri_extra);
+        mIntervieweePhotoFileExtra = getString(R.string.interviewee_photo_file_extra);
 
-        // get the mIntervieweeName, mIntervieweeDescription, and mIntervieweePhotoUri if they were passed in
+        // get the mIntervieweeName, mIntervieweeDescription, and mIntervieweePhotoFile if they were passed in
         mIntervieweeName = getIntent().getStringExtra(mIntervieweeExtra);
         mIntervieweeRole = getIntent().getStringExtra(mIntervieweeRoleExtra);
-        mIntervieweePhotoUri = getIntent().getStringExtra(mIntervieweePhotoUri);
+        mIntervieweePhotoFile = getIntent().getStringExtra(mIntervieweePhotoFileExtra);
 
         // get the Toolbar, get the activity title from resources, and set the toolbar title
         mToolbar = (Toolbar) findViewById(R.id.interviewing_toolbar);
@@ -94,6 +104,21 @@ public class InterviewingActivity extends AppCompatActivity {
 
             public void onClick(View view) {
                 // broadcast an implicit intent to retrieve a picture
+
+                // if the API level > 21 then READ_EXTERNAL_STORAGE isn't automatic and should be requested
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    // Should we show an explanation?
+                    if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+                        // Explain to the user why we need to read external storage
+
+                    }
+
+                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+
+                }
 
                 // make a new Intent
                 Intent photoIntent = new Intent();
@@ -150,7 +175,7 @@ public class InterviewingActivity extends AppCompatActivity {
                     // add all the fields' values to it
                     makeAMomentIntent.putExtra(mIntervieweeExtra, mIntervieweeName);
                     makeAMomentIntent.putExtra(mIntervieweeRoleExtra, mIntervieweeRole);
-                    makeAMomentIntent.putExtra(mIntervieweePhotoUriExtra, mIntervieweePhotoUri);
+                    makeAMomentIntent.putExtra(mIntervieweePhotoFileExtra, mIntervieweePhotoFile);
 
                     // signal that the results are okay and attach the Intent
                     setResult(RESULT_OK, makeAMomentIntent);
@@ -180,7 +205,10 @@ public class InterviewingActivity extends AppCompatActivity {
 
                 // get the photo's Uri from the Intent and set the mIntervieweePhotoUri with it
                 Uri photoUri = data.getData();
-                mIntervieweePhotoUri = photoUri.toString();
+
+                FileDealer fileDealer = new FileDealer();
+
+                mIntervieweePhotoFile = fileDealer.getPath(this, photoUri);
 
                 // add the picture to the screen
                 replaceWithPicture();
@@ -265,7 +293,7 @@ public class InterviewingActivity extends AppCompatActivity {
 
         }
 
-        if(mIntervieweePhotoUri != null) {
+        if(mIntervieweePhotoFile != null) {
 
             replaceWithPicture();
 
@@ -283,9 +311,13 @@ public class InterviewingActivity extends AppCompatActivity {
         // make the mIntervieweeImageView visible
         mIntervieweeImageView.setVisibility(View.VISIBLE);
 
+        File imageFile = new File(mIntervieweePhotoFile);
+
         // set the image on the ImageView
-        mIntervieweeImageView.setImageURI(Uri.parse(mIntervieweePhotoUri));
+        mIntervieweeImageView.setImageURI(Uri.fromFile(imageFile));
 
     }
+
+
 
 }

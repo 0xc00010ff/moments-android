@@ -22,10 +22,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static com.tikkunolam.momentsintime.R.string.local_video_uri_extra;
-import static com.tikkunolam.momentsintime.R.string.video;
-import static com.tikkunolam.momentsintime.R.string.video_file_extra;
-
 /**
  * OKHTTP NETWORKING CLASS FOR API CALLS
  */
