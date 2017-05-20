@@ -134,7 +134,14 @@ public class NoteActivity extends AppCompatActivity {
                     // if there's now no text in the MaterialEditText
 
                     // turn the save menu item grey to indicate it isn't clickable
-                    mSaveMenuItem.setEnabled(true);
+                    mSaveMenuItem.setEnabled(false);
+
+                }
+
+                if(mNoteEditText.getText().length() > mNoteEditText.getMaxCharacters()) {
+                    // if the number of characters in mNoteEditText exceeds its character limit, disable save
+
+                    mSaveMenuItem.setEnabled(false);
 
                 }
 

@@ -158,6 +158,14 @@ public class CreateTopicActivity extends AppCompatActivity {
 
                 }
 
+                if(mTopicHeadlineEditText.getText().length() > mTopicHeadlineEditText.getMaxCharacters()
+                        || mTopicQuestionEditText.getText().length() > mTopicQuestionEditText.getMaxCharacters()) {
+                    // if either EditTexts exceed their character limit, disable the mSaveMenuItem
+
+                    mSaveMenuItem.setEnabled(false);
+
+                }
+
             }
 
         };
