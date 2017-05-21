@@ -62,6 +62,7 @@ public class MomentCardHolder extends RecyclerView.ViewHolder{
 
         // set the text in the videoNameTextView from the mMoment
         videoNameTextView.setText(moment.getTitle());
+        videoNameTextView.setVisibility(View.VISIBLE);
 
         // if there is a description set it, otherwise delete the view
         String description = moment.getDescription();
@@ -69,6 +70,7 @@ public class MomentCardHolder extends RecyclerView.ViewHolder{
         if(!description.equals("")) {
 
             videoDescriptionTextView.setText(description);
+            videoDescriptionTextView.setVisibility(View.VISIBLE);
 
         }
         else {

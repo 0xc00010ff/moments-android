@@ -85,7 +85,7 @@ public class TopicActivity extends AppCompatActivity implements TopicAdapter.Top
         fillModelList();
 
         // initialize the Adapter
-        mTopicAdapter = new TopicAdapter(this, mViewModelList);
+        mTopicAdapter = new TopicAdapter(this, mViewModelList, true);
 
         // set the Adapter on the RecyclerView
         mRecyclerView.setAdapter(mTopicAdapter);

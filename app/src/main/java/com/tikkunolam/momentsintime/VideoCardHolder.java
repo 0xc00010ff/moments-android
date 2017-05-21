@@ -16,9 +16,12 @@ public class VideoCardHolder extends RecyclerView.ViewHolder{
     ImageView dotsImageView;
     ImageView playButtonImageView;
 
+    // a boolean indicating if the onClicks should be added
+    boolean clickable = true;
+
     HolderInteractionListener mActivityCallback;
 
-    public VideoCardHolder(Context context, View view) {
+    public VideoCardHolder(Context context, View view, boolean clickable) {
 
         // call the superclass's constructor
         super(view);
@@ -26,21 +29,27 @@ public class VideoCardHolder extends RecyclerView.ViewHolder{
         // cast the context to a HolderInteractionListener
         mActivityCallback = (HolderInteractionListener) context;
 
+        this.clickable = clickable;
+
         // fill the views
         videoPreviewImageView = (ImageView) view.findViewById(R.id.video_card_preview_imageView);
         dotsImageView = (ImageView) view.findViewById(R.id.video_card_dots_imageView);
         playButtonImageView = (ImageView) view.findViewById(R.id.video_card_play_imageView);
 
         // add a listener to the dots
-        dotsImageView.setOnClickListener(new View.OnClickListener() {
+        if(clickable) {
 
-            public void onClick(View view) {
+            dotsImageView.setOnClickListener(new View.OnClickListener() {
 
-                mActivityCallback.onVideoDotsClick();
+                public void onClick(View view) {
 
-            }
+                    mActivityCallback.onVideoDotsClick();
 
-        });
+                }
+
+            });
+
+        }
 
         // add a listener to the play button
         playButtonImageView.setOnClickListener(new View.OnClickListener() {

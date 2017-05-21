@@ -21,16 +21,21 @@ public class TopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     // integer identifiers for the viewtypes
     final int PROMPT = 1, TOPIC = 2;
 
+    // boolean indicating if the Holder should be clickable
+    boolean mClickable = true;
+
     /**
      * CONSTRUCTORS
      */
-    public TopicAdapter(Context context, ArrayList<Object> viewModels) {
+    public TopicAdapter(Context context, ArrayList<Object> viewModels, boolean clickable) {
 
         mContext = context;
 
         mActivityCallback = (TopicInteractionListener) context;
 
         mViewModelList = viewModels;
+
+        mClickable = clickable;
 
     }
 
@@ -88,7 +93,7 @@ public class TopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                         .from(parent.getContext())
                         .inflate(R.layout.topic_card, parent, false);
 
-                holder = new TopicCardHolder(mContext, topicCardView);
+                holder = new TopicCardHolder(mContext, topicCardView, mClickable);
 
                 break;
 

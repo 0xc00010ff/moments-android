@@ -25,17 +25,20 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     // integer identifiers for the view types
     final int SECTION_TITLE = 0, SECTION_PROMPT = 1, NOTE = 2, INTERVIEWING = 3, TOPIC = 4, VIDEO = 5;
 
-
+    // a boolean indicating if the Holders should be clickable
+    boolean mClickable = true;
 
 
     /**
      * CONSTRUCTORS
      */
-    public MakeAMomentAdapter(Context context, ArrayList<Object> viewModels) {
+    public MakeAMomentAdapter(Context context, ArrayList<Object> viewModels, boolean clickable) {
 
         mContext = context;
 
         mViewModelList = viewModels;
+
+        mClickable = clickable;
 
     }
 
@@ -125,7 +128,7 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .inflate(R.layout.section_prompt_text, parent, false);
 
                 // fill the ViewHolder with a SectionPromptHolder
-                viewHolder = new SectionPromptHolder(mContext, sectionPromptView);
+                viewHolder = new SectionPromptHolder(mContext, sectionPromptView, mClickable);
 
                 break;
 
@@ -137,7 +140,7 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .inflate(R.layout.note_card, parent, false);
 
                 // fill the ViewHolder with a NoteCardHolder
-                viewHolder = new NoteCardHolder(mContext, noteCardView);
+                viewHolder = new NoteCardHolder(mContext, noteCardView, mClickable);
 
                 break;
 
@@ -149,7 +152,7 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .inflate(R.layout.interviewing_card, parent, false);
 
                 // fill the ViewHolder with a InterviewingCardHolder
-                viewHolder = new InterviewingCardHolder(mContext, interviewingCardView);
+                viewHolder = new InterviewingCardHolder(mContext, interviewingCardView, mClickable);
 
                 break;
 
@@ -161,7 +164,7 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .inflate(R.layout.topic_card, parent, false);
 
                 // fill the ViewHolder with a DescriptionCardHolder
-                viewHolder = new TopicCardHolder(mContext, descriptionCardView);
+                viewHolder = new TopicCardHolder(mContext, descriptionCardView, mClickable);
 
                 break;
 
@@ -173,7 +176,7 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .inflate(R.layout.video_card, parent, false);
 
                 // fill the ViewHolder with a VideoCardHolder
-                viewHolder = new VideoCardHolder(mContext, videoCardLayout);
+                viewHolder = new VideoCardHolder(mContext, videoCardLayout, mClickable);
 
                 break;
 

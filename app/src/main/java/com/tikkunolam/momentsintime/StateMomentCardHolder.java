@@ -276,6 +276,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
                 else {
 
                     videoDescriptionTextView.setText(moment.getDescription());
+                    videoDescriptionTextView.setVisibility(View.VISIBLE);
 
                 }
 
@@ -289,7 +290,9 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
 
             // set the rest of the values
             videoNameTextView.setText(moment.getTitle());
+            videoNameTextView.setVisibility(View.VISIBLE);
             momentStateTextView.setText(mStateLive);
+            shareTextView.setVisibility(View.VISIBLE);
             Picasso.with(mContext).load(moment.getPictureUrl()).error(mContext.getResources().getDrawable(R.drawable.camera)).into(videoPreviewImageView);
 
         }

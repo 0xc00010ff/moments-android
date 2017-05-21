@@ -35,7 +35,10 @@ public class SectionPromptHolder extends RecyclerView.ViewHolder {
     String mVideoPrompt;
     String mNotesPrompt;
 
-    public SectionPromptHolder(Context context, View view) {
+    // a boolean indicating if the onClicks should be set
+    boolean mClickable = true;
+
+    public SectionPromptHolder(Context context, View view, boolean clickable) {
 
         // call the superclass's constructor
         super(view);
@@ -45,6 +48,8 @@ public class SectionPromptHolder extends RecyclerView.ViewHolder {
 
         // set the mActivityCallback
         mActivityCallback = (MakeAMomentActivity) mContext;
+
+        mClickable = clickable;
 
         // initialize the Views
         mSectionPromptFrameLayout = (FrameLayout) view;
@@ -75,32 +80,40 @@ public class SectionPromptHolder extends RecyclerView.ViewHolder {
         if(text.equals(mInterviewingPrompt)) {
             // if it's interview text apply a listener that calls the HolderInteractionListener's onInterviewingPromptClick
 
-            mSectionPromptTextView.setOnClickListener(new OnClickListener() {
+            if(mClickable) {
 
-                @Override
-                public void onClick(View view) {
+                mSectionPromptTextView.setOnClickListener(new OnClickListener() {
 
-                    mActivityCallback.onInterviewingPromptClick();
+                    @Override
+                    public void onClick(View view) {
 
-                }
+                        mActivityCallback.onInterviewingPromptClick();
 
-            });
+                    }
+
+                });
+
+            }
 
         }
 
         else if(text.equals(mTopicPrompt)) {
             // if it's topic text apply a listener that calls the HolderInteractionListener's onTopicPromptClick
 
-            mSectionPromptTextView.setOnClickListener(new OnClickListener() {
+            if(mClickable) {
 
-                @Override
-                public void onClick(View view) {
+                mSectionPromptTextView.setOnClickListener(new OnClickListener() {
 
-                    mActivityCallback.onTopicPromptClick();
+                    @Override
+                    public void onClick(View view) {
 
-                }
+                        mActivityCallback.onTopicPromptClick();
 
-            });
+                    }
+
+                });
+
+            }
 
         }
 
@@ -110,68 +123,72 @@ public class SectionPromptHolder extends RecyclerView.ViewHolder {
             // set the color of the TextView to the light grey
             mSectionPromptTextView.setTextColor(mContext.getResources().getColor(R.color.textLight));
 
-            // turn text into a SpannableString
-            SpannableString spannableText = new SpannableString(text);
+            if(mClickable) {
 
-            // split the text around the word "or"
-            String[] words = text.split("\\sor\\s");
+                // turn text into a SpannableString
+                SpannableString spannableText = new SpannableString(text);
 
-            // create a ClickableSpan that specifies what to do when the video string is clicked
-            ClickableSpan videoSpan = new ClickableSpan() {
+                // split the text around the word "or"
+                String[] words = text.split("\\sor\\s");
 
-                @Override
-                public void onClick(View textView) {
+                // create a ClickableSpan that specifies what to do when the video string is clicked
+                ClickableSpan videoSpan = new ClickableSpan() {
 
-                    mActivityCallback.onVideoPromptClick();
+                    @Override
+                    public void onClick(View textView) {
 
-                }
+                        mActivityCallback.onVideoPromptClick();
 
-                @Override
-                public void updateDrawState(TextPaint drawState) {
-                    // remove the funny style SpannableString adds
+                    }
 
-                    // set the color
-                    drawState.setColor(mContext.getResources().getColor(R.color.actionBlue));
+                    @Override
+                    public void updateDrawState(TextPaint drawState) {
+                        // remove the funny style SpannableString adds
 
-                    // remove the underline
-                    drawState.setUnderlineText(false);
-                }
+                        // set the color
+                        drawState.setColor(mContext.getResources().getColor(R.color.actionBlue));
 
-            };
+                        // remove the underline
+                        drawState.setUnderlineText(false);
+                    }
 
-            // set the ClickableSpan on the SpannableString from the beginning, to the end of the first word
-            spannableText.setSpan(videoSpan, 0, words[0].length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                };
 
-
-            // create a clickable span that specifies what to do when the upload string is clicked
-            ClickableSpan uploadSpan = new ClickableSpan() {
-
-                @Override
-                public void onClick(View textView) {
-
-                    mActivityCallback.onUploadPromptClick();
-
-                }
-
-                @Override
-                public void updateDrawState(TextPaint drawState) {
-                    // remove the funny style SpannableString adds
-
-                    // set the color
-                    drawState.setColor(mContext.getResources().getColor(R.color.actionBlue));
-
-                    // remove the underline
-                    drawState.setUnderlineText(false);
-                }
-
-            };
-
-            // set the uploadSpan on the spannableText from the beginning of the second word, to the end
-            spannableText.setSpan(uploadSpan, words[0].length() + 3, spannableText.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                // set the ClickableSpan on the SpannableString from the beginning, to the end of the first word
+                spannableText.setSpan(videoSpan, 0, words[0].length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 
-            mSectionPromptTextView.setText(spannableText);
-            mSectionPromptTextView.setMovementMethod(LinkMovementMethod.getInstance());
+                // create a clickable span that specifies what to do when the upload string is clicked
+                ClickableSpan uploadSpan = new ClickableSpan() {
+
+                    @Override
+                    public void onClick(View textView) {
+
+                        mActivityCallback.onUploadPromptClick();
+
+                    }
+
+                    @Override
+                    public void updateDrawState(TextPaint drawState) {
+                        // remove the funny style SpannableString adds
+
+                        // set the color
+                        drawState.setColor(mContext.getResources().getColor(R.color.actionBlue));
+
+                        // remove the underline
+                        drawState.setUnderlineText(false);
+                    }
+
+                };
+
+                // set the uploadSpan on the spannableText from the beginning of the second word, to the end
+                spannableText.setSpan(uploadSpan, words[0].length() + 3, spannableText.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+
+
+                mSectionPromptTextView.setText(spannableText);
+                mSectionPromptTextView.setMovementMethod(LinkMovementMethod.getInstance());
+
+            }
 
         }
 
@@ -180,16 +197,20 @@ public class SectionPromptHolder extends RecyclerView.ViewHolder {
 
             mSectionPromptTextView.setTextColor(mContext.getResources().getColor(R.color.actionBlue));
 
-            mSectionPromptTextView.setOnClickListener(new OnClickListener() {
+            if(mClickable) {
 
-                @Override
-                public void onClick(View view) {
+                mSectionPromptTextView.setOnClickListener(new OnClickListener() {
 
-                    mActivityCallback.onNotesPromptClick();
+                    @Override
+                    public void onClick(View view) {
 
-                }
+                        mActivityCallback.onNotesPromptClick();
 
-            });
+                    }
+
+                });
+
+            }
 
         }
 

@@ -88,9 +88,10 @@ public class InterviewingActivity extends AppCompatActivity {
         mNameEditText = (MaterialEditText) findViewById(R.id.name_editText);
         mRoleEditText = (MaterialEditText) findViewById(R.id.role_editText);
 
-        // get a TextWatcher and add it to the mNameEditText to indicate save is clickable if there is text
+        // get a TextWatcher and add it to the MaterialEditTexts to indicate save is clickable if there is text
         TextWatcher mTextWatcher = buildTextWatcher();
         mNameEditText.addTextChangedListener(mTextWatcher);
+        mRoleEditText.addTextChangedListener(mTextWatcher);
 
         // get the views dealing with the picture
         mPhotoViewRelativeLayout = (RelativeLayout) findViewById(R.id.photo_view_relativeLayout);
@@ -266,6 +267,14 @@ public class InterviewingActivity extends AppCompatActivity {
                     // if the EditText now has nothing in it
 
                     // change the color of the save menu to grey, to indicate it's not clickable
+                    mSaveMenuItem.setEnabled(false);
+
+                }
+
+                // if they've exceeded the character limit, disable it
+                if(mNameEditText.getText().length() > mNameEditText.getMaxCharacters()
+                        || mRoleEditText.getText().length() > mRoleEditText.getMaxCharacters()) {
+
                     mSaveMenuItem.setEnabled(false);
 
                 }

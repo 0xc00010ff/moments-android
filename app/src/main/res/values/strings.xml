@@ -94,6 +94,11 @@
     <string name="in_development_content">Feature in development. It will be ready in no time!</string>
     <string name="in_development_ok">Cool!</string>
 
+    <string name="edit_video_title">Edit until your heart is content</string>
+    <string name="edit_video_content">The video has been saved to your gallery. You can edit the video with your favorite tools and update this Moment with the new video when you\'re ready. Nothing will be uploaded until you say so.</string>
+    <string name="edit_video_positive_text">OK</string>
+    <string name="edit_video_delete_video">Delete Video</string>
+
     <!--String for the sms Intent-->
     <string name="sms_message">Check out this story on Moments In Time! </string>
 

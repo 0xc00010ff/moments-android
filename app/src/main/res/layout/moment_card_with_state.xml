@@ -86,10 +86,8 @@
             android:id="@+id/video_name_textView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:maxLines="2"
             android:text="@string/moment_title"
@@ -102,14 +100,15 @@
 
         <TextView
             android:id="@+id/video_description_textView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginRight="16dp"
             android:text="@string/moment_description"
             android:textColor="@color/text"
             android:textSize="18sp"
             app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/video_name_textView" />
 
         <View

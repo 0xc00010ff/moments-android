@@ -19,7 +19,10 @@ public class TopicCardHolder extends RecyclerView.ViewHolder{
     TextView mTopicCardTitleTextView;
     TextView mTopicCardDescriptionTextView;
 
-    public TopicCardHolder(Context context, View view) {
+    // a boolean indicating if the onClicks should be set or not
+    boolean mClickable = true;
+
+    public TopicCardHolder(Context context, View view, boolean clickable) {
 
         // call the superclass's constructor
         super(view);
@@ -31,6 +34,8 @@ public class TopicCardHolder extends RecyclerView.ViewHolder{
             mActivityCallback = (HolderInteractionListener) context;
 
         }
+
+        mClickable = clickable;
 
         // set the views
         mTopicCardView = (CardView) view;
@@ -44,16 +49,20 @@ public class TopicCardHolder extends RecyclerView.ViewHolder{
         // if the mActivityCallback isn't null, then MakeAMomentActivity owns this Holder, and the following onClick is appropriate
         if(mActivityCallback != null) {
 
-            mTopicCardView.setOnClickListener(new View.OnClickListener() {
+            if(mClickable) {
 
-                public void onClick(View view) {
+                mTopicCardView.setOnClickListener(new View.OnClickListener() {
 
-                    // alert the Activity a Topic was chosen
-                    mActivityCallback.onTopicPromptClick();
+                    public void onClick(View view) {
 
-                }
+                        // alert the Activity a Topic was chosen
+                        mActivityCallback.onTopicPromptClick();
 
-            });
+                    }
+
+                });
+
+            }
 
         }
 

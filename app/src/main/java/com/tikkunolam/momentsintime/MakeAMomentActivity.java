@@ -1,6 +1,7 @@
 package com.tikkunolam.momentsintime;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,9 +23,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.content.CursorLoader;
+import android.view.WindowManager;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -39,6 +44,7 @@ import java.util.ArrayList;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 import static com.tikkunolam.momentsintime.R.string.primary_key_extra;
 
 public class MakeAMomentActivity extends AppCompatActivity implements HolderInteractionListener{
@@ -81,6 +87,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     ArrayList<SectionTitle> mTitles;
     ArrayList<SectionPrompt> mPrompts;
 
+    // a boolean indicating whether the views should be clickable or not
+    boolean mClickable = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +140,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         }
 
+        // determine if the views on screen should be clickable and set mClickable accordingly
+        evaluateClickability();
 
         // get the RecyclerView. this holds everything in this activity but the toolbar
         mRecyclerView = (RecyclerView) findViewById(R.id.make_a_moment_recyclerView);
@@ -157,6 +167,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         mSaveMenuItem = menu.findItem(R.id.make_a_moment_submit);
         mSaveMenuItem.setEnabled(false);
+
+        enableDisableMomentSubmission();
 
         return true;
 
@@ -216,14 +228,13 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         }
 
-
     }
 
     public void setUpRecyclerView() {
         // sets up the RecyclerView with the MakeAMomentAdapter and mViewModelList
 
         // set up the adapter
-        mMakeAMomentAdapter = new MakeAMomentAdapter(this, mViewModelList);
+        mMakeAMomentAdapter = new MakeAMomentAdapter(this, mViewModelList, mClickable);
 
         // set the MakeAMomentAdapter on the mRecyclerView
         mRecyclerView.setAdapter(mMakeAMomentAdapter);
@@ -342,8 +353,12 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         if(isMomentComplete()) {
 
-            // turn MenuItem white
-            mSaveMenuItem.setEnabled(true);
+            if(mClickable) {
+
+                // turn MenuItem white
+                mSaveMenuItem.setEnabled(true);
+
+            }
 
         }
 
@@ -558,6 +573,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     public void onInterviewingPromptClick() {
         // deal with acquiring an interviewee, adding it to the Moment, and refreshing the Adapter
 
+        final Context context = this;
+
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .title(R.string.interviewing)
                 .items(R.array.interviewing_dialog_array)
@@ -571,6 +588,14 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                             case 0:
                                 // they chose Facebook...
+
+                                // display the facebook dialog
+                                MaterialDialog anotherDialog = new MaterialDialog.Builder(context)
+                                        .title(getString(R.string.in_development_title))
+                                        .content(getString(R.string.in_development_content))
+                                        .positiveText(getString(R.string.in_development_ok))
+                                        .positiveColor(getResources().getColor(R.color.actionBlue))
+                                        .show();
 
                                 break;
 
@@ -678,6 +703,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     public void onVideoDotsClick() {
         // open the dialog to ask the user to edit/delete the video
 
+        final Context context = this;
+
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .title(R.string.video_dialog_title)
                 .items(R.array.video_dialog_array)
@@ -690,12 +717,29 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                             case 0:
                                 // user chose to edit
+                                MaterialDialog editDialog = new MaterialDialog.Builder(context)
+                                        .title(R.string.edit_video_title)
+                                        .content(R.string.edit_video_content)
+                                        .positiveText(R.string.edit_video_positive_text)
+                                        .positiveColor(getResources().getColor(R.color.actionBlue))
+                                        .negativeText(R.string.edit_video_delete_video)
+                                        .negativeColor(getResources().getColor(R.color.red))
+                                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                            @Override
+                                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                                                deleteVideo();
+
+                                            }
+                                        })
+                                        .show();
 
 
                                 break;
 
                             case 1:
                                 // user chose to delete
+                                deleteVideo();
 
                                 break;
 
@@ -763,6 +807,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     }
 
                 })
+                .positiveText(getString(R.string.dialog_cancel))
+                .positiveColor(getResources().getColor(R.color.actionBlue))
                 .show();
 
 
@@ -846,6 +892,42 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         // tell the Adapter to update the list on screen
         mMakeAMomentAdapter.notifyDataSetChanged();
+
+    }
+
+    private void deleteVideo() {
+        // the user chose to delete the video... delete it from realm and re-insert the video prompt
+
+        // delete the video from the Moment
+        mMoment.persistUpdates(new PersistenceExecutor() {
+
+            @Override
+            public void execute() {
+
+                mMoment.setLocalVideoFilePath(null);
+
+            }
+
+        });
+
+        // re-insert the video prompt
+        String videoPrompt = getBaseContext().getResources().getString(R.string.video_prompt);
+        mViewModelList.remove(VIDEO_SLOT);
+        mViewModelList.add(VIDEO_SLOT, new SectionPrompt(videoPrompt));
+
+        // re-load the RecyclerView
+        mMakeAMomentAdapter.notifyDataSetChanged();
+
+
+    }
+
+    public void evaluateClickability() {
+
+        if(mMoment.getMomentState() == MomentStateEnum.LIVE || mMoment.getMomentState() == MomentStateEnum.UPLOADING) {
+
+            mClickable = false;
+
+        }
 
     }
 
