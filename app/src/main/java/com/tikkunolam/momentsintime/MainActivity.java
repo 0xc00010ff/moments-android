@@ -122,7 +122,9 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
     }
 
     // the callback method that will be called when the share button is clicked in a
-    public void onMyShareClick(Moment moment) {
+    public void onMyShareClick(final Moment moment) {
+
+        final Context context = this;
 
         // produce the dialog that presents sharing options
         MaterialDialog dialog = new MaterialDialog.Builder(this)
@@ -137,10 +139,27 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
                             case 0:
                                 // user chose to share on Facebook
 
+                                MaterialDialog anotherDialog = new MaterialDialog.Builder(context)
+                                        .title(getString(R.string.in_development_title))
+                                        .content(getString(R.string.in_development_content))
+                                        .positiveText(getString(R.string.in_development_ok))
+                                        .positiveColor(getResources().getColor(R.color.actionBlue))
+                                        .show();
+
                                 break;
 
                             case 1:
                                 // user chose to share through message
+
+                                // make an Intent for sending an sms
+                                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                                sendIntent.setData(Uri.parse("sms:"));
+
+                                // add a message to it
+                                sendIntent.putExtra("sms_body", getString(R.string.sms_message) + moment.getVideoUrl());
+
+                                // start the Activity
+                                startActivity(sendIntent);
 
                                 break;
 

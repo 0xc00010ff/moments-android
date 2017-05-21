@@ -1,6 +1,7 @@
 package com.tikkunolam.momentsintime;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +28,7 @@ import android.view.View;
 import android.content.CursorLoader;
 import android.view.WindowManager;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -86,7 +89,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
     // a boolean indicating whether the views should be clickable or not
     boolean mClickable = true;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -571,6 +573,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     public void onInterviewingPromptClick() {
         // deal with acquiring an interviewee, adding it to the Moment, and refreshing the Adapter
 
+        final Context context = this;
+
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .title(R.string.interviewing)
                 .items(R.array.interviewing_dialog_array)
@@ -584,6 +588,14 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                             case 0:
                                 // they chose Facebook...
+
+                                // display the facebook dialog
+                                MaterialDialog anotherDialog = new MaterialDialog.Builder(context)
+                                        .title(getString(R.string.in_development_title))
+                                        .content(getString(R.string.in_development_content))
+                                        .positiveText(getString(R.string.in_development_ok))
+                                        .positiveColor(getResources().getColor(R.color.actionBlue))
+                                        .show();
 
                                 break;
 
@@ -691,6 +703,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     public void onVideoDotsClick() {
         // open the dialog to ask the user to edit/delete the video
 
+        final Context context = this;
+
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .title(R.string.video_dialog_title)
                 .items(R.array.video_dialog_array)
@@ -703,6 +717,22 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                             case 0:
                                 // user chose to edit
+                                MaterialDialog editDialog = new MaterialDialog.Builder(context)
+                                        .title(R.string.edit_video_title)
+                                        .content(R.string.edit_video_content)
+                                        .positiveText(R.string.edit_video_positive_text)
+                                        .positiveColor(getResources().getColor(R.color.actionBlue))
+                                        .negativeText(R.string.edit_video_delete_video)
+                                        .negativeColor(getResources().getColor(R.color.red))
+                                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                            @Override
+                                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                                                deleteVideo();
+
+                                            }
+                                        })
+                                        .show();
 
 
                                 break;
