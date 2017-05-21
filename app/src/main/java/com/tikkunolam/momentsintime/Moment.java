@@ -5,12 +5,14 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
+import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
 
 import static com.tikkunolam.momentsintime.MomentStateEnum.UPLOADING;
@@ -27,6 +29,8 @@ public class Moment extends RealmObject {
 
     @PrimaryKey
     private String primaryKey;
+
+    private Date date;
 
     // the state of the Moment
     private String state;
@@ -51,7 +55,6 @@ public class Moment extends RealmObject {
 
     // the video playback url
     private String videoUrl;
-
 
     // the local video file path
     private String localVideoFilePath;
@@ -87,6 +90,12 @@ public class Moment extends RealmObject {
     public String getPrimaryKey() {
 
         return primaryKey;
+
+    }
+
+    public Date getDate() {
+
+        return date;
 
     }
 
@@ -168,6 +177,12 @@ public class Moment extends RealmObject {
     public void setPrimaryKey(String primaryKey) {
 
         this.primaryKey = primaryKey;
+
+    }
+
+    public void setDate(Date date) {
+
+        this.date = date;
 
     }
 
@@ -274,6 +289,9 @@ public class Moment extends RealmObject {
         // make a new Moment with the primaryKey
         Moment moment = realm.createObject(Moment.class, primaryKey);
 
+        // set the Moment's date
+        moment.setDate(new Date());
+
         realm.commitTransaction();
 
         return moment;
@@ -310,10 +328,12 @@ public class Moment extends RealmObject {
 
         Realm realm = Realm.getDefaultInstance();
 
+        // find Moments where the state is UPLOADING
         RealmQuery<Moment> query = realm.where(Moment.class).equalTo("state", UPLOADING.name());
 
         RealmResults<Moment> moments = query.findAll();
 
+        // add them all to the momentList
         momentList.addAll(realm.copyFromRealm(moments));
 
         return momentList;
@@ -326,8 +346,10 @@ public class Moment extends RealmObject {
 
         Realm realm = Realm.getDefaultInstance();
 
-        RealmResults<Moment> realmResults = realm.where(Moment.class).findAll();
+        // fetch the Moments in reverse chronological order, so the newest are at the top.
+        RealmResults<Moment> realmResults = realm.where(Moment.class).findAllSorted("date", Sort.DESCENDING);
 
+        // add them all to the list
         momentList.addAll(realm.copyFromRealm(realmResults));
 
         return momentList;
