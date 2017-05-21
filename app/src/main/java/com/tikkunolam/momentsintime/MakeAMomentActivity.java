@@ -27,6 +27,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.content.CursorLoader;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -62,6 +63,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     final int INTERVIEWING_INTENT = 3;
     final int TOPIC_INTENT = 4;
     final int NOTE_INTENT = 5;
+
+    // integers to specify which action requested READ_EXTERNAL_STORAGE permission
+    final int UPLOAD = 1, FILM = 2;
 
     // positions in the mViewModelList
     final int INTERVIEWING_TITLE = 0, INTERVIEWING_SLOT = 1, TOPIC_TITLE = 2, TOPIC_SLOT = 3,
@@ -654,14 +658,19 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
             }
 
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, FILM);
 
         }
 
-        // express an implicit intent to film a video
-        Intent filmVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        else {
+            // the user has already granted permission. go ahead and open the activity
 
-        startActivityForResult(filmVideoIntent, VIDEO_FROM_CAMERA);
+            // express an implicit intent to film a video
+            Intent filmVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+
+            startActivityForResult(filmVideoIntent, VIDEO_FROM_CAMERA);
+
+        }
 
 
     }
@@ -680,13 +689,18 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
             }
 
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    1);
+                    UPLOAD);
         }
 
-        Intent intent = new Intent();
-        intent.setType("video/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent,"Select Video"),VIDEO_FROM_GALLERY);
+        // otherwise we don't need to request permission so just open the Activity
+        else {
+
+            Intent intent = new Intent();
+            intent.setType("video/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent,"Select Video"),VIDEO_FROM_GALLERY);
+
+        }
 
     }
 
@@ -929,6 +943,50 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         }
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        // called after a call to requestPermissions(). check here if they granted permission...
+        // ...and if so, start the activity corresponding to the requestCode
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+
+            case UPLOAD:
+                // the user wants to get a video from gallery. if permission granted, open that Activity.
+
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // they granted permission... open the Activity
+
+                    Intent intent = new Intent();
+                    intent.setType("video/*");
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(intent,"Select Video"), VIDEO_FROM_GALLERY);
+
+                }
+
+
+                break;
+
+            case FILM:
+                // the user wants to film a video. if permission granted, open that Activity.
+
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // they granted permission... open the Activity
+
+                    // express an implicit intent to film a video
+                    Intent filmVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+
+                    startActivityForResult(filmVideoIntent, VIDEO_FROM_CAMERA);
+
+                }
+
+                break;
+
+        }
+        
     }
 
 }
