@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -47,7 +48,6 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
     final int MAKE_A_MOMENT_REQUEST_CODE = 1;
 
     // Strings for use with SharedPreferences
-    String mSharedPreferencesName;
     String mHasFailedFlagName;
 
     // list of Moments
@@ -95,6 +95,9 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
 
         //inflate the fragment's view
         View entireView = inflater.inflate(R.layout.fragment_my_moments, container, false);
+
+        // get the name of the sharedPreferences flag that indicates failure of upload
+        mHasFailedFlagName = getString(R.string.has_failed_flag);
 
         // get the RelativeLayout to retrieve the child views
         mMyMomentsRelativeLayout = (RelativeLayout) entireView;
@@ -162,9 +165,6 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
 
         // fetch the mPrimaryKeyExtra
         mPrimaryKeyExtra = getString(R.string.primary_key_extra);
-
-        mSharedPreferencesName = getString(R.string.shared_preferences);
-        mHasFailedFlagName = getString(R.string.has_failed_flag);
 
     }
 
@@ -321,7 +321,7 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
     public void switchToFailed() {
 
         // get the shared preferences
-        SharedPreferences sharedPreferences = getContext().getApplicationContext().getSharedPreferences(mSharedPreferencesName, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
         // get the shouldSwitch value from them
         Boolean shouldSwitch = sharedPreferences.getBoolean(mHasFailedFlagName, false);
@@ -329,25 +329,39 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
         // reset it to false in SharedPreferences
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(mHasFailedFlagName, false);
+        editor.commit();
 
         // if a the UploadService started an upload and never finished it
         if(shouldSwitch) {
             // find all the Moments with UPLOADING state and switch them to FAILED
 
-            ArrayList<Moment> moments = Moment.findUploadingMoments();
+            mMomentList.getMyMoments();
 
-            for(final Moment moment: moments) {
+            ArrayList<Moment> list = mMomentList.getMomentList();
 
-                moment.persistUpdates(new PersistenceExecutor() {
+            for(Moment moment: list) {
+                // for every Moment in the MomentList, find the Managed Moment by key, and if it's uploading, change it to failed
 
-                    @Override
-                    public void execute() {
+                // get the primaryKey
+                String primaryKey = moment.getPrimaryKey();
 
-                        moment.setEnumState(MomentStateEnum.FAILED);
+                // get the managed Moment
+                final Moment managedMoment = Moment.findMoment(primaryKey);
 
-                    }
+                if(managedMoment.getMomentState() == MomentStateEnum.UPLOADING) {
 
-                });
+                    managedMoment.persistUpdates(new PersistenceExecutor() {
+
+                        @Override
+                        public void execute() {
+
+                            managedMoment.setEnumState(MomentStateEnum.FAILED);
+
+                        }
+
+                    });
+
+                }
 
             }
 
