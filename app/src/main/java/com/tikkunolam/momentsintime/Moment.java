@@ -274,6 +274,8 @@ public class Moment extends RealmObject {
             }
         });
 
+        realm.close();
+
     }
 
     public static Moment createMoment() {
@@ -322,24 +324,6 @@ public class Moment extends RealmObject {
 
     }
 
-    public static ArrayList<Moment> findUploadingMoments() {
-
-        ArrayList<Moment> momentList = new ArrayList<>();
-
-        Realm realm = Realm.getDefaultInstance();
-
-        // find Moments where the state is UPLOADING
-        RealmQuery<Moment> query = realm.where(Moment.class).equalTo("state", UPLOADING.name());
-
-        RealmResults<Moment> moments = query.findAll();
-
-        // add them all to the momentList
-        momentList.addAll(realm.copyFromRealm(moments));
-
-        return momentList;
-
-    }
-
     public static ArrayList<Moment> getMyMoments() {
 
         ArrayList<Moment> momentList = new ArrayList<>();
@@ -351,6 +335,8 @@ public class Moment extends RealmObject {
 
         // add them all to the list
         momentList.addAll(realm.copyFromRealm(realmResults));
+
+        realm.close();
 
         return momentList;
 

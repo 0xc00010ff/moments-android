@@ -42,7 +42,7 @@ public class UploadService extends IntentService {
     String mVideoFileExtra, mPrimaryKeyExtra;
 
     // strings for SharedPreferences
-    String sharedPreferencesName, hasFailedFlagName;
+    String hasFailedFlagName;
 
     // the video file to upload
     String mVideoFileString;
@@ -113,7 +113,6 @@ public class UploadService extends IntentService {
         mPrimaryKeyExtra = getString(R.string.primary_key_extra);
 
         // strings for SharedPreferences
-        sharedPreferencesName = getString(R.string.shared_preferences);
         hasFailedFlagName = getString(R.string.has_failed_flag);
 
         // app access token for authenticating requests
@@ -550,7 +549,7 @@ public class UploadService extends IntentService {
     // happens before upload incase the app is killed, so the Moment can be updated to FAILED
     private void indicateUploadNotFinished() {
 
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(sharedPreferencesName, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -563,7 +562,7 @@ public class UploadService extends IntentService {
     // set the sharedPreference back, indicating the upload finished and the state is correct
     private void indicateUploadFinished() {
 
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(sharedPreferencesName, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
 

@@ -33,6 +33,8 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
     // the CardView containing everything
     CardView wholeCardView;
 
+    ConstraintLayout stateConstraintLayout;
+
     // the TextView that indicates the state of the Moment
     TextView momentStateTextView;
 
@@ -74,6 +76,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
 
         wholeCardView = (CardView) view;
         momentStateTextView = (TextView) view.findViewById(R.id.moment_state_textView);
+        stateConstraintLayout = (ConstraintLayout) view.findViewById(R.id.state_constraintLayout);
         coloredCircleView = view.findViewById(R.id.state_circle_view);
         videoPreviewImageView = (ImageView) view.findViewById(R.id.video_preview_imageView);
         videoNameTextView = (TextView) view.findViewById(R.id.video_name_textView);
@@ -202,7 +205,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
 
     }
 
-    private void configureFailed(Moment moment) {
+    private void configureFailed(final Moment moment) {
         // configures the views with a FAILED Moment
 
         // hide the shareTextView
@@ -218,6 +221,18 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         videoDescriptionTextView.setText(moment.getDescription());
         momentStateTextView.setText(mStateFailed);
         coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_red));
+
+        // set the stateConstraintLayout's onClick
+        stateConstraintLayout.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                mActivityCallback.onFailedStateClick(moment);
+
+            }
+
+        });
 
         setOnVideoClick(moment);
         setOnDotsClick(moment);
