@@ -369,6 +369,36 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
     }
 
+    public void onFailedStateClick(Moment moment) {
+        // when the stateConstraintLayout is clicked in a Moment with FAILED upload state
+
+        // get the Moment
+        final Moment managedMoment = Moment.findMoment(moment.getPrimaryKey());
+
+        // create an UPLOADING state
+        final MomentStateEnum uploadingState = MomentStateEnum.UPLOADING;
+
+        // persist that state to the Moment
+        managedMoment.persistUpdates(new PersistenceExecutor() {
+
+            @Override
+            public void execute() {
+
+                managedMoment.setEnumState(uploadingState);
+
+            }
+
+        });
+
+        // kick off the uploadService
+        managedMoment.uploadMoment(this.getApplicationContext());
+
+        // notify the Fragment to refresh its view list to reflect the UPLOADING Moment
+        myMomentsFragment.refreshListFromActivity();
+
+
+    }
+
 
     // the callback method that will be called when the MomentPrompt is clicked in the CommunityFragment RecyclerView
     public void onMomentPromptClick() {
