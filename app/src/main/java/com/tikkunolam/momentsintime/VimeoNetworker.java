@@ -38,6 +38,9 @@ public class VimeoNetworker {
     // strings for intent extra arguments/parameters
     String videoFileExtra, mPrimaryKeyExtra;
 
+    // strings for JSON filter request arguments
+    String mCommunityFilter, mPlayableVideoFilter, mSingleMomentFilter, mDeleteMomentFilter;
+
     // app access token for authenticating requests
     private String mAccessToken;
 
@@ -81,6 +84,12 @@ public class VimeoNetworker {
         videoFileExtra = applicationContext.getString(R.string.video_file_extra);
         mPrimaryKeyExtra = applicationContext.getString(R.string.primary_key_extra);
 
+        // get the JSON filter request argument Strings
+        mCommunityFilter = applicationContext.getString(R.string.community_filter);
+        mPlayableVideoFilter = applicationContext.getString(R.string.playable_video_filter);
+        mSingleMomentFilter = applicationContext.getString(R.string.single_moment_filter);
+        mDeleteMomentFilter = applicationContext.getString(R.string.delete_moment_filter);
+
 
 
     }
@@ -105,7 +114,7 @@ public class VimeoNetworker {
 
             // build the request
             Request request = new Request.Builder()
-                    .url(mApiAddress + mVideoFetchUri + "?" + mPageNumberParameter + pageNumberString + "&" + mPerPageParameter + mVideosPerPage)
+                    .url(mApiAddress + mVideoFetchUri + "?" + mPageNumberParameter + pageNumberString + "&" + mPerPageParameter + mVideosPerPage + "&" + mCommunityFilter)
                     .addHeader("Authorization", "Bearer " + mAccessToken)
                     .addHeader("Accept", mApiVersion)
                     .build();
@@ -389,7 +398,7 @@ public class VimeoNetworker {
             // try to retrieve the Moment from Vimeo
 
             Request request = new Request.Builder()
-                    .url(mApiAddress + "/me" + videoUri)
+                    .url(mApiAddress + "/me" + videoUri + "?" + mSingleMomentFilter)
                     .addHeader("Authorization", "Bearer " + mAccessToken)
                     .addHeader("Accept", mApiVersion)
                     .build();
@@ -459,15 +468,13 @@ public class VimeoNetworker {
         try{
 
             Request request = new Request.Builder()
-                    .url(mApiAddress + moment.getVideoUri())
+                    .url(mApiAddress + moment.getVideoUri() + "?" + mDeleteMomentFilter)
                     .addHeader("Authorization", "Bearer " + mAccessToken)
                     .addHeader("Accept", mApiVersion)
                     .delete()
                     .build();
 
             response = client.newCall(request).execute();
-
-            Log.d(TAG, "wah happen");
 
             success = true;
 

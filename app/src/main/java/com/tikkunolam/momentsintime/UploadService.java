@@ -41,6 +41,9 @@ public class UploadService extends IntentService {
     // string for intent extra arguments/parameters
     String mVideoFileExtra, mPrimaryKeyExtra;
 
+    // strings for json filter argument in requests
+    String mUploadTicketFilter, mUploadFilter, mCompleteUploadFilter, mUpdateMetadataFilter, mCheckAvailabilityFilter;
+
     // strings for SharedPreferences
     String hasFailedFlagName;
 
@@ -111,6 +114,13 @@ public class UploadService extends IntentService {
         // strings for intent extra arguments/parameters
         mVideoFileExtra = getString(R.string.video_file_extra);
         mPrimaryKeyExtra = getString(R.string.primary_key_extra);
+
+        // strings for JSON filter arguments
+        mUploadTicketFilter = getString(R.string.upload_ticket_filter);
+        mUploadFilter = getString(R.string.upload_filter);
+        mCompleteUploadFilter = getString(R.string.complete_upload_filter);
+        mUpdateMetadataFilter = getString(R.string.update_metadata_filter);
+        mCheckAvailabilityFilter = getString(R.string.check_availability_filter);
 
         // strings for SharedPreferences
         hasFailedFlagName = getString(R.string.has_failed_flag);
@@ -266,7 +276,7 @@ public class UploadService extends IntentService {
 
             // build the request
             Request request = new Request.Builder()
-                    .url(mApiAddress + mVideoFetchUri)
+                    .url(mApiAddress + mVideoFetchUri + "?" + mUploadTicketFilter)
                     .post(body)
                     .addHeader("Authorization", "Bearer " + mAccessToken)
                     .addHeader("Accept", mApiVersion)
@@ -494,7 +504,7 @@ public class UploadService extends IntentService {
 
                 // request the video
                 Request request = new Request.Builder()
-                        .url(mApiAddress + mFinalUri)
+                        .url(mApiAddress + mFinalUri + "?" + mCheckAvailabilityFilter)
                         .addHeader("Authorization", "Bearer " + mAccessToken)
                         .addHeader("Accept", mApiVersion)
                         .build();
