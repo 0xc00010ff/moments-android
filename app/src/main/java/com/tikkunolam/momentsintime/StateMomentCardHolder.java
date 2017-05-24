@@ -133,6 +133,10 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         // hide the shareTextView
         shareTextView.setVisibility(View.INVISIBLE);
 
+        // show the rest of the views in case they were hidden in another configure
+        videoNameTextView.setVisibility(View.VISIBLE);
+        videoDescriptionTextView.setVisibility(View.VISIBLE);
+
         // if the Moment has a localVideoUri, fill the videoPreviewImageView with a preview from it
         if(moment.getLocalVideoFilePath() != null) {
 
@@ -188,6 +192,10 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
 
         // hide the shareTextView
         shareTextView.setVisibility(View.INVISIBLE);
+
+        // show the rest of the views in case they were hidden in another configure
+        videoNameTextView.setVisibility(View.VISIBLE);
+        videoDescriptionTextView.setVisibility(View.VISIBLE);
 
         // gets the video file path string from the Moment and makes a file with it
         File videoFile = new File(moment.getLocalVideoFilePath());

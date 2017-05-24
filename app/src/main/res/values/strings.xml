@@ -5,7 +5,7 @@
     <!--API DETAILS-->
 
     <!--strings for individual configuration-->
-    <string name="api_access_token">cbcd60a11d6c8dbad7310a4074312963</string>
+    <string name="api_access_token">f410124bb5ab3bbb7c64936f98afc973</string>
     <!--real Moments in Time Token: cbcd60a11d6c8dbad7310a4074312963-->
     <!--personal test token: f410124bb5ab3bbb7c64936f98afc973-->
 
@@ -41,8 +41,8 @@
 
     <!--strings for the community fragment-->
     <string name="moment_prompt">Make a Moment</string>
-    <string name="moment_prompt_cont">Who do you know that has a story to tell?</string>
-    <string name="ask_to_interview">Ask to Interview</string>
+    <string name="moment_prompt_cont">Create a moment of your own. Save to your stash or submit to the world.</string>
+    <string name="moment_prompt_link">Let\'s make a Moment</string>
 
     <!--strings for the mymoments fragment-->
     <string name="no_moments">Where are all the moments?</string>

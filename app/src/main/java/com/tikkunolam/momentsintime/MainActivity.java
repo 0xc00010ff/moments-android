@@ -402,7 +402,13 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
     // the callback method that will be called when the MomentPrompt is clicked in the CommunityFragment RecyclerView
     public void onMomentPromptClick() {
+        // open MakeAMomentActivity
 
+        // make a new Intent with the MakeAMomentActivity
+        Intent makeAMomentIntent = new Intent(this, MakeAMomentActivity.class);
+
+        // start it
+        startActivityForResult(makeAMomentIntent, MAKE_A_MOMENT_REQUEST_CODE);
 
     }
 
