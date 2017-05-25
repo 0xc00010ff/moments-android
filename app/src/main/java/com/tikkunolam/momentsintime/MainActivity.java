@@ -2,8 +2,10 @@ package com.tikkunolam.momentsintime;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
@@ -34,12 +36,16 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
     String mVimeoVideoUriExtra;
     String mLocalVideoFileExtra;
 
+    // string for the terms and conditions shared preference argument
+    String mHasAgreedToTermsFlag;
+
     // the Fragments in the ViewPager
     Fragment communityFragment;
     myMomentInterface myMomentsFragment;
 
     // integers for request codes from startActivityForResult
     final int MAKE_A_MOMENT_REQUEST_CODE = 1;
+    final int TERMS_AND_CONDITIONS_REQUEST_CODE = 2;
 
     // ui references
     Toolbar mToolbar;
@@ -60,6 +66,12 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
         mVimeoVideoUriExtra = getString(R.string.vimeo_video_uri_extra);
         mLocalVideoFileExtra = getString(R.string.local_video_file_extra);
 
+        // get the shared preference argument
+        mHasAgreedToTermsFlag = getString(R.string.has_agreed_to_terms_and_conditions);
+
+        // check if the person has agreed to terms and conditions
+        checkForTermsAndConditions();
+
         //set the ActionBar to the toolbar we created
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -72,6 +84,25 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
         //set up the TabLayout
         mTabLayout = (TabLayout) findViewById(R.id.tabLayout);
         setupTabLayout();
+    }
+
+    private void checkForTermsAndConditions() {
+
+        // get the shared preferences
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // get the hasAgreed value from them
+        Boolean hasAgreed = sharedPreferences.getBoolean(mHasAgreedToTermsFlag, false);
+
+        // if they haven't agreed, open the TermsAndConditionsActivity
+        if(!hasAgreed) {
+
+            Intent termsAndConditionsIntent = new Intent(this, TermsAndConditionsActivity.class);
+
+            startActivityForResult(termsAndConditionsIntent, TERMS_AND_CONDITIONS_REQUEST_CODE);
+
+        }
+
     }
 
     private void setupTabLayout() {

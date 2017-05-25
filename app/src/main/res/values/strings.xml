@@ -29,8 +29,9 @@
     <string name="update_metadata_filter">fields=uri</string>
     <string name="check_availability_filter">fields=status</string>
 
-    <!--strings for service interactions-->
+    <!--strings for shared preferences-->
     <string name="has_failed_flag">hasFailed</string>
+    <string name="has_agreed_to_terms_and_conditions">hasAgreed</string>
 
 
     <!--UI STRINGS-->
@@ -81,6 +82,11 @@
     <string name="topic_headline">Headline(short and sweet)</string>
     <string name="topic_question">Question/Theme</string>
 
+    <!--strings for the TermsAndConditionsActivity-->
+    <string name="terms_and_conditions_toolbar_title">Terms and Conditions</string>
+    <string name="terms_and_conditions_content">TRUE! -- nervous -- very, very dreadfully nervous I had been and am; but why will you say that I am mad? The disease had sharpened my senses -- not destroyed -- not dulled them. Above all was the sense of hearing acute. I heard all things in the heaven and in the earth. I heard many things in hell. How, then, am I mad? Hearken! and observe how healthily -- how calmly I can tell you the whole story.</string>
+    <string name="terms_and_conditions_accept">Accept</string>
+
     <!--strings for the save_menu-->
     <string name="save_item">Save</string>
 
@@ -108,6 +114,11 @@
     <string name="edit_video_content">The video has been saved to your gallery. You can edit the video with your favorite tools and update this Moment with the new video when you\'re ready. Nothing will be uploaded until you say so.</string>
     <string name="edit_video_positive_text">OK</string>
     <string name="edit_video_delete_video">Delete Video</string>
+
+    <string name="terms_and_conditions_dialog_title">Terms and Conditions</string>
+    <string name="terms_and_conditions_dialog_content">I have read, and agree to the Moments In Time Terms and Conditions</string>
+    <string name="terms_and_conditions_positive_text">Accept</string>
+    <string name="terms_and_conditions_negative_text">Cancel</string>
 
     <!--String for the sms Intent-->
     <string name="sms_message">Check out this story on Moments In Time! </string>
