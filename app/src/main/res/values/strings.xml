@@ -32,6 +32,7 @@
     <!--strings for shared preferences-->
     <string name="has_failed_flag">hasFailed</string>
     <string name="has_agreed_to_terms_and_conditions">hasAgreed</string>
+    <string name="is_first_visit">firstVisit</string>
 
 
     <!--UI STRINGS-->
@@ -97,6 +98,11 @@
     <string name="state_live">Live</string>
     <string name="moment_title">Title</string>
     <string name="moment_description"></string>
+
+    <!--strings for the WelcomeMessage-->
+    <string name="welcome_message_title">Welcome to Moments In Time</string>
+    <string name="welcome_message_content">We believe that these stories will inspire, educate, and encourage individuals to capture their own "Moments In Time," connecting one generation to another, while preserving amazing stories...</string>
+    <string name="welcome_message_moment_prompt">Let\'s make a Moment</string>
 
     <!--strings for dialogs-->
 
