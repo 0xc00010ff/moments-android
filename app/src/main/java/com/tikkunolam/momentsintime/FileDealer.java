@@ -4,6 +4,7 @@ package com.tikkunolam.momentsintime;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -13,9 +14,14 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static android.R.attr.bitmap;
 
 public class FileDealer {
     /**
@@ -220,6 +226,50 @@ public class FileDealer {
         }
 
         return bytes;
+
+    }
+
+    public String bitmapToFile(Context context, Bitmap picture) {
+        // takes a bitmap, saves it locally, and return a String containing the file's path
+
+        String filePathString = null;
+
+        File directory = context.getApplicationContext().getFilesDir();
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+        Date now = new Date();
+        String fileName = formatter.format(now) + ".jpg";
+
+        File pictureFile = new File(directory, fileName);
+
+        OutputStream outputStream;
+
+        try {
+
+            outputStream = new FileOutputStream(pictureFile);
+
+            picture.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+
+            outputStream.flush();
+            outputStream.close();
+
+        }
+
+        catch(FileNotFoundException exception) {
+
+            exception.toString();
+
+        }
+
+        catch(IOException exception) {
+
+            exception.toString();
+
+        }
+
+        filePathString = pictureFile.getAbsolutePath();
+
+        return filePathString;
 
     }
 

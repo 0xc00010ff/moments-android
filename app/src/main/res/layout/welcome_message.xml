@@ -1,41 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/moment_prompt_linearLayout"
+    android:id="@+id/welcome_message_linearLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:background="@color/background"
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/moment_prompt_textView"
+        android:id="@+id/welcome_message_title_textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:layout_marginTop="8dp"
-        android:text="@string/moment_prompt"
         android:textAlignment="center"
         android:textColor="@color/text"
         android:textSize="18sp"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/moment_prompt_cont_textView"
+        android:id="@+id/welcome_message_content_textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="4dp"
         android:layout_marginTop="4dp"
-        android:text="@string/moment_prompt_cont"
         android:textAlignment="center"
         android:textColor="@color/text" />
 
     <TextView
-        android:id="@+id/ask_to_interview_textView"
+        android:id="@+id/welcome_message_moment_prompt_textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="4dp"
-        android:text="@string/moment_prompt_link"
         android:textAlignment="center"
         android:textColor="@color/actionBlue"
         android:textSize="18sp" />

@@ -4,7 +4,7 @@
     <!--string array for the dialog for Interviewing in MakeAMomentActivity-->
     <string-array name="interviewing_dialog_array">
 
-        <item>Pick from Facebook</item>
+        <item>Choose From Contacts</item>
         <item>Enter Manually</item>
 
     </string-array>

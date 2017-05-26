@@ -20,7 +20,7 @@ public class MomentPrompt {
 
         mMakeAMomentString = applicationContext.getString(R.string.moment_prompt);
         mWhoString = applicationContext.getString(R.string.moment_prompt_cont);
-        mAskToInterviewString = applicationContext.getString(R.string.ask_to_interview);
+        mAskToInterviewString = applicationContext.getString(R.string.moment_prompt_link);
 
     }
 

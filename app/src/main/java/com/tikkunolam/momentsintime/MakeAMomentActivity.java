@@ -7,10 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -27,7 +30,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.content.CursorLoader;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.Toast;
+import android.provider.ContactsContract.Contacts;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -36,6 +41,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -46,6 +53,7 @@ import io.realm.RealmList;
 import io.realm.RealmResults;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
+import static android.net.Uri.withAppendedPath;
 import static com.tikkunolam.momentsintime.R.string.primary_key_extra;
 
 public class MakeAMomentActivity extends AppCompatActivity implements HolderInteractionListener{
@@ -63,6 +71,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     final int INTERVIEWING_INTENT = 3;
     final int TOPIC_INTENT = 4;
     final int NOTE_INTENT = 5;
+    final int INTERVIEWEE_FROM_CONTACTS = 6;
 
     // integers to specify which action requested READ_EXTERNAL_STORAGE permission
     final int UPLOAD = 1, FILM = 2;
@@ -93,6 +102,10 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
     // a boolean indicating whether the views should be clickable or not
     boolean mClickable = true;
+
+    // the Uri to be returned from a contact fetch
+    Uri uriContact;
+    String mContactID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -441,6 +454,18 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                     break;
 
+                case INTERVIEWEE_FROM_CONTACTS:
+                    // the user just chose an interviewee from Contacts...
+                    // get their name, role, and photo file, set them on the Moment, and insertInterviewingCard
+
+                    uriContact = data.getData();
+
+                    retrieveContactName();
+                    retrieveContactPhoto();
+                    insertInterviewingCard();
+
+                    break;
+
                 case TOPIC_INTENT:
 
                     // get the title and description from the TopicActivity
@@ -591,15 +616,11 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                         switch(position) {
 
                             case 0:
-                                // they chose Facebook...
+                                // they chose Contacts...
 
-                                // display the facebook dialog
-                                MaterialDialog anotherDialog = new MaterialDialog.Builder(context)
-                                        .title(getString(R.string.in_development_title))
-                                        .content(getString(R.string.in_development_content))
-                                        .positiveText(getString(R.string.in_development_ok))
-                                        .positiveColor(getResources().getColor(R.color.actionBlue))
-                                        .show();
+                                Intent contactIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
+
+                                startActivityForResult(contactIntent, INTERVIEWEE_FROM_CONTACTS);
 
                                 break;
 
@@ -988,5 +1009,49 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         }
         
     }
+
+    private void retrieveContactName() {
+
+        // querying contact data store
+        Cursor cursor = getContentResolver().query(uriContact, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+
+            // DISPLAY_NAME = The display name for the contact.
+
+            final String contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+            mMoment.persistUpdates(new PersistenceExecutor() {
+
+                @Override
+                public void execute() {
+
+                    mMoment.setInterviewee(contactName);
+
+                }
+
+            });
+        }
+
+        cursor.close();
+
+        Cursor cursorID = getContentResolver().query(uriContact,
+                new String[]{ContactsContract.Contacts._ID},
+                null, null, null);
+
+        if (cursorID.moveToFirst()) {
+
+            mContactID = cursorID.getString(cursorID.getColumnIndex(ContactsContract.Contacts._ID));
+        }
+
+        cursorID.close();
+
+    }
+
+
+    public void retrieveContactPhoto() {
+
+    }
+
 
 }

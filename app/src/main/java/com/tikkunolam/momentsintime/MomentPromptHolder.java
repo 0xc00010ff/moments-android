@@ -40,7 +40,7 @@ public class MomentPromptHolder extends RecyclerView.ViewHolder {
         super(view);
 
         // assign the mActivityCallback from context
-        mActivityCallback = (MainActivity) context;
+        mActivityCallback = (MomentInteractionListener) context;
 
         moment_prompt_textView = (TextView) view.findViewById(R.id.moment_prompt_textView);
         moment_prompt_cont_textView = (TextView) view.findViewById(R.id.moment_prompt_cont_textView);

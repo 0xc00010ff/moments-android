@@ -1,8 +1,10 @@
 package com.tikkunolam.momentsintime;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +26,11 @@ public class CommunityFragment extends Fragment {
 
     Context mContext;
 
+    // string for shared preference argument
+    String mIsFirstTimeArg;
+
+    boolean mIsFirstTime;
+
     // ui references
     FrameLayout mCommunityFrameLayout;
     RecyclerView mCommunityRecyclerView;
@@ -40,6 +47,8 @@ public class CommunityFragment extends Fragment {
 
     // listener for mCommunityRecyclerView's scroll
     EndlessRecyclerViewScrollListener mScrollListener;
+
+    final int WELCOME_MESSAGE_POSITION = 0;
 
     public CommunityFragment() {
 
@@ -66,6 +75,8 @@ public class CommunityFragment extends Fragment {
 
         mContext = getActivity();
 
+        mIsFirstTimeArg = mContext.getString(R.string.is_first_visit);
+
         // inflate the layout for the fragment
         View entireView = inflater.inflate(R.layout.fragment_community, container, false);
 
@@ -83,6 +94,9 @@ public class CommunityFragment extends Fragment {
 
         // make a new mViewModelList
         mViewModelList = new ArrayList<>();
+
+        // check if this is the user's first time in the app
+        checkIfFirstTime();
 
         // set up the RecyclerView
         setUpRecyclerView();
@@ -114,6 +128,32 @@ public class CommunityFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    public void insertWelcomeMessage() {
+
+        if(mIsFirstTime) {
+
+            WelcomeMessage welcomeMessage = new WelcomeMessage(mContext);
+            mViewModelList.add(WELCOME_MESSAGE_POSITION, welcomeMessage);
+
+        }
+
+    }
+
+    public void checkIfFirstTime() {
+
+        // get the shared preferences
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+
+        // get the isFirstVisit value from them
+        mIsFirstTime = sharedPreferences.getBoolean(mIsFirstTimeArg, true);
+
+        // set the value to false so it'll never insert one again
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(mIsFirstTimeArg, false);
+        editor.commit();
+
     }
 
     public void setUpRecyclerView(){
@@ -219,6 +259,9 @@ public class CommunityFragment extends Fragment {
 
             // clear the list for the sake of the endless scroll
             mViewModelList.clear();
+
+            // add the welcome message if appropriate
+            insertWelcomeMessage();
 
             // add all the fetched Moments to the mViewModelList
             mViewModelList.addAll(mMomentList.getMomentList());

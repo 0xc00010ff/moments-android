@@ -283,40 +283,6 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
 
     }
 
-    /**
-     * EVENTBUS CALLBACKS
-     */
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(UploadFinishedMessage event) {
-        // an UploadService finished.. reload the views
-
-        fetchMoments();
-
-    }
-
-    /**
-     * METHODS TO BE CALLED FROM THE PARENT ACTIVITY
-     */
-
-    public void refreshListFromActivity() {
-        // called from the MainActivity when it has changed some underlying data and the Fragment needs to refresh
-
-
-        // clear the contents of the screen
-        mViewModelList.clear();
-
-        // fetch the local Moments
-        mMomentList.getMyMoments();
-
-        // add all the fetched Moments to the mViewModelList
-        mViewModelList.addAll(mMomentList.getMomentList());
-
-        // tell the Adapter to update itself
-        mMomentCardAdapter.notifyDataSetChanged();
-
-    }
-
     // check if the flag was set by the service indicating an upload never finished. if so switch any UPLOADING Moments to FAILED
     public void switchToFailed() {
 
@@ -367,6 +333,40 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
 
         }
 
+
+    }
+
+    /**
+     * EVENTBUS CALLBACKS
+     */
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(UploadFinishedMessage event) {
+        // an UploadService finished.. reload the views
+
+        fetchMoments();
+
+    }
+
+    /**
+     * METHODS TO BE CALLED FROM THE PARENT ACTIVITY
+     */
+
+    public void refreshListFromActivity() {
+        // called from the MainActivity when it has changed some underlying data and the Fragment needs to refresh
+
+
+        // clear the contents of the screen
+        mViewModelList.clear();
+
+        // fetch the local Moments
+        mMomentList.getMyMoments();
+
+        // add all the fetched Moments to the mViewModelList
+        mViewModelList.addAll(mMomentList.getMomentList());
+
+        // tell the Adapter to update itself
+        mMomentCardAdapter.notifyDataSetChanged();
 
     }
 

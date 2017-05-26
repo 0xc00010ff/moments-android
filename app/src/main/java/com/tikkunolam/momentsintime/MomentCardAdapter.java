@@ -27,6 +27,7 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     ArrayList<Object> mViewModelList;
 
     // integers to identify the Object in the ArrayList
+    final int WELCOME_MESSAGE = 0;
     final int MOMENT = 1;
     final int PROMPT = 2;
     final int MOMENT_WITH_STATE = 3;
@@ -57,7 +58,14 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public int getItemViewType(int position) {
         // determine what type of object is in the current position of the list
 
-        if(mViewModelList.get(position) instanceof Moment) {
+        if(mViewModelList.get(position) instanceof WelcomeMessage) {
+            // if the Object is a WelcomeMessage return that info
+
+            return WELCOME_MESSAGE;
+
+        }
+
+        else if(mViewModelList.get(position) instanceof Moment) {
             // if the Object is a Moment, determine if it has a state and return a ViewType accordingly
 
             Moment moment = (Moment) mViewModelList.get(position);
@@ -98,6 +106,19 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         RecyclerView.ViewHolder viewHolder = null;
 
         switch(viewType) {
+
+            case WELCOME_MESSAGE:
+                // if it calls for a welcome message, inflate one and pass it to a WelcomeMessageHolder
+
+                // inflate welcome_message
+                View welcomeMessageView = LayoutInflater
+                        .from(parent.getContext())
+                        .inflate(R.layout.welcome_message, parent, false);
+
+                // set the ViewHolder as a WelcomeMessageHolder
+                viewHolder = new WelcomeMessageHolder(mContext, welcomeMessageView);
+
+                break;
 
             case PROMPT:
                 // if the list calls for a prompt, inflate one and pass it to a new MomentPromptHolder
@@ -149,6 +170,22 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         // determine what type of layout we're going to fill
         switch(holder.getItemViewType()) {
+
+            case WELCOME_MESSAGE:
+                // fill a WelcomeMessageHolder
+
+                // get the WelcomeMessage from the list
+                WelcomeMessage welcomeMessage = (WelcomeMessage) mViewModelList.get(position);
+
+                // cast the generic Holder to a WelcomeMessageHolder
+                WelcomeMessageHolder welcomeMessageHolder = (WelcomeMessageHolder) holder;
+
+                // fill its views
+                welcomeMessageHolder.mWelcomeMessageTitleTextView.setText(welcomeMessage.getTitle());
+                welcomeMessageHolder.mWelcomeMessageContentTextView.setText(welcomeMessage.getContent());
+                welcomeMessageHolder.mWelcomeMessageMomentPromptTextView.setText(welcomeMessage.getPrompt());
+
+                break;
 
             case MOMENT:
                 // fill a momentCardHolder
