@@ -3,6 +3,8 @@
     android:id="@+id/moment_prompt_linearLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:layout_marginTop="8dp"
     android:orientation="vertical">
 
     <TextView
@@ -23,10 +25,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="4dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
         android:layout_marginTop="4dp"
         android:text="@string/moment_prompt_cont"
         android:textAlignment="center"
-        android:textColor="@color/text" />
+        android:textColor="@color/text"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/ask_to_interview_textView"

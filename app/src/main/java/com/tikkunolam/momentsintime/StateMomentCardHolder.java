@@ -149,6 +149,13 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
 
         }
 
+        // otherwise put the default picture in it
+        else {
+
+            videoPreviewImageView.setImageResource(R.mipmap.ic_launcher);
+
+        }
+
         // if the Moment has a title, fill that field
         if(moment.getTitle() != null) {
 
