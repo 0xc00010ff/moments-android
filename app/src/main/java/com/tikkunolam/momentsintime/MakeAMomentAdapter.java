@@ -276,7 +276,15 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 // if the user added a picture, then fill the ImageView with it
                 if(interviewingCardData.getIntervieweePhotoUri() != null) {
 
+                    interviewingCardHolder.mIntervieweePhotoImageView.setVisibility(View.VISIBLE);
                     interviewingCardHolder.mIntervieweePhotoImageView.setImageURI(interviewingCardData.getIntervieweePhotoUri());
+
+                }
+
+                // otherwise hide the ImageView
+                else {
+
+                    interviewingCardHolder.mIntervieweePhotoImageView.setVisibility(View.GONE);
 
                 }
 
