@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -33,6 +34,7 @@ public class CommunityFragment extends Fragment {
 
     // ui references
     FrameLayout mCommunityFrameLayout;
+    SwipeRefreshLayout mSwipeRefreshLayout;
     RecyclerView mCommunityRecyclerView;
     ProgressBar mProgressBar;
 
@@ -86,6 +88,8 @@ public class CommunityFragment extends Fragment {
         // the the ProgressBar
         mProgressBar = (ProgressBar) mCommunityFrameLayout.findViewById(R.id.progressBar);
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) mCommunityFrameLayout.findViewById(R.id.community_swipeRefreshLayout);
+
         // get the RecyclerView
         mCommunityRecyclerView = (RecyclerView) mCommunityFrameLayout.findViewById(R.id.community_recyclerView);
 
@@ -100,6 +104,9 @@ public class CommunityFragment extends Fragment {
 
         // set up the RecyclerView
         setUpRecyclerView();
+
+        // set up swipe to refresh
+        setUpSwipeToRefresh();
 
         // return the inflated view
         return entireView;
@@ -222,6 +229,28 @@ public class CommunityFragment extends Fragment {
 
     }
 
+    private void setUpSwipeToRefresh() {
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+
+                mScrollListener.resetState();
+
+                mMomentList = new MomentList(getContext());
+
+                AsyncFetchCommunityMoments asyncFetch = new AsyncFetchCommunityMoments();
+
+                asyncFetch.execute(mMomentList);
+
+            }
+
+        });
+
+
+    }
+
 
     public class AsyncFetchCommunityMoments extends AsyncTask<MomentList, Void, Void> {
         /**
@@ -232,8 +261,13 @@ public class CommunityFragment extends Fragment {
 
         protected void onPreExecute() {
 
-            // show the progress bar
-            mProgressBar.setVisibility(View.VISIBLE);
+            // if this wasn't called by a swipe to refresh, show the progress bar
+            if(!mSwipeRefreshLayout.isRefreshing()) {
+
+                // show the progress bar
+                mProgressBar.setVisibility(View.VISIBLE);
+
+            }
 
         }
 
@@ -253,6 +287,12 @@ public class CommunityFragment extends Fragment {
             // execute on the UI thread when the background task completes
             // Void argument is necessary, but not used
 
+
+            if(mSwipeRefreshLayout.isRefreshing()) {
+
+                mSwipeRefreshLayout.setRefreshing(false);
+
+            }
 
             // stop the progressBar
             mProgressBar.setVisibility(View.GONE);
