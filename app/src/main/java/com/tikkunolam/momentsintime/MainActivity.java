@@ -53,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
     PagerAdapter mPagerAdapter;
     TabLayout mTabLayout;
 
+    // tab position of the MyMomentsFragment
+    final int MY_MOMENTS_POSITION = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -438,13 +441,15 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
     // the callback method that will be called when the MomentPrompt is clicked in the CommunityFragment RecyclerView
     public void onMomentPromptClick() {
-        // open MakeAMomentActivity
 
-        // make a new Intent with the MakeAMomentActivity
-        Intent makeAMomentIntent = new Intent(this, MakeAMomentActivity.class);
+        // tell the MyMomentsFragment it should open MakeAMomentActivity
+        myMomentsFragment.openMakeAMomentActivity();
 
-        // start it
-        startActivityForResult(makeAMomentIntent, MAKE_A_MOMENT_REQUEST_CODE);
+        // get the MyMomentsFragment
+        TabLayout.Tab myMomentsTab = mTabLayout.getTabAt(MY_MOMENTS_POSITION);
+
+        // select it
+        myMomentsTab.select();
 
     }
 
@@ -568,6 +573,8 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
     public interface myMomentInterface {
 
         void refreshListFromActivity();
+
+        void openMakeAMomentActivity();
 
     }
 

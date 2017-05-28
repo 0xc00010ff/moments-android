@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif-black"
         android:text="@string/moment_prompt"
         android:textAlignment="center"
         android:textColor="@color/text"

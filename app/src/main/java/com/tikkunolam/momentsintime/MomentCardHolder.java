@@ -3,7 +3,9 @@ package com.tikkunolam.momentsintime;
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,6 +27,9 @@ public class MomentCardHolder extends RecyclerView.ViewHolder{
 
     // the ImageView for the dots
     ImageView dotsImageView;
+
+    // the container for the dots, to expand click size
+    FrameLayout dotsContainer;
 
     // the textView for the mMoment name
     TextView videoNameTextView;
@@ -49,6 +54,7 @@ public class MomentCardHolder extends RecyclerView.ViewHolder{
         videoDescriptionTextView = (TextView) view.findViewById(R.id.video_description_textView);
         shareTextView = (TextView) view.findViewById(R.id.share_textView);
         dotsImageView = (ImageView) view.findViewById(R.id.dots_imageView);
+        dotsContainer = (FrameLayout) view.findViewById(R.id.moment_card_dots_container_frameLayout);
 
     }
 
@@ -103,7 +109,7 @@ public class MomentCardHolder extends RecyclerView.ViewHolder{
         });
 
         // set the onClick for the dots
-        dotsImageView.setOnClickListener(new View.OnClickListener() {
+        dotsContainer.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {

@@ -7,6 +7,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,6 +15,8 @@ import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+
+import pl.bclogic.pulsator4droid.library.PulsatorLayout;
 
 public class StateMomentCardHolder extends RecyclerView.ViewHolder{
     /**
@@ -41,6 +44,8 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
     // the circle that indicates the state of the Moment
     View coloredCircleView;
 
+    PulsatorLayout circlePulse;
+
     // the ImageView for the mMoment preview
     ImageView videoPreviewImageView;
 
@@ -49,6 +54,9 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
 
     // the three dots for the delete dialog
     ImageView dotsImageView;
+
+    // the container for the dots, to expand click area
+    FrameLayout dotsContainerFrameLayout;
 
     // the textView for the mMoment name
     TextView videoNameTextView;
@@ -78,11 +86,13 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         momentStateTextView = (TextView) view.findViewById(R.id.moment_state_textView);
         stateConstraintLayout = (ConstraintLayout) view.findViewById(R.id.state_constraintLayout);
         coloredCircleView = view.findViewById(R.id.state_circle_view);
+        circlePulse = (PulsatorLayout) view.findViewById(R.id.pulse_circle);
         videoPreviewImageView = (ImageView) view.findViewById(R.id.video_preview_imageView);
         videoNameTextView = (TextView) view.findViewById(R.id.video_name_textView);
         videoDescriptionTextView = (TextView) view.findViewById(R.id.video_description_textView);
         shareTextView = (TextView) view.findViewById(R.id.share_textView);
         dotsImageView = (ImageView) view.findViewById(R.id.dots_imageView);
+        dotsContainerFrameLayout = (FrameLayout) view.findViewById(R.id.moment_card_with_state_dots_container);
         playButtonImageView = (ImageView) view.findViewById(R.id.play_button_imageView);
 
 
@@ -129,6 +139,9 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
 
     private void configureInProgress(Moment moment) {
         // configures the views with an IN_PROGRESS Moment
+
+        // stop the pulse
+        circlePulse.stop();
 
         // hide the shareTextView
         shareTextView.setVisibility(View.INVISIBLE);
@@ -215,6 +228,9 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         momentStateTextView.setText(mStateUploading);
         coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_blue));
 
+        // start the pulse
+        circlePulse.start();
+
         setOnVideoClick(moment);
         setOnDotsClick(moment);
 
@@ -222,6 +238,9 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
 
     private void configureFailed(final Moment moment) {
         // configures the views with a FAILED Moment
+
+        // stop the pulse
+        circlePulse.stop();
 
         // hide the shareTextView
         shareTextView.setVisibility(View.INVISIBLE);
@@ -256,6 +275,9 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
 
     private void configureLive(Moment moment) {
         // configures the views with a LIVE Moment
+
+        // stop the pulse
+        circlePulse.stop();
 
         coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_green));
 
@@ -384,7 +406,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
     private void setOnDotsClick(final Moment moment) {
         // sets a listener on the dots that will call the Activity's onMyDotsClick method
 
-        dotsImageView.setOnClickListener(new View.OnClickListener() {
+        dotsContainerFrameLayout.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
