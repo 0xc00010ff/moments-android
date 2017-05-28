@@ -11,7 +11,7 @@ public class WelcomeMessageHolder extends RecyclerView.ViewHolder{
     MomentInteractionListener mActivityCallback;
 
     // the TextViews to display the data from a WelcomeMessage
-    TextView mWelcomeMessageTitleTextView, mWelcomeMessageContentTextView, mWelcomeMessageMomentPromptTextView;
+    TextView mWelcomeMessageTitleTextView, mWelcomeMessageContentTextView;
 
     public WelcomeMessageHolder(Context context, View view) {
 
@@ -23,20 +23,6 @@ public class WelcomeMessageHolder extends RecyclerView.ViewHolder{
         mWelcomeMessageTitleTextView = (TextView) view.findViewById(R.id.welcome_message_title_textView);
 
         mWelcomeMessageContentTextView = (TextView) view.findViewById(R.id.welcome_message_content_textView);
-
-        mWelcomeMessageMomentPromptTextView = (TextView) view.findViewById(R.id.welcome_message_moment_prompt_textView);
-
-        // set the onClick on the moment prompt
-        mWelcomeMessageMomentPromptTextView.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-
-                mActivityCallback.onMomentPromptClick();
-
-            }
-
-        });
 
     }
 

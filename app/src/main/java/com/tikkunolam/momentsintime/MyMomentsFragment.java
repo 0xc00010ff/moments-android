@@ -195,10 +195,7 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
         super.onResume();
 
         // refresh the mViewModelList with Moments
-        mMomentList.getMyMoments();
-        mViewModelList.clear();
-        mViewModelList.addAll(mMomentList.getMomentList());
-        mMomentCardAdapter.notifyDataSetChanged();
+        fetchMoments();
 
     }
 
@@ -249,6 +246,20 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
 
         // tell the Adapter to update itself
         mMomentCardAdapter.notifyDataSetChanged();
+
+        // if there are no Moments, show the noMoments prompt
+        if(mViewModelList.size() == 0) {
+
+            mNoMomentsLinearLayout.setVisibility(View.VISIBLE);
+
+        }
+
+        // otherwise hide it
+        else {
+
+            mNoMomentsLinearLayout.setVisibility(View.GONE);
+
+        }
 
 
     }
@@ -355,18 +366,13 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
     public void refreshListFromActivity() {
         // called from the MainActivity when it has changed some underlying data and the Fragment needs to refresh
 
+        fetchMoments();
 
-        // clear the contents of the screen
-        mViewModelList.clear();
+    }
 
-        // fetch the local Moments
-        mMomentList.getMyMoments();
+    public void openMakeAMomentActivity() {
 
-        // add all the fetched Moments to the mViewModelList
-        mViewModelList.addAll(mMomentList.getMomentList());
-
-        // tell the Adapter to update itself
-        mMomentCardAdapter.notifyDataSetChanged();
+        onNewMomentClick();
 
     }
 

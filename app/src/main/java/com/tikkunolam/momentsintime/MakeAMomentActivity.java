@@ -107,6 +107,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     Uri uriContact;
     String mContactID;
 
+    // String array that will hold the default notes to be supplied to every new Moment
+    String[] defaultNotes;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -122,6 +125,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         mIntervieweePhotoFileExtra = getString(R.string.interviewee_photo_file_extra);
         mTitleExtra = getString(R.string.title_extra);
         mDescriptionExtra = getString(R.string.description_extra);
+
+        // get the default notes
+        defaultNotes = getResources().getStringArray(R.array.default_notes);
 
         // get the toolbar and set it
         mToolbar = (Toolbar) findViewById(R.id.make_a_moment_toolbar);
@@ -147,6 +153,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                 }
 
             });
+
+            // add the default notes to the Moment
+            addDefaultNotes();
 
         }
 
@@ -607,6 +616,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .title(R.string.interviewing)
                 .items(R.array.interviewing_dialog_array)
+                .itemsColor(getResources().getColor(R.color.actionBlue))
                 .itemsCallback(new MaterialDialog.ListCallback() {
 
                     @Override
@@ -743,6 +753,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .title(R.string.video_dialog_title)
                 .items(R.array.video_dialog_array)
+                .itemsColor(getResources().getColor(R.color.actionBlue))
                 .itemsCallback(new MaterialDialog.ListCallback() {
 
                     @Override
@@ -784,7 +795,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                 })
                 .positiveText(getString(R.string.dialog_cancel))
-                .positiveColor(getResources().getColor(R.color.actionBlue))
+                .positiveColor(getResources().getColor(R.color.textLight))
                 .show();
 
     }
@@ -794,56 +805,43 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .title(R.string.note_dialog_title)
-                .items(R.array.note_dialog_array)
-                .itemsCallback(new MaterialDialog.ListCallback() {
+                .negativeText(getString(R.string.note_dialog_delete))
+                .negativeColor(getResources().getColor(R.color.red))
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
 
                     @Override
-                    public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
 
-                        switch(position) {
+                        // get the position where the notes begin
+                        int notesBegin = (mViewModelList.size()) - (mMoment.getNotes().size());
 
-                            case 0:
-                                // user chose to delete... delete the note at the position from the mViewModelList and from the mMoment's noteList
+                        // this is the index of the note in the mMoment noteList
+                        final int noteListIndex = notePosition - notesBegin;
 
-                                // get the position where the notes begin
-                                int notesBegin = (mViewModelList.size()) - (mMoment.getNotes().size());
+                        // delete the Note from the mMoment's noteList
+                        mMoment.persistUpdates(new PersistenceExecutor() {
 
-                                // this is the index of the note in the mMoment noteList
-                                final int noteListIndex = notePosition - notesBegin;
+                            @Override
+                            public void execute() {
 
-                                // delete the Note from the mMoment's noteList
-                                mMoment.persistUpdates(new PersistenceExecutor() {
+                                RealmList<Note> notes = mMoment.getNotes();
+                                notes.remove(noteListIndex);
 
-                                    @Override
-                                    public void execute() {
+                            }
 
-                                        RealmList<Note> notes = mMoment.getNotes();
-                                        notes.remove(noteListIndex);
+                        });
 
-                                    }
+                        // delete it from the mViewModelList
+                        mViewModelList.remove(notePosition);
 
-                                });
-
-                                // delete it from the mViewModelList
-                                mViewModelList.remove(notePosition);
-
-                                // tell the Adapter to update the RecyclerView
-                                mMakeAMomentAdapter.notifyDataSetChanged();
-
-                                break;
-
-                            case 1:
-                                // user chose to cancel... auto dismiss is on so do nothing
-
-                                break;
-
-                        }
+                        // tell the Adapter to update the RecyclerView
+                        mMakeAMomentAdapter.notifyDataSetChanged();
 
                     }
 
                 })
                 .positiveText(getString(R.string.dialog_cancel))
-                .positiveColor(getResources().getColor(R.color.actionBlue))
+                .positiveColor(getResources().getColor(R.color.textLight))
                 .show();
 
 
@@ -1050,6 +1048,31 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
 
     public void retrieveContactPhoto() {
+
+    }
+
+    public void addDefaultNotes() {
+
+        for(int i = 0; i < defaultNotes.length; i++) {
+
+            final String noteString = defaultNotes[i];
+
+            // make a new note and add it to realm and to the Moment
+            mMoment.persistUpdates(new PersistenceExecutor() {
+
+                @Override
+                public void execute() {
+
+                    RealmList noteList = mMoment.getNotes();
+                    Note note = new Note();
+                    note.setNote(noteString);
+                    noteList.add(0, note);
+
+                }
+
+            });
+
+        }
 
     }
 

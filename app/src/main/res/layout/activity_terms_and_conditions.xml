@@ -17,8 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/horizontal_rule_view"
-        android:layout_below="@+id/terms_and_conditions_toolbar"
-        android:layout_margin="8dp">
+        android:layout_below="@+id/terms_and_conditions_toolbar">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -28,6 +27,7 @@
                 android:id="@+id/terms_and_conditions_content_textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="16dp"
                 android:text="@string/terms_and_conditions_content"
                 android:textColor="@color/text"
                 android:textSize="18sp" />

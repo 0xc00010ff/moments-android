@@ -126,6 +126,8 @@
     <string name="terms_and_conditions_positive_text">Accept</string>
     <string name="terms_and_conditions_negative_text">Cancel</string>
 
+    <string name="note_dialog_delete">Delete</string>
+
     <!--String for the sms Intent-->
     <string name="sms_message">Check out this story on Moments In Time! </string>
 

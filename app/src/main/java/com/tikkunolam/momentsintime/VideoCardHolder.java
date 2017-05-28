@@ -3,6 +3,7 @@ package com.tikkunolam.momentsintime;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 public class VideoCardHolder extends RecyclerView.ViewHolder{
@@ -13,6 +14,7 @@ public class VideoCardHolder extends RecyclerView.ViewHolder{
      */
 
     ImageView videoPreviewImageView;
+    FrameLayout dotsContainer;
     ImageView dotsImageView;
     ImageView playButtonImageView;
 
@@ -33,13 +35,14 @@ public class VideoCardHolder extends RecyclerView.ViewHolder{
 
         // fill the views
         videoPreviewImageView = (ImageView) view.findViewById(R.id.video_card_preview_imageView);
+        dotsContainer = (FrameLayout) view.findViewById(R.id.video_card_dots_container);
         dotsImageView = (ImageView) view.findViewById(R.id.video_card_dots_imageView);
         playButtonImageView = (ImageView) view.findViewById(R.id.video_card_play_imageView);
 
         // add a listener to the dots
         if(clickable) {
 
-            dotsImageView.setOnClickListener(new View.OnClickListener() {
+            dotsContainer.setOnClickListener(new View.OnClickListener() {
 
                 public void onClick(View view) {
 

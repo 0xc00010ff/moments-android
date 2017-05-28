@@ -138,13 +138,6 @@ public class NoteActivity extends AppCompatActivity {
 
                 }
 
-                if(mNoteEditText.getText().length() > mNoteEditText.getMaxCharacters()) {
-                    // if the number of characters in mNoteEditText exceeds its character limit, disable save
-
-                    mSaveMenuItem.setEnabled(false);
-
-                }
-
             }
 
         };

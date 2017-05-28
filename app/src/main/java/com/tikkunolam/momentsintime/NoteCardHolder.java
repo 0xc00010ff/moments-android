@@ -3,6 +3,7 @@ package com.tikkunolam.momentsintime;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +19,8 @@ public class NoteCardHolder extends RecyclerView.ViewHolder {
 
     // the textView for the note_card text
     TextView mNoteCardTextView;
+
+    FrameLayout mDotsContainer;
 
     // the ImageView for the dots in the corner
     ImageView mDotsImageView;
@@ -41,13 +44,15 @@ public class NoteCardHolder extends RecyclerView.ViewHolder {
         // set the textView
         mNoteCardTextView = (TextView) view.findViewById(R.id.note_card_textView);
 
+        mDotsContainer = (FrameLayout) view.findViewById(R.id.note_card_dots_container);
+
         // set the mDotsImageView
         mDotsImageView = (ImageView) view.findViewById(R.id.note_card_dots_imageView);
 
         if(mClickable) {
 
             // set the onClick on the mDotsImageView to display the appropriate dialog
-            mDotsImageView.setOnClickListener(new View.OnClickListener() {
+            mDotsContainer.setOnClickListener(new View.OnClickListener() {
 
                 public void onClick(View view) {
 

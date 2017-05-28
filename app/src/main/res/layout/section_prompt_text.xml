@@ -10,9 +10,10 @@
     <TextView
         android:id="@+id/section_prompt_textView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="4dp"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="6dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
         android:text="TextView"
         android:textColor="@color/actionBlue"
         android:textSize="18sp" />

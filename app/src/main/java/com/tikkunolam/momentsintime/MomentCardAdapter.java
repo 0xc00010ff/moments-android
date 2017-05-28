@@ -183,7 +183,6 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 // fill its views
                 welcomeMessageHolder.mWelcomeMessageTitleTextView.setText(welcomeMessage.getTitle());
                 welcomeMessageHolder.mWelcomeMessageContentTextView.setText(welcomeMessage.getContent());
-                welcomeMessageHolder.mWelcomeMessageMomentPromptTextView.setText(welcomeMessage.getPrompt());
 
                 break;
 

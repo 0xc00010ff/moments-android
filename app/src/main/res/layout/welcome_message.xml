@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif-black"
         android:textAlignment="center"
         android:textColor="@color/text"
         android:textSize="18sp"
@@ -24,18 +25,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="4dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
         android:layout_marginTop="4dp"
         android:textAlignment="center"
         android:textColor="@color/text" />
 
-    <TextView
-        android:id="@+id/welcome_message_moment_prompt_textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="4dp"
-        android:textAlignment="center"
-        android:textColor="@color/actionBlue"
-        android:textSize="18sp" />
 </LinearLayout>
