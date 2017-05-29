@@ -19,7 +19,7 @@
     <string name="video_availability">available</string>
 
     <!--strings for use as JSON filters in the API requests-->
-    <string name="community_filter">fields=uri,name,description,link,pictures.sizes</string>
+    <string name="community_filter">fields=uri,status,name,description,link,pictures.sizes</string>
     <string name="playable_video_filter">fields=files,link</string>
     <string name="single_moment_filter">fields=name,description,pictures,link</string>
     <string name="delete_moment_filter">fields=uri</string>

@@ -174,6 +174,26 @@ public class UploadService extends IntentService {
                     // tell the world that the upload has finished
                     indicateUploadFinished();
 
+                    // update the Moment's state to LIVE
+
+                    // make a LIVE MomentStateEnum
+                    final MomentStateEnum momentStateEnum = LIVE;
+
+                    // find the Moment by primaryKey
+                    final Moment moment = Moment.findMoment(mPrimaryKeyString);
+
+                    // persist the state and videoUri
+                    moment.persistUpdates(new PersistenceExecutor() {
+
+                        @Override
+                        public void execute() {
+
+                            moment.setEnumState(momentStateEnum);
+
+                        }
+
+                    });
+
                     // if the upload completion went through and we received the final Uri...
                     // ... update the video's title and description on Vimeo
 
@@ -196,28 +216,25 @@ public class UploadService extends IntentService {
 
         // if the upload was successful
         if(success) {
-            // wait until the video is available on Vimeo then update the Moment's state enum to LIVE, and set its videoUri
-
-            waitForAvailability();
-
-            // make a LIVE MomentStateEnum
-            final MomentStateEnum momentStateEnum = LIVE;
+            // update the video's uri, then wait to notify the fragment until vimeo return an available status
 
             // find the Moment by primaryKey
             final Moment moment = Moment.findMoment(mPrimaryKeyString);
 
-            // persist the state and videoUri
+            // persist the videoUri
             moment.persistUpdates(new PersistenceExecutor() {
 
                 @Override
                 public void execute() {
 
-                    moment.setEnumState(momentStateEnum);
                     moment.setVideoUri(mFinalUri);
 
                 }
 
             });
+
+            // wait until the video is available to tell the fragment to update its view
+            waitForAvailability();
 
         }
 
@@ -438,7 +455,7 @@ public class UploadService extends IntentService {
         // add the title and description to the video on Vimeo
 
         OkHttpClient client = new OkHttpClient();
-        Response response = null;
+        Response response;
         boolean success = false;
 
         // try to update the metadata. return whether operation was successful
