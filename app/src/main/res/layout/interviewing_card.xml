@@ -13,14 +13,15 @@
     app:cardUseCompatPadding="true">
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/interviewing_constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
 
         <ImageView
             android:id="@+id/interviewing_card_imageView"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_marginBottom="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
@@ -36,24 +37,23 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
             android:singleLine="true"
             android:text="TextView"
             android:textColor="@color/text"
             android:textSize="22sp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/interviewing_card_role_textView"
             app:layout_constraintLeft_toRightOf="@+id/interviewing_card_imageView"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
             android:id="@+id/interviewing_card_role_textView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
             android:singleLine="true"
             android:text="TextView"
             android:textColor="@color/text"
@@ -61,7 +61,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/interviewing_card_imageView"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/interviewing_card_name_textView" />
+            app:layout_constraintTop_toBottomOf="@+id/interviewing_card_name_textView"
+            app:layout_constraintVertical_chainStyle="packed" />
     </android.support.constraint.ConstraintLayout>
 
 

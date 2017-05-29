@@ -1,6 +1,7 @@
 package com.tikkunolam.momentsintime;
 
 import android.content.Context;
+import android.support.constraint.ConstraintSet;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -268,6 +269,10 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 // if the user entered a role, then fill the TextView with it
                 if(interviewingCardData.getIntervieweeRole() != null) {
 
+                    // add the role
+                    interviewingCardHolder.addRole();
+
+                    // fill it
                     interviewingCardHolder.mIntervieweeRoleTextView.setText(interviewingCardData.getIntervieweeRole());
 
                 }
@@ -275,6 +280,9 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 else {
                     // otherwise hide the TextView
                     interviewingCardHolder.mIntervieweeRoleTextView.setVisibility(View.GONE);
+
+                    // and constrain the bottom of the interviewee TextView to its parent
+                    interviewingCardHolder.removeRole();
 
                 }
 

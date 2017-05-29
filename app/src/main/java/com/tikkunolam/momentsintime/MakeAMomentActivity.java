@@ -893,7 +893,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         InterviewingCardData interviewingCardData = new InterviewingCardData(mMoment.getInterviewee());
 
         // add the mIntervieweeRole if there is one
-        if(mMoment.getIntervieweeRole() != null) {
+        if(mMoment.getIntervieweeRole() != null && !mMoment.getIntervieweeRole().equals("")) {
 
             interviewingCardData.setIntervieweeRole(mMoment.getIntervieweeRole());
 
