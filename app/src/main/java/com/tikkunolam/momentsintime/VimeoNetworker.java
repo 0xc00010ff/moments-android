@@ -64,6 +64,9 @@ public class VimeoNetworker {
     // to be included in headers to let Vimeo know what version of the API we expect
     private String mApiVersion;
 
+    // the word "available" to match to Vimeo's status response
+    private String mAvailabilityString;
+
 
     /**
      * CONSTRUCTORS
@@ -89,6 +92,8 @@ public class VimeoNetworker {
         mPlayableVideoFilter = applicationContext.getString(R.string.playable_video_filter);
         mSingleMomentFilter = applicationContext.getString(R.string.single_moment_filter);
         mDeleteMomentFilter = applicationContext.getString(R.string.delete_moment_filter);
+
+        mAvailabilityString = applicationContext.getString(R.string.video_availability);
 
 
 
@@ -295,30 +300,41 @@ public class VimeoNetworker {
 
                 }
 
-                String uri = jsonVideoObject.getString("uri");
-                String url = jsonVideoObject.getString("link");
+                String status = jsonVideoObject.getString("status");
 
-                // get the pictures JSONObject (a list of the same pic in different sizes)
-                JSONObject picturesObject = jsonVideoObject.getJSONObject("pictures");
-                JSONArray sizesArray = picturesObject.getJSONArray("sizes");
+                // if the status is available, add it to the list
+                if(status.equals(mAvailabilityString)) {
 
-                // get the third picture. somewhere around 300 x 150
-                // this may need to be more robust, in case Vimeo is inconsistent
-                JSONObject picture = sizesArray.getJSONObject(4);
+                    // get the uri and url
+                    String uri = jsonVideoObject.getString("uri");
+                    String url = jsonVideoObject.getString("link");
 
-                // get the url
-                String pictureUrl = picture.getString("link");
+                    // get the pictures JSONObject (a list of the same pic in different sizes)
+                    JSONObject picturesObject = jsonVideoObject.getJSONObject("pictures");
+                    JSONArray sizesArray = picturesObject.getJSONArray("sizes");
 
-                // create the Moment how God intended
-                Moment moment = new Moment();
-                moment.setTitle(name);
-                moment.setDescription(description);
-                moment.setVideoUri(uri);
-                moment.setVideoUrl(url);
-                moment.setPictureUrl(pictureUrl);
+                    // get the third picture. somewhere around 300 x 150
+                    // this may need to be more robust, in case Vimeo is inconsistent
+                    JSONObject picture = sizesArray.getJSONObject(4);
 
-                // add it to the Moment list
-                moments.add(moment);
+                    // get the url
+                    String pictureUrl = picture.getString("link");
+
+
+
+                    // create the Moment how God intended
+                    Moment moment = new Moment();
+                    moment.setTitle(name);
+                    moment.setDescription(description);
+                    moment.setVideoUri(uri);
+                    moment.setVideoUrl(url);
+                    moment.setPictureUrl(pictureUrl);
+
+                    // add it to the Moment list
+                    moments.add(moment);
+
+                }
+
             }
         }
         catch(JSONException exception) {
@@ -326,7 +342,6 @@ public class VimeoNetworker {
             // log it so I'm sure where it came from
             Log.e(TAG, "JSON Exception!!!");
 
-            throw new RuntimeException(exception);
         }
 
         // return the list

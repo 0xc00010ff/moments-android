@@ -16,7 +16,6 @@ public class VideoViewActivity extends AppCompatActivity {
     Moment mMoment;
 
     // strings for intent extra arguments
-    String mPrimaryKeyExtra;
     String mLocalVideoFileExtra;
     String mVimeoVideoUriExtra;
 
