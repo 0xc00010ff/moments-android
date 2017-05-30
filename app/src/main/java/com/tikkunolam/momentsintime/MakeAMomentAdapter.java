@@ -1,6 +1,7 @@
 package com.tikkunolam.momentsintime;
 
 import android.content.Context;
+import android.support.constraint.ConstraintSet;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,8 +9,13 @@ import android.view.ViewGroup;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 
 import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
+
+import static com.tikkunolam.momentsintime.R.string.video;
 
 public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     /**
@@ -263,6 +269,10 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 // if the user entered a role, then fill the TextView with it
                 if(interviewingCardData.getIntervieweeRole() != null) {
 
+                    // add the role
+                    interviewingCardHolder.addRole();
+
+                    // fill it
                     interviewingCardHolder.mIntervieweeRoleTextView.setText(interviewingCardData.getIntervieweeRole());
 
                 }
@@ -271,13 +281,19 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     // otherwise hide the TextView
                     interviewingCardHolder.mIntervieweeRoleTextView.setVisibility(View.GONE);
 
+                    // and constrain the bottom of the interviewee TextView to its parent
+                    interviewingCardHolder.removeRole();
+
                 }
 
                 // if the user added a picture, then fill the ImageView with it
                 if(interviewingCardData.getIntervieweePhotoUri() != null) {
 
                     interviewingCardHolder.mIntervieweePhotoImageView.setVisibility(View.VISIBLE);
-                    interviewingCardHolder.mIntervieweePhotoImageView.setImageURI(interviewingCardData.getIntervieweePhotoUri());
+
+                    // use picasso to fill the ImageView and create a circle mask
+                    Picasso.with(mContext).load(interviewingCardData.getIntervieweePhotoUri())
+                            .transform(new CropCircleTransformation()).into(interviewingCardHolder.mIntervieweePhotoImageView);
 
                 }
 

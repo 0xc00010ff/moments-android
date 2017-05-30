@@ -613,53 +613,73 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         final Context context = this;
 
-        MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .title(R.string.interviewing)
-                .items(R.array.interviewing_dialog_array)
-                .itemsColor(getResources().getColor(R.color.actionBlue))
-                .itemsCallback(new MaterialDialog.ListCallback() {
+        // if the Moment has an interviewee, then go straight to editing
+        if(mMoment.getInterviewee() != null) {
 
-                    @Override
-                    public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
-                        // when a dialog option is selected these callbacks are used
+            // make an intent with the InterviewingActivity
+            Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
 
-                        switch(position) {
+            // attach the Moment's interviewee, interviewee role, and interviewee photo uri
+            interviewingIntent.putExtra(mIntervieweeExtra, mMoment.getInterviewee());
+            interviewingIntent.putExtra(mRoleExtra, mMoment.getIntervieweeRole());
+            interviewingIntent.putExtra(mIntervieweePhotoFileExtra, mMoment.getIntervieweePhotoFile());
 
-                            case 0:
-                                // they chose Contacts...
+            startActivityForResult(interviewingIntent, INTERVIEWING_INTENT);
 
-                                Intent contactIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
+        }
 
-                                startActivityForResult(contactIntent, INTERVIEWEE_FROM_CONTACTS);
+        // otherwise give them the option to choose between contacts or entering manually
+        else {
 
-                                break;
+            MaterialDialog dialog = new MaterialDialog.Builder(this)
+                    .title(R.string.interviewing)
+                    .items(R.array.interviewing_dialog_array)
+                    .itemsColor(getResources().getColor(R.color.actionBlue))
+                    .itemsCallback(new MaterialDialog.ListCallback() {
 
-                            case 1:
-                                // they chose to make one manually
+                        @Override
+                        public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                            // when a dialog option is selected these callbacks are used
 
-                                // make an intent with the InterviewingActivity
-                                Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
+                            switch(position) {
 
-                                // attach the Moment's interviewee, interviewee role, and interviewee photo uri
-                                interviewingIntent.putExtra(mIntervieweeExtra, mMoment.getInterviewee());
-                                interviewingIntent.putExtra(mRoleExtra, mMoment.getIntervieweeRole());
-                                interviewingIntent.putExtra(mIntervieweePhotoFileExtra, mMoment.getIntervieweePhotoFile());
+                                case 0:
+                                    // they chose Contacts...
 
-                                startActivityForResult(interviewingIntent, INTERVIEWING_INTENT);
+                                    Intent contactIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
 
-                                break;
+                                    startActivityForResult(contactIntent, INTERVIEWEE_FROM_CONTACTS);
 
-                            case 2:
-                                // they chose to cancel. auto dismiss is on so do nothing
+                                    break;
 
-                                break;
+                                case 1:
+                                    // they chose to make one manually
+
+                                    // make an intent with the InterviewingActivity
+                                    Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
+
+                                    // attach the Moment's interviewee, interviewee role, and interviewee photo uri
+                                    interviewingIntent.putExtra(mIntervieweeExtra, mMoment.getInterviewee());
+                                    interviewingIntent.putExtra(mRoleExtra, mMoment.getIntervieweeRole());
+                                    interviewingIntent.putExtra(mIntervieweePhotoFileExtra, mMoment.getIntervieweePhotoFile());
+
+                                    startActivityForResult(interviewingIntent, INTERVIEWING_INTENT);
+
+                                    break;
+
+                                case 2:
+                                    // they chose to cancel. auto dismiss is on so do nothing
+
+                                    break;
+
+                            }
 
                         }
 
-                    }
+                    })
+                    .show();
 
-                })
-                .show();
+        }
 
     }
 
@@ -873,7 +893,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         InterviewingCardData interviewingCardData = new InterviewingCardData(mMoment.getInterviewee());
 
         // add the mIntervieweeRole if there is one
-        if(mMoment.getIntervieweeRole() != null) {
+        if(mMoment.getIntervieweeRole() != null && !mMoment.getIntervieweeRole().equals("")) {
 
             interviewingCardData.setIntervieweeRole(mMoment.getIntervieweeRole());
 

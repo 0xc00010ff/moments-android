@@ -463,7 +463,7 @@ public class UploadService extends IntentService {
 
             // build the body for the PATCH request
             RequestBody patchBody = new FormBody.Builder()
-                    .add("name", mMoment.getTitle())
+                    .add("name", mMoment.getInterviewee() + " - " + mMoment.getTitle())
                     .add("description", mMoment.getDescription())
                     .build();
 

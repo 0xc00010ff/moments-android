@@ -25,10 +25,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
 import io.realm.Realm;
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 public class InterviewingActivity extends AppCompatActivity {
 
@@ -334,7 +336,8 @@ public class InterviewingActivity extends AppCompatActivity {
         File imageFile = new File(mIntervieweePhotoFile);
 
         // set the image on the ImageView
-        mIntervieweeImageView.setImageURI(Uri.fromFile(imageFile));
+        Picasso.with(mContext).load(Uri.fromFile(imageFile))
+                .transform(new CropCircleTransformation()).into(mIntervieweeImageView);
 
     }
 
