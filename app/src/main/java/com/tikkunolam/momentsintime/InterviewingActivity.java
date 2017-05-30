@@ -1,36 +1,31 @@
 package com.tikkunolam.momentsintime;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rengwuxian.materialedittext.MaterialEditText;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
-import io.realm.Realm;
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class InterviewingActivity extends AppCompatActivity {
 
@@ -336,8 +331,8 @@ public class InterviewingActivity extends AppCompatActivity {
         File imageFile = new File(mIntervieweePhotoFile);
 
         // set the image on the ImageView
-        Picasso.with(mContext).load(Uri.fromFile(imageFile))
-                .transform(new CropCircleTransformation()).into(mIntervieweeImageView);
+        Glide.with(mContext).load(Uri.fromFile(imageFile))
+                .bitmapTransform(new CropCircleTransformation(mContext)).into(mIntervieweeImageView);
 
     }
 

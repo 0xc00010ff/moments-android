@@ -9,7 +9,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+
 
 public class MomentCardHolder extends RecyclerView.ViewHolder{
     /**
@@ -62,9 +63,9 @@ public class MomentCardHolder extends RecyclerView.ViewHolder{
     // code that might usually be in onBindViewHolder of MomentCardAdapter
     public void configureWithMoment(final Moment moment) {
 
-        // use Picasso to fill the videoPreviewImageView from the mMoment's picture url
+        // use Glide to fill the videoPreviewImageView from the mMoment's picture url
         // fill this before the rest so the loading doesn't look silly
-        Picasso.with(mContext).load(moment.getPictureUrl()).into(videoPreviewImageView);
+        Glide.with(mContext).load(moment.getPictureUrl()).into(videoPreviewImageView);
 
         // set the text in the videoNameTextView from the mMoment
         videoNameTextView.setText(moment.getTitle());

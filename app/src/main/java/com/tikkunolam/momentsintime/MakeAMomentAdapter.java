@@ -8,14 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 
-import com.bumptech.glide.Glide;
-import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
-
-import static com.tikkunolam.momentsintime.R.string.video;
+import com.bumptech.glide.Glide;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     /**
@@ -291,9 +287,9 @@ public class MakeAMomentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                     interviewingCardHolder.mIntervieweePhotoImageView.setVisibility(View.VISIBLE);
 
-                    // use picasso to fill the ImageView and create a circle mask
-                    Picasso.with(mContext).load(interviewingCardData.getIntervieweePhotoUri())
-                            .transform(new CropCircleTransformation()).into(interviewingCardHolder.mIntervieweePhotoImageView);
+                    // use Glide to fill the ImageView and create a circle mask
+                    Glide.with(mContext).load(interviewingCardData.getIntervieweePhotoUri())
+                            .bitmapTransform(new CropCircleTransformation(mContext)).into(interviewingCardHolder.mIntervieweePhotoImageView);
 
                 }
 
