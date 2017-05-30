@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
@@ -345,7 +344,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
             videoNameTextView.setVisibility(View.VISIBLE);
             momentStateTextView.setText(mStateLive);
             shareTextView.setVisibility(View.VISIBLE);
-            Picasso.with(mContext).load(moment.getPictureUrl()).error(mContext.getResources().getDrawable(R.drawable.camera)).into(videoPreviewImageView);
+            Glide.with(mContext).load(moment.getPictureUrl()).error(mContext.getResources().getDrawable(R.drawable.camera)).into(videoPreviewImageView);
 
         }
 
