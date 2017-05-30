@@ -234,17 +234,21 @@ public class FileDealer {
 
         String filePathString = null;
 
+        // get the local file directory
         File directory = context.getApplicationContext().getFilesDir();
 
+        // generate the date at the time this code's executed, for use as a file name
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
         Date now = new Date();
         String fileName = formatter.format(now) + ".jpg";
 
+        // make a file in which to hold the Bitmap data
         File pictureFile = new File(directory, fileName);
 
         OutputStream outputStream;
 
         try {
+            // try to stream the picture into the file
 
             outputStream = new FileOutputStream(pictureFile);
 
@@ -267,6 +271,7 @@ public class FileDealer {
 
         }
 
+        // get the file's path and send it back
         filePathString = pictureFile.getAbsolutePath();
 
         return filePathString;
