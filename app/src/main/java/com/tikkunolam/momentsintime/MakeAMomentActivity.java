@@ -469,9 +469,19 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                     uriContact = data.getData();
 
+                    // get the Contact's name and photo, and save them to the Moment
                     retrieveContactName();
                     retrieveContactPhoto();
-                    insertInterviewingCard();
+
+                    // make an intent with the InterviewingActivity
+                    Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
+
+                    // attach the Moment's interviewee, interviewee role, and interviewee photo uri
+                    interviewingIntent.putExtra(mIntervieweeExtra, mMoment.getInterviewee());
+                    interviewingIntent.putExtra(mRoleExtra, mMoment.getIntervieweeRole());
+                    interviewingIntent.putExtra(mIntervieweePhotoFileExtra, mMoment.getIntervieweePhotoFile());
+
+                    startActivityForResult(interviewingIntent, INTERVIEWING_INTENT);
 
                     break;
 
