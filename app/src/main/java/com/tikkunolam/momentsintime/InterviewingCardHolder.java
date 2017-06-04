@@ -74,16 +74,6 @@ public class InterviewingCardHolder extends RecyclerView.ViewHolder{
         // remove the role view
         mIntervieweeRoleTextView.setVisibility(View.GONE);
 
-        // make a new ConstraintSet and copy the constraints of the original
-        ConstraintSet constraintSet = new ConstraintSet();
-        constraintSet.clone(mConstraintLayout);
-
-        // connect the name view to the bottom
-        constraintSet.connect(R.id.interviewing_card_name_textView, ConstraintSet.BOTTOM, R.id.interviewing_constraintLayout, ConstraintSet.BOTTOM);
-
-        // apply the ConstraintSet to the ConstraintLayout
-        constraintSet.applyTo(mConstraintLayout);
-
     }
 
     public void addRole() {
@@ -91,17 +81,6 @@ public class InterviewingCardHolder extends RecyclerView.ViewHolder{
 
         // make it visible
         mIntervieweeRoleTextView.setVisibility(View.VISIBLE);
-
-        // make a new ConstraintSet, copying the constraints of the original
-        ConstraintSet constraintSet = new ConstraintSet();
-        constraintSet.clone(mConstraintLayout);
-
-        // constrain the interviewee to the role
-        constraintSet.connect(R.id.interviewing_card_name_textView, ConstraintSet.BOTTOM, R.id.interviewing_card_role_textView, ConstraintSet.TOP);
-
-        // apply the ContraintSet to the ConstraintLayout
-        constraintSet.applyTo(mConstraintLayout);
-
 
     }
 
