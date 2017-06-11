@@ -101,7 +101,7 @@
 
     <!--strings for the WelcomeMessage-->
     <string name="welcome_message_title">Welcome to Moments In Time</string>
-    <string name="welcome_message_content">We believe that these stories will inspire, educate, and encourage individuals to capture their own "Moments In Time," connecting one generation to another, while preserving amazing stories...</string>
+    <string name="welcome_message_content">Watch moments from the community and get inspired to share your own moments. Scroll down to start.</string>
     <string name="welcome_message_moment_prompt">Let\'s make a Moment</string>
 
     <!--strings for dialogs-->
