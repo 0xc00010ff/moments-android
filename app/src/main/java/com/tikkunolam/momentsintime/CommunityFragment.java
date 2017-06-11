@@ -326,11 +326,7 @@ public class CommunityFragment extends Fragment {
             if(repeating) {
                 // add a MomentPrompt at every [position]th position
 
-                Log.d("FUCK", "wtf");
-
                 for(int i = 1; i < mViewModelList.size(); i++) {
-
-                    Log.d("FUCK", "wtf");
 
                     if ( i % (position) == 0) {
 

@@ -8,6 +8,8 @@
     <string name="api_access_token">cbcd60a11d6c8dbad7310a4074312963</string>
     <!--real Moments in Time Token: cbcd60a11d6c8dbad7310a4074312963-->
     <!--personal test token: f410124bb5ab3bbb7c64936f98afc973-->
+    <string name="upload_album">4630681</string>
+    <string name="main_album">4626849</string>
 
     <!--string for api interaction-->
     <string name="api_base_address">https://api.vimeo.com</string>
@@ -17,6 +19,7 @@
     <string name="per_page_parameter">per_page=</string>
     <string name="single_video_fetch_uri">/videos/</string>
     <string name="video_availability">available</string>
+    <string name="main_album_fetch">/me/albums/4626849/videos</string>
 
     <!--strings for use as JSON filters in the API requests-->
     <string name="community_filter">fields=uri,status,name,description,link,pictures.sizes</string>
