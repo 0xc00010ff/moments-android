@@ -45,7 +45,7 @@ public class UploadService extends IntentService {
     String mUploadTicketFilter, mUploadFilter, mCompleteUploadFilter, mUpdateMetadataFilter, mCheckAvailabilityFilter;
 
     // strings for SharedPreferences
-    String hasFailedFlagName;
+    String hasFailedFlagName, mDisplayUploadMessageFlagName, mPrimaryKeyFlagName;
 
     // the video file to upload
     String mVideoFileString;
@@ -127,6 +127,8 @@ public class UploadService extends IntentService {
 
         // strings for SharedPreferences
         hasFailedFlagName = getString(R.string.has_failed_flag);
+        mDisplayUploadMessageFlagName = getString(R.string.display_upload_message);
+        mPrimaryKeyFlagName = getString(R.string.moment_primary_key);
 
         // app access token for authenticating requests
         mAccessToken = getString(R.string.api_access_token);
@@ -647,8 +649,10 @@ public class UploadService extends IntentService {
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        // indicate that upload has not finished
+        // indicate that upload has finished
         editor.putBoolean(hasFailedFlagName, false);
+        editor.putBoolean(mDisplayUploadMessageFlagName, true);
+        editor.putString(mPrimaryKeyFlagName, mPrimaryKeyString);
         editor.commit();
 
     }

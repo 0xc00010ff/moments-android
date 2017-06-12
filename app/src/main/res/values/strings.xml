@@ -34,9 +34,12 @@
     <string name="check_availability_filter">fields=status</string>
 
     <!--strings for shared preferences-->
+    <!--DO NOT CHANGE ANY OF THESE VALUES OR APPS WITH OLD VALUES MAY BEHAVE UNPREDICTABLY!!!-->
     <string name="has_failed_flag">hasFailed</string>
     <string name="has_agreed_to_terms_and_conditions">hasAgreed</string>
     <string name="is_first_visit">firstVisit</string>
+    <string name="display_upload_message">displayUploadMessage</string>
+    <string name="moment_primary_key">momentPrimaryKey</string>
 
 
     <!--UI STRINGS-->
@@ -107,6 +110,11 @@
     <string name="welcome_message_title">Welcome to Moments In Time</string>
     <string name="welcome_message_content">Watch moments from the community and get inspired to share your own moments. Scroll down to start.</string>
     <string name="welcome_message_moment_prompt">Let\'s make a Moment</string>
+
+    <!--strings for the UploadMessage-->
+    <string name="upload_message_title">You made a Moment!</string>
+    <string name="upload_message_content">We got your Moment and people are going to love it! We are processing it and making sure the content is safe for the community before they can see it. Want to share your creation?</string>
+    <string name="upload_message_prompt">Share your Moment</string>
 
     <!--strings for dialogs-->
 

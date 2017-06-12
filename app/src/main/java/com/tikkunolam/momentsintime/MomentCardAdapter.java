@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import static okhttp3.internal.Internal.instance;
+
 public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     // Adapter for populating the RecyclerViews with moment_cards
 
@@ -31,6 +33,7 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     final int MOMENT = 1;
     final int PROMPT = 2;
     final int MOMENT_WITH_STATE = 3;
+    final int UPLOAD_MESSAGE = 4;
 
 
     public MomentCardAdapter(Context context, ArrayList<Object> viewModelList) {
@@ -88,6 +91,12 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         else if(mViewModelList.get(position) instanceof MomentPrompt) {
 
             return PROMPT;
+
+        }
+
+        else if(mViewModelList.get(position) instanceof UploadMessage) {
+
+            return UPLOAD_MESSAGE;
 
         }
 
@@ -156,6 +165,21 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                 // set the viewHolder as a StateMomentCardHolder
                 viewHolder = new StateMomentCardHolder(mContext, momentWithStateView);
+
+                break;
+
+            case UPLOAD_MESSAGE:
+                // if it calls for an UPLOAD_MESSAGE, inflate a moment_prompt and pass it to a UploadMessageHolder
+
+                // inflate a moment_prompt
+                View momentPromptView = LayoutInflater
+                        .from(parent.getContext())
+                        .inflate(R.layout.moment_prompt, parent, false);
+
+                // set the viewHolder as an UploadMessageHolder
+                viewHolder = new UploadMessageHolder(mContext, momentPromptView);
+
+                break;
 
         }
 
@@ -226,6 +250,23 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 momentPromptHolder.moment_prompt_textView.setText(momentPrompt.getMakeAMomentString());
                 momentPromptHolder.moment_prompt_cont_textView.setText(momentPrompt.getWhoString());
                 momentPromptHolder.ask_to_interview_textView.setText(momentPrompt.getAskToInterviewString());
+
+                break;
+
+            case UPLOAD_MESSAGE:
+                // set an UploadMessageHolder
+
+                UploadMessageHolder uploadMessageHolder = (UploadMessageHolder) holder;
+
+                // cast the generic Object to an UploadMessage
+                UploadMessage uploadMessage = (UploadMessage) mViewModelList.get(position);
+
+                // fill the Holder with the UploadMessage's values
+                uploadMessageHolder.mTitleTextView.setText(uploadMessage.getTitle());
+                uploadMessageHolder.mContentTextView.setText(uploadMessage.getContent());
+                uploadMessageHolder.mPromptTextView.setText(uploadMessage.getPrompt());
+
+                uploadMessageHolder.setMomentWithKey(uploadMessage.getPrimaryKey());
 
 
         }
