@@ -20,6 +20,7 @@
     <string name="single_video_fetch_uri">/videos/</string>
     <string name="video_availability">available</string>
     <string name="main_album_fetch">/me/albums/4626849/videos</string>
+    <string name="video_to_album_address">/me/albums/4630681</string>
 
     <!--strings for use as JSON filters in the API requests-->
     <string name="community_filter">fields=uri,status,name,description,link,pictures.sizes</string>

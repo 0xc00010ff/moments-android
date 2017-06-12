@@ -123,7 +123,7 @@ public class VimeoNetworker {
 
             // build the request
             Request request = new Request.Builder()
-                    .url(mApiAddress + mMainAlbumFetchUri + "?" + mPageNumberParameter + pageNumberString + "&" + mPerPageParameter + mVideosPerPage + "&" + mCommunityFilter)
+                    .url(mApiAddress + mMainAlbumFetchUri + "?" + mPageNumberParameter + pageNumberString + "&" + mPerPageParameter + mVideosPerPage + "&" + mCommunityFilter + "&sort=manual")
                     .addHeader("Authorization", "Bearer " + mAccessToken)
                     .addHeader("Accept", mApiVersion)
                     .build();
