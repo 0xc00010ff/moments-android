@@ -434,6 +434,7 @@ public class VimeoNetworker {
             // get the attributes that are one level deep
             String name = jsonResponse.getString("name");
             String description = jsonResponse.getString("description");
+            String url = jsonResponse.getString("link");
 
             if(description.equals("null")) {
                 // API returns "null" so make it empty instead
@@ -456,6 +457,7 @@ public class VimeoNetworker {
             moment.setTitle(name);
             moment.setDescription(description);
             moment.setPictureUrl(pictureUrl);
+            moment.setVideoUrl(url);
 
 
         }
