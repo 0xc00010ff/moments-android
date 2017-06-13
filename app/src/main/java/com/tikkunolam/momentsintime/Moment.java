@@ -403,6 +403,8 @@ public class Moment extends RealmObject {
 
         }
 
+        realm.close();
+
         return deleteFromRealm;
 
     }

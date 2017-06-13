@@ -112,8 +112,8 @@
     <string name="welcome_message_moment_prompt">Let\'s make a Moment</string>
 
     <!--strings for the UploadMessage-->
-    <string name="upload_message_title">You made a Moment!</string>
-    <string name="upload_message_content">We got your Moment and people are going to love it! We are processing it and making sure the content is safe for the community before they can see it. Want to share your creation?</string>
+    <string name="upload_message_title">Your Moment is live!</string>
+    <string name="upload_message_content">The Moments moderators will review your post before adding it to the community. In the mean time, feel free to share your awesome creation.</string>
     <string name="upload_message_prompt">Share your Moment</string>
 
     <!--strings for dialogs-->

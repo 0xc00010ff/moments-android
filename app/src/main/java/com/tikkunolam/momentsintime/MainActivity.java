@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -474,6 +475,7 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
             if(deleted) {
                 // it was deleted successfully. tell the fragment to reload its mViewModelList
 
+                // wait
                 myMomentsFragment.refreshListFromActivity();
 
             }
@@ -482,6 +484,7 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
                 // it wasn't deleted successfully
 
                 // display a dialog saying something went wrong
+                Log.e(TAG, "IT DIDN'T DELETE!");
 
             }
 
