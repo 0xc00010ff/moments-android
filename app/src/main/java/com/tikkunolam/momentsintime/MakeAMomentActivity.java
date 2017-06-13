@@ -74,7 +74,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     final int INTERVIEWEE_FROM_CONTACTS = 6;
 
     // integers to specify which action requested READ_EXTERNAL_STORAGE permission
-    final int UPLOAD = 1, FILM = 2;
+    final int UPLOAD = 1, FILM = 2, CONTACTS = 3;
 
     // positions in the mViewModelList
     final int INTERVIEWING_TITLE = 0, INTERVIEWING_SLOT = 1, TOPIC_TITLE = 2, TOPIC_SLOT = 3,
@@ -469,9 +469,19 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                     uriContact = data.getData();
 
+                    // get the Contact's name and photo, and save them to the Moment
                     retrieveContactName();
                     retrieveContactPhoto();
-                    insertInterviewingCard();
+
+                    // make an intent with the InterviewingActivity
+                    Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
+
+                    // attach the Moment's interviewee, interviewee role, and interviewee photo uri
+                    interviewingIntent.putExtra(mIntervieweeExtra, mMoment.getInterviewee());
+                    interviewingIntent.putExtra(mRoleExtra, mMoment.getIntervieweeRole());
+                    interviewingIntent.putExtra(mIntervieweePhotoFileExtra, mMoment.getIntervieweePhotoFile());
+
+                    startActivityForResult(interviewingIntent, INTERVIEWING_INTENT);
 
                     break;
 
@@ -646,9 +656,23 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                                 case 0:
                                     // they chose Contacts...
 
-                                    Intent contactIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
+                                    // if their phone uses the new permission flow and READ_CONTACTS hasn't been granted
+                                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_CONTACTS)
+                                            != PackageManager.PERMISSION_GRANTED) {
 
-                                    startActivityForResult(contactIntent, INTERVIEWEE_FROM_CONTACTS);
+                                        // request the permission
+                                        requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
+                                                CONTACTS);
+                                    }
+
+                                    // otherwise we don't need to request permission so just open the Activity
+                                    else {
+
+                                        Intent contactIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
+
+                                        startActivityForResult(contactIntent, INTERVIEWEE_FROM_CONTACTS);
+
+                                    }
 
                                     break;
 
@@ -1024,19 +1048,33 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                 break;
 
+            case CONTACTS:
+                // the user wants to read contacts. if permission granted, open that Activity.
+
+
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // they granted permission... open the Activity
+
+                    Intent contactIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
+
+                    startActivityForResult(contactIntent, INTERVIEWEE_FROM_CONTACTS);
+
+                }
+
+                break;
+
         }
         
     }
 
     private void retrieveContactName() {
 
-        // querying contact data store
+        // get a Cursor to get the Contact's name
         Cursor cursor = getContentResolver().query(uriContact, null, null, null, null);
 
         if (cursor.moveToFirst()) {
 
-            // DISPLAY_NAME = The display name for the contact.
-
+            // get the name of the Contact and save it to the Moment
             final String contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
             mMoment.persistUpdates(new PersistenceExecutor() {
@@ -1053,13 +1091,16 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
         cursor.close();
 
+        // get a new cursor to get the Contact's ID
         Cursor cursorID = getContentResolver().query(uriContact,
                 new String[]{ContactsContract.Contacts._ID},
                 null, null, null);
 
         if (cursorID.moveToFirst()) {
 
+            // get the Contact's ID so we can fetch other information with it
             mContactID = cursorID.getString(cursorID.getColumnIndex(ContactsContract.Contacts._ID));
+
         }
 
         cursorID.close();
@@ -1068,6 +1109,63 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
 
     public void retrieveContactPhoto() {
+
+        // get the Contact data using the Uri found with the Contact's ID
+        Uri contactUri = ContentUris.withAppendedId(Contacts.CONTENT_URI, Long.valueOf(mContactID));
+
+        // get the thumbnail picture
+        Uri photoUri = Uri.withAppendedPath(contactUri, Contacts.Photo.CONTENT_DIRECTORY);
+
+        ByteArrayInputStream stream;
+
+        Cursor cursor = getContentResolver().query(photoUri, new String[] {Contacts.Photo.PHOTO}, null, null, null);
+
+        if(cursor != null) {
+
+            try {
+
+                if(cursor.moveToFirst()) {
+
+                    byte[] data = cursor.getBlob(0);
+
+                    if(data != null) {
+
+                        // make a new input stream from the picture data
+                        stream = new ByteArrayInputStream(data);
+
+                        // make a bitmap with it
+                        Bitmap bitmap = BitmapFactory.decodeStream(stream);
+
+                        // send it to the file dealer to make a file and get its path
+                        FileDealer fileDealer = new FileDealer();
+
+                        final String pictureFile = fileDealer.bitmapToFile(this, bitmap);
+
+                        // save that path to the Moment
+                        mMoment.persistUpdates(new PersistenceExecutor() {
+
+                            @Override
+                            public void execute() {
+
+                                mMoment.setIntervieweePhotoUri(pictureFile);
+
+                            }
+
+                        });
+
+                    }
+
+                }
+
+            }
+
+            finally {
+
+                cursor.close();
+
+            }
+
+        }
 
     }
 

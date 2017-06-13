@@ -5,9 +5,11 @@
     <!--API DETAILS-->
 
     <!--strings for individual configuration-->
-    <string name="api_access_token">f410124bb5ab3bbb7c64936f98afc973</string>
+    <string name="api_access_token">cbcd60a11d6c8dbad7310a4074312963</string>
     <!--real Moments in Time Token: cbcd60a11d6c8dbad7310a4074312963-->
     <!--personal test token: f410124bb5ab3bbb7c64936f98afc973-->
+    <string name="upload_album">4630681</string>
+    <string name="main_album">4626849</string>
 
     <!--string for api interaction-->
     <string name="api_base_address">https://api.vimeo.com</string>
@@ -17,6 +19,8 @@
     <string name="per_page_parameter">per_page=</string>
     <string name="single_video_fetch_uri">/videos/</string>
     <string name="video_availability">available</string>
+    <string name="main_album_fetch">/me/albums/4626849/videos</string>
+    <string name="video_to_album_address">/me/albums/4630681</string>
 
     <!--strings for use as JSON filters in the API requests-->
     <string name="community_filter">fields=uri,status,name,description,link,pictures.sizes</string>
@@ -30,9 +34,12 @@
     <string name="check_availability_filter">fields=status</string>
 
     <!--strings for shared preferences-->
+    <!--DO NOT CHANGE ANY OF THESE VALUES OR APPS WITH OLD VALUES MAY BEHAVE UNPREDICTABLY!!!-->
     <string name="has_failed_flag">hasFailed</string>
     <string name="has_agreed_to_terms_and_conditions">hasAgreed</string>
     <string name="is_first_visit">firstVisit</string>
+    <string name="display_upload_message">displayUploadMessage</string>
+    <string name="moment_primary_key">momentPrimaryKey</string>
 
 
     <!--UI STRINGS-->
@@ -101,8 +108,13 @@
 
     <!--strings for the WelcomeMessage-->
     <string name="welcome_message_title">Welcome to Moments In Time</string>
-    <string name="welcome_message_content">We believe that these stories will inspire, educate, and encourage individuals to capture their own "Moments In Time," connecting one generation to another, while preserving amazing stories...</string>
+    <string name="welcome_message_content">Watch moments from the community and get inspired to share your own moments. Scroll down to start.</string>
     <string name="welcome_message_moment_prompt">Let\'s make a Moment</string>
+
+    <!--strings for the UploadMessage-->
+    <string name="upload_message_title">You made a Moment!</string>
+    <string name="upload_message_content">We got your Moment and people are going to love it! We are processing it and making sure the content is safe for the community before they can see it. Want to share your creation?</string>
+    <string name="upload_message_prompt">Share your Moment</string>
 
     <!--strings for dialogs-->
 

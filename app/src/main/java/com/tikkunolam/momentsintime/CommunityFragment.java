@@ -10,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -306,8 +307,8 @@ public class CommunityFragment extends Fragment {
             // add all the fetched Moments to the mViewModelList
             mViewModelList.addAll(mMomentList.getMomentList());
 
-            // insert a single prompt at the seventh position
-            insertMomentPrompts(7, false);
+            // insert a repeating prompt in every fifth position
+            insertMomentPrompts(5, true);
 
             // notify the adapter the mViewModelList has changed
             mMomentCardAdapter.notifyDataSetChanged();
@@ -325,9 +326,9 @@ public class CommunityFragment extends Fragment {
             if(repeating) {
                 // add a MomentPrompt at every [position]th position
 
-                for(int i = 0; i > mViewModelList.size(); i++) {
+                for(int i = 1; i < mViewModelList.size(); i++) {
 
-                    if ((position - 1) % i == 0) {
+                    if ( i % (position) == 0) {
 
                         MomentPrompt momentPrompt = new MomentPrompt(mContext);
                         mViewModelList.add(i, momentPrompt);

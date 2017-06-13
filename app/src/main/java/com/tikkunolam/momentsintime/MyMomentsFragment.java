@@ -48,7 +48,7 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
     final int MAKE_A_MOMENT_REQUEST_CODE = 1;
 
     // Strings for use with SharedPreferences
-    String mHasFailedFlagName;
+    String mHasFailedFlagName, mDisplayUploadMessageFlagName, mPrimaryKeyFlagName;
 
     // list of Moments
     private MomentList mMomentList;
@@ -66,6 +66,9 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
     TextView mMakeAMomentTextView;
     FloatingActionButton mFloatingActionButton;
     ProgressBar mProgressBar;
+
+    // position at which to insert an UploadMessage
+    final int mUploadMessagePosition = 0;
 
 
     public MyMomentsFragment() {
@@ -96,8 +99,10 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
         //inflate the fragment's view
         View entireView = inflater.inflate(R.layout.fragment_my_moments, container, false);
 
-        // get the name of the sharedPreferences flag that indicates failure of upload
+        // get the name of the sharedPreferences
         mHasFailedFlagName = getString(R.string.has_failed_flag);
+        mDisplayUploadMessageFlagName = getString(R.string.display_upload_message);
+        mPrimaryKeyFlagName = getString(R.string.moment_primary_key);
 
         // get the RelativeLayout to retrieve the child views
         mMyMomentsRelativeLayout = (RelativeLayout) entireView;
@@ -241,6 +246,9 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
         // clear the contents of the screen
         mViewModelList.clear();
 
+        // check to see if an UploadMessage should be added
+        addUploadMessage();
+
         // add all the fetched Moments to the mViewModelList
         mViewModelList.addAll(mMomentList.getMomentList());
 
@@ -344,6 +352,37 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
 
         }
 
+
+    }
+
+    private void addUploadMessage() {
+        // determine if an UploadMessage should be added, and add it if so
+
+        // get the shared preferences
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        // get the shouldAddMessage value from them
+        Boolean shouldAddMessage = sharedPreferences.getBoolean(mDisplayUploadMessageFlagName, false);
+
+        // reset it to false in SharedPreferences
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(mDisplayUploadMessageFlagName, false);
+        editor.commit();
+
+        // if we should add an UploadMessage
+        if(shouldAddMessage) {
+            // add one to the view list
+
+            // get the PrimaryKey of the Moment that inspired the UploadMessage
+            String primaryKey = sharedPreferences.getString(mPrimaryKeyFlagName, "");
+
+            // make an UploadMessage
+            UploadMessage uploadMessage = new UploadMessage(getContext(), primaryKey);
+
+            // insert it at the beginning of the view list
+            mViewModelList.add(mUploadMessagePosition, uploadMessage);
+
+        }
 
     }
 

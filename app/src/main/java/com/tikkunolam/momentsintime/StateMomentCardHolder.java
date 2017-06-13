@@ -156,7 +156,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
             File videoFile = new File(moment.getLocalVideoFilePath());
 
             // set the preview image with Glide, using the local video uri
-            Glide.with(mContext).load(Uri.fromFile(videoFile)).asBitmap().into(videoPreviewImageView);
+            Glide.with(mContext).load(Uri.fromFile(videoFile)).asBitmap().centerCrop().into(videoPreviewImageView);
 
 
         }
@@ -164,7 +164,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         // otherwise put the default picture in it
         else {
 
-            videoPreviewImageView.setImageResource(R.mipmap.ic_launcher);
+            Glide.with(mContext).load(R.drawable.profile_placeholder).fitCenter().into(videoPreviewImageView);
 
         }
 
@@ -344,7 +344,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
             videoNameTextView.setVisibility(View.VISIBLE);
             momentStateTextView.setText(mStateLive);
             shareTextView.setVisibility(View.VISIBLE);
-            Glide.with(mContext).load(moment.getPictureUrl()).error(mContext.getResources().getDrawable(R.drawable.camera)).into(videoPreviewImageView);
+            Glide.with(mContext).load(moment.getPictureUrl()).into(videoPreviewImageView);
 
         }
 

@@ -45,7 +45,7 @@ public class UploadService extends IntentService {
     String mUploadTicketFilter, mUploadFilter, mCompleteUploadFilter, mUpdateMetadataFilter, mCheckAvailabilityFilter;
 
     // strings for SharedPreferences
-    String hasFailedFlagName;
+    String hasFailedFlagName, mDisplayUploadMessageFlagName, mPrimaryKeyFlagName;
 
     // the video file to upload
     String mVideoFileString;
@@ -64,6 +64,9 @@ public class UploadService extends IntentService {
 
     // add metadata uri
     private String mVideoUri;
+
+    // switch album address
+    String mVideoToAlbumAddress;
 
     // String to match the status of the video returned by Vimeo if it's available
     private String mVideoAvailable;
@@ -124,6 +127,8 @@ public class UploadService extends IntentService {
 
         // strings for SharedPreferences
         hasFailedFlagName = getString(R.string.has_failed_flag);
+        mDisplayUploadMessageFlagName = getString(R.string.display_upload_message);
+        mPrimaryKeyFlagName = getString(R.string.moment_primary_key);
 
         // app access token for authenticating requests
         mAccessToken = getString(R.string.api_access_token);
@@ -133,6 +138,9 @@ public class UploadService extends IntentService {
 
         // upload uri
         mVideoFetchUri = getString(R.string.video_fetch_uri);
+
+        // video to album address
+        mVideoToAlbumAddress = getString(R.string.video_to_album_address);
 
         // update metadata uri
         mVideoUri = getString(R.string.single_video_fetch_uri);
@@ -232,6 +240,9 @@ public class UploadService extends IntentService {
                 }
 
             });
+
+            // move the video to the pending album
+            moveToAlbum();
 
             // wait until the video is available to tell the fragment to update its view
             waitForAvailability();
@@ -509,7 +520,7 @@ public class UploadService extends IntentService {
 
         boolean available = false;
         OkHttpClient client = new OkHttpClient();
-        Response response;
+        Response response = null;
 
         try {
 
@@ -569,12 +580,57 @@ public class UploadService extends IntentService {
 
         }
 
+        finally {
+
+            response.body().close();
+
+        }
+
 
     }
 
-    // set a sharedPreferences value indicating upload hasn't finished
-    // happens before upload incase the app is killed, so the Moment can be updated to FAILED
+    private void moveToAlbum() {
+        // to be called once the video has finished uploading
+        // moves it to the upload album to wait for admin's approval
+
+        OkHttpClient client = new OkHttpClient();
+        Response response = null;
+
+        try {
+
+            // OkHttp requires a request body for PUTs. We don't though, so make an empty one.
+            RequestBody body = RequestBody.create(null, new byte[]{});
+
+            // build the request
+            Request request = new Request.Builder()
+                    .url(mApiAddress + mVideoToAlbumAddress + mFinalUri)
+                    .put(body)
+                    .addHeader("Authorization", "Bearer " + mAccessToken)
+                    .addHeader("Accept", mApiVersion)
+                    .build();
+
+            // make the call
+            response = client.newCall(request).execute();
+
+        }
+
+        catch(IOException exception) {
+
+            Log.d(TAG, exception.toString());
+
+        }
+
+        finally {
+
+            response.body().close();
+
+        }
+
+    }
+
     private void indicateUploadNotFinished() {
+        // set a sharedPreferences value indicating upload hasn't finished
+        // happens before upload incase the app is killed, so the Moment can be updated to FAILED
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -593,8 +649,10 @@ public class UploadService extends IntentService {
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        // indicate that upload has not finished
+        // indicate that upload has finished
         editor.putBoolean(hasFailedFlagName, false);
+        editor.putBoolean(mDisplayUploadMessageFlagName, true);
+        editor.putString(mPrimaryKeyFlagName, mPrimaryKeyString);
         editor.commit();
 
     }

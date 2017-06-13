@@ -50,6 +50,9 @@ public class VimeoNetworker {
     // this is the string for both fetching and uploading. Difference is in the request type.
     private String mVideoFetchUri;
 
+    // the string for fetching from the main album
+    private String mMainAlbumFetchUri;
+
     // part of the query string for specifying page number for videos fetch
     private String mPageNumberParameter;
 
@@ -79,6 +82,7 @@ public class VimeoNetworker {
         mAccessToken = applicationContext.getString(R.string.api_access_token);
         mApiAddress = applicationContext.getString(R.string.api_base_address);
         mVideoFetchUri = applicationContext.getString(R.string.video_fetch_uri);
+        mMainAlbumFetchUri = applicationContext.getString(R.string.main_album_fetch);
         mPageNumberParameter = applicationContext.getString(R.string.page_number_parameter);
         mPerPageParameter = applicationContext.getString(R.string.per_page_parameter);
         mApiVersion = applicationContext.getString(R.string.api_version);
@@ -119,7 +123,7 @@ public class VimeoNetworker {
 
             // build the request
             Request request = new Request.Builder()
-                    .url(mApiAddress + mVideoFetchUri + "?" + mPageNumberParameter + pageNumberString + "&" + mPerPageParameter + mVideosPerPage + "&" + mCommunityFilter)
+                    .url(mApiAddress + mMainAlbumFetchUri + "?" + mPageNumberParameter + pageNumberString + "&" + mPerPageParameter + mVideosPerPage + "&" + mCommunityFilter + "&sort=manual")
                     .addHeader("Authorization", "Bearer " + mAccessToken)
                     .addHeader("Accept", mApiVersion)
                     .build();
@@ -430,6 +434,7 @@ public class VimeoNetworker {
             // get the attributes that are one level deep
             String name = jsonResponse.getString("name");
             String description = jsonResponse.getString("description");
+            String url = jsonResponse.getString("link");
 
             if(description.equals("null")) {
                 // API returns "null" so make it empty instead
@@ -452,6 +457,7 @@ public class VimeoNetworker {
             moment.setTitle(name);
             moment.setDescription(description);
             moment.setPictureUrl(pictureUrl);
+            moment.setVideoUrl(url);
 
 
         }
