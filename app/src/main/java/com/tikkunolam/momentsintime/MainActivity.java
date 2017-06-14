@@ -124,25 +124,62 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
     public void onVideoSelect(Moment moment) {
         // open a new Activity to view the Moment
 
-        // create the Intent
-        Intent videoIntent = new Intent(getBaseContext(), VideoViewActivity.class);
+        // a boolean that determines whether or not we're allowed to open the VideoViewActivity
+        // if there is a Live Moment that hasn't finished processing on Vimeo, watchable will be false.
+        boolean watchable = true;
 
-        // if there is a Vimeo video uri then attach that to the Intent
-        if(moment.getVideoUri() != null) {
+        // if the Moment is Live
+        if(moment.getMomentState() == MomentStateEnum.LIVE) {
+            // it may not be available from Vimeo. If it isn't, we can't open the VideoViewActivity
+            // or it will try to play a video that isn't processed and crashed
 
-            videoIntent.putExtra(mVimeoVideoUriExtra, moment.getVideoUri());
+            // if it's not available
+            if(!moment.isAvailable()) {
+
+                // set the boolean to false
+                watchable = false;
+
+            }
+
 
         }
 
-        // otherwise attach the local video uri to it
+        if(watchable) {
+
+            // create the Intent
+            Intent videoIntent = new Intent(getBaseContext(), VideoViewActivity.class);
+
+            // if there is a Vimeo video uri then attach that to the Intent
+            if(moment.getVideoUri() != null) {
+
+                videoIntent.putExtra(mVimeoVideoUriExtra, moment.getVideoUri());
+
+            }
+
+            // otherwise attach the local video uri to it
+            else {
+
+                videoIntent.putExtra(mLocalVideoFileExtra, moment.getLocalVideoFilePath());
+
+            }
+
+            // open the activity
+            startActivity(videoIntent);
+
+        }
+
         else {
+            // the Moment is Live and unavailable... tell the user that
 
-            videoIntent.putExtra(mLocalVideoFileExtra, moment.getLocalVideoFilePath());
+            // show the dialog explaining
+            MaterialDialog dialog = new MaterialDialog.Builder(this)
+                    .title(getString(R.string.video_processing_dialog_title))
+                    .content(R.string.video_processing_dialog_content)
+                    .positiveText(R.string.video_processing_dialog_prompt)
+                    .positiveColor(getResources().getColor(R.color.actionBlue))
+                    .show();
 
         }
-
-        // open the activity
-        startActivity(videoIntent);
 
     }
 
@@ -475,16 +512,23 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
             if(deleted) {
                 // it was deleted successfully. tell the fragment to reload its mViewModelList
 
-                // wait
+                // sleep for half a second to let Realm catch up
+                // this is BAD™ but Realm only allows callbacks for general changes to objects, not delete specifically
+                // so without some funny business, this is the easiest way
+                try {
+
+                    Thread.sleep(500);
+
+                }
+
+                catch(InterruptedException e){
+
+                    // the thread was interrupted while sleeping. nothing needs to be cleaned up, so do nothing.
+
+                }
+
+                // refresh the list to reflect the delete
                 myMomentsFragment.refreshListFromActivity();
-
-            }
-
-            else {
-                // it wasn't deleted successfully
-
-                // display a dialog saying something went wrong
-                Log.e(TAG, "IT DIDN'T DELETE!");
 
             }
 

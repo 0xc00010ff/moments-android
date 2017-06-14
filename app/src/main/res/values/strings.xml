@@ -140,6 +140,10 @@
 
     <string name="note_dialog_delete">Delete</string>
 
+    <string name="video_processing_dialog_title">Almost there!</string>
+    <string name="video_processing_dialog_content">Your Moment uploaded successfully and is being processed. Check back soon!</string>
+    <string name="video_processing_dialog_prompt">OK</string>
+
     <!--String for the sms Intent-->
     <string name="sms_message">Check out this story on Moments In Time! </string>
 
