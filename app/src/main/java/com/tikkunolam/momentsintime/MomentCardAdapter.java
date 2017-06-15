@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import static okhttp3.internal.Internal.instance;
-
 public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     // Adapter for populating the RecyclerViews with moment_cards
 
@@ -20,7 +18,7 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     Context mContext;
 
     // strings to fill in the state in the moment_card_with_state
-    String mStateInProgress, mStateUploading, mStateFailed, mStateLive;
+    String mStatePrivate, mStateUploading, mStateFailed, mStateLive;
 
     // reference to the Activity for making callbacks in onClick
     MomentInteractionListener mActivityCallback;
@@ -43,7 +41,7 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         mViewModelList = viewModelList;
 
         // get the Strings from resources
-        mStateInProgress = context.getString(R.string.state_in_progress);
+        mStatePrivate = context.getString(R.string.state_private);
         mStateUploading = context.getString(R.string.state_uploading);
         mStateFailed = context.getString(R.string.state_failed);
         mStateLive = context.getString(R.string.state_live);

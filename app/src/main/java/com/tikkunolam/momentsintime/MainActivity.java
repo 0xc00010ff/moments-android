@@ -144,6 +144,19 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
         }
 
+        // if the Moment is Private
+        if(moment.getMomentState() == MomentStateEnum.PRIVATE) {
+
+            // if the Moment doesn't have a video
+            if(moment.getLocalVideoFilePath() == null) {
+
+                // it isn't watchable
+                watchable = false;
+
+            }
+
+        }
+
         if(watchable) {
 
             // create the Intent
@@ -171,13 +184,18 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
         else {
             // the Moment is Live and unavailable... tell the user that
 
-            // show the dialog explaining
-            MaterialDialog dialog = new MaterialDialog.Builder(this)
-                    .title(getString(R.string.video_processing_dialog_title))
-                    .content(R.string.video_processing_dialog_content)
-                    .positiveText(R.string.video_processing_dialog_prompt)
-                    .positiveColor(getResources().getColor(R.color.actionBlue))
-                    .show();
+            if(moment.getMomentState() == MomentStateEnum.LIVE) {
+
+                // show the dialog explaining
+                MaterialDialog dialog = new MaterialDialog.Builder(this)
+                        .title(getString(R.string.video_processing_dialog_title))
+                        .content(R.string.video_processing_dialog_content)
+                        .positiveText(R.string.video_processing_dialog_prompt)
+                        .positiveColor(getResources().getColor(R.color.actionBlue))
+                        .show();
+
+
+            }
 
         }
 

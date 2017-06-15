@@ -136,19 +136,19 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // fetch the primaryKey that may have been passed in
         String primaryKey = getIntent().getStringExtra(mPrimaryKeyExtra);
 
-        // if there's no primaryKey, they're making a new Moment, so create a Moment and set its state to IN_PROGRESS
+        // if there's no primaryKey, they're making a new Moment, so create a Moment and set its state to PRIVATE
         if(primaryKey == null) {
 
             // make a new managed Moment
             mMoment = Moment.createMoment();
 
-            // set the Moment's status to IN_PROGRESS
+            // set the Moment's status to PRIVATE
             mMoment.persistUpdates(new PersistenceExecutor() {
 
                 @Override
                 public void execute() {
 
-                    mMoment.setEnumState(MomentStateEnum.IN_PROGRESS);
+                    mMoment.setEnumState(MomentStateEnum.PRIVATE);
 
                 }
 

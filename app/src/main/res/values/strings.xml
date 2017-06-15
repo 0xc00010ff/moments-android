@@ -99,7 +99,7 @@
     <string name="save_item">Save</string>
 
     <!--strings for the moment_card_with_state-->
-    <string name="state_in_progress">In Progress</string>
+    <string name="state_private">Private</string>
     <string name="state_uploading">Uploading...</string>
     <string name="state_failed">Upload failed! Tap to retry</string>
     <string name="state_live">Live</string>
