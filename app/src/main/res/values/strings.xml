@@ -25,7 +25,7 @@
     <!--strings for use as JSON filters in the API requests-->
     <string name="community_filter">fields=uri,status,name,description,link,pictures.sizes</string>
     <string name="playable_video_filter">fields=files,link</string>
-    <string name="single_moment_filter">fields=name,description,pictures,link</string>
+    <string name="single_moment_filter">fields=name,description,pictures,link,status</string>
     <string name="delete_moment_filter">fields=uri</string>
     <string name="upload_ticket_filter">fields=uri,complete_uri,upload_link,upload_link_secure</string>
     <string name="upload_filter">fields=uri</string>

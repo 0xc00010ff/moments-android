@@ -166,6 +166,14 @@ public class Moment extends RealmObject {
 
     }
 
+    public String getCanonicalTitle() {
+        // we are giving Moments to Vimeo with the format "interviewee - title"
+        // this method does that concatenation
+
+        return interviewee + " - " + title;
+
+    }
+
     public boolean isAvailable() {
 
         return available;

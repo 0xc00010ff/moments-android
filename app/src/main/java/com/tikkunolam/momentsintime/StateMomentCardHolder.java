@@ -171,7 +171,19 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         // if the Moment has a title, fill that field
         if(moment.getTitle() != null) {
 
-            videoNameTextView.setText(moment.getTitle());
+            // if the Moment has an interviewee as well we can get the formatted title (name - title)
+            if(moment.getInterviewee() != null) {
+
+                videoNameTextView.setText(moment.getCanonicalTitle());
+
+            }
+
+            // otherwise just use the title itself
+            else {
+
+                videoNameTextView.setText(moment.getTitle());
+
+            }
 
         }
 
@@ -222,7 +234,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         // set the preview image with Glide, using the local video uri
         Glide.with(mContext).load(Uri.fromFile(videoFile)).asBitmap().into(videoPreviewImageView);
 
-        videoNameTextView.setText(moment.getTitle());
+        videoNameTextView.setText(moment.getCanonicalTitle());
         videoDescriptionTextView.setText(moment.getDescription());
         momentStateTextView.setText(mStateUploading);
         coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_blue));
@@ -250,7 +262,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         // set the preview image with Glide, using the local video file
         Glide.with(mContext).load(Uri.fromFile(videoFile)).asBitmap().into(videoPreviewImageView);
 
-        videoNameTextView.setText(moment.getTitle());
+        videoNameTextView.setText(moment.getCanonicalTitle());
         videoDescriptionTextView.setText(moment.getDescription());
         momentStateTextView.setText(mStateFailed);
         coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_red));
@@ -311,12 +323,6 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
                 @Override
                 public void execute() {
 
-                    if(newMoment.getTitle() != null) {
-
-                        moment.setTitle(newMoment.getTitle());
-
-                    }
-
                     if(newMoment.getDescription() != null) {
 
                         moment.setDescription(newMoment.getDescription());
@@ -334,6 +340,8 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
                         moment.setVideoUrl(newMoment.getVideoUrl());
 
                     }
+
+                    moment.setAvailable(newMoment.isAvailable());
 
                 }
 
@@ -371,7 +379,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
             }
 
             // set the rest of the values
-            videoNameTextView.setText(moment.getTitle());
+            videoNameTextView.setText(moment.getCanonicalTitle());
             videoNameTextView.setVisibility(View.VISIBLE);
             momentStateTextView.setText(mStateLive);
             shareTextView.setVisibility(View.VISIBLE);
