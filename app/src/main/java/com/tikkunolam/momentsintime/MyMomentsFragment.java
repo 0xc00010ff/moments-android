@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -30,6 +31,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 
 import io.realm.RealmResults;
+import pl.bclogic.pulsator4droid.library.PulsatorLayout;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
@@ -66,6 +68,7 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
     TextView mMakeAMomentTextView;
     FloatingActionButton mFloatingActionButton;
     ProgressBar mProgressBar;
+    PulsatorLayout mFabPulse;
 
     // position at which to insert an UploadMessage
     final int mUploadMessagePosition = 0;
@@ -109,6 +112,9 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
 
         // get the progressBar
         mProgressBar = (ProgressBar) mMyMomentsRelativeLayout.findViewById(R.id.progressBar);
+
+        // get the PulsatorLayout for the FAB pulse
+        mFabPulse = (PulsatorLayout) mMyMomentsRelativeLayout.findViewById(R.id.fab_pulse);
 
         // get the view to show when there are no moments. it's set to hidden for now
         mNoMomentsLinearLayout = (LinearLayout) mMyMomentsRelativeLayout.findViewById(R.id.no_moments_linearLayout);
@@ -410,8 +416,26 @@ public class MyMomentsFragment extends Fragment implements MainActivity.myMoment
     }
 
     public void openMakeAMomentActivity() {
+        // called from the MainActivity when it wants to open MakeAMomentActivity from the Moment prompt
 
-        onNewMomentClick();
+        // make the FAB pulse
+        mFabPulse.start();
+
+        // wait .75 seconds to open the activity to make it clear to the user what happened
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+
+            public void run() {
+
+                // stop the pulse
+                mFabPulse.stop();
+
+                // open MakeAMomentActivity
+                onNewMomentClick();
+
+            }
+
+        }, 750);
 
     }
 

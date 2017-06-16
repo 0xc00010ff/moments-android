@@ -143,7 +143,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         circlePulse.stop();
 
         // hide the shareTextView
-        shareTextView.setVisibility(View.INVISIBLE);
+        shareTextView.setVisibility(View.VISIBLE);
 
         // show the rest of the views in case they were hidden in another configure
         videoNameTextView.setVisibility(View.VISIBLE);
@@ -215,6 +215,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         setOnCardClick(moment);
         setOnVideoClick(moment);
         setOnDotsClick(moment);
+        setOnShareClick(moment);
 
     }
 

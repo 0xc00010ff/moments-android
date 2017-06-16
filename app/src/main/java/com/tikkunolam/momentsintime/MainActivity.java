@@ -12,6 +12,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -498,14 +499,13 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
     // the callback method that will be called when the MomentPrompt is clicked in the CommunityFragment RecyclerView
     public void onMomentPromptClick() {
 
-        // tell the MyMomentsFragment it should open MakeAMomentActivity
-        myMomentsFragment.openMakeAMomentActivity();
-
         // get the MyMomentsFragment
         TabLayout.Tab myMomentsTab = mTabLayout.getTabAt(MY_MOMENTS_POSITION);
 
         // select it
         myMomentsTab.select();
+
+        myMomentsFragment.openMakeAMomentActivity();
 
     }
 
@@ -530,23 +530,20 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
             if(deleted) {
                 // it was deleted successfully. tell the fragment to reload its mViewModelList
 
-                // sleep for half a second to let Realm catch up
+                // wait for half a second to let Realm catch up
                 // this is BAD™ but Realm only allows callbacks for general changes to objects, not delete specifically
                 // so without some funny business, this is the easiest way
-                try {
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
 
-                    Thread.sleep(500);
+                    public void run() {
 
-                }
+                        // refresh the list to reflect the delete
+                        myMomentsFragment.refreshListFromActivity();
 
-                catch(InterruptedException e){
+                    }
 
-                    // the thread was interrupted while sleeping. nothing needs to be cleaned up, so do nothing.
-
-                }
-
-                // refresh the list to reflect the delete
-                myMomentsFragment.refreshListFromActivity();
+                }, 500);
 
             }
 
