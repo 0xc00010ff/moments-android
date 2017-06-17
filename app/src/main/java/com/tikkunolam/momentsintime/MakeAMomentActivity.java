@@ -553,7 +553,11 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                     FileDealer fileDealer = new FileDealer();
 
-                    final String filePath = fileDealer.getPath(this, Uri.parse(selectedVideoUri));
+                    // get the path to the video we just retrieved
+                    String oldFilePath = fileDealer.getPath(this, Uri.parse(selectedVideoUri));
+
+                    // save it locally
+                    final String localFilePath = fileDealer.saveVideoLocally(this, oldFilePath);
 
                     // update the Moment in Realm
                     mMoment.persistUpdates(new PersistenceExecutor() {
@@ -561,7 +565,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                         @Override
                         public void execute() {
 
-                            mMoment.setLocalVideoFilePath(filePath);
+                            mMoment.setLocalVideoFilePath(localFilePath);
 
                         }
 
@@ -586,7 +590,10 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     fileDealer = new FileDealer();
 
                     // get the path of the video from the FileDealer
-                    final String filmedVideoPath = fileDealer.getPath(this, Uri.parse(filmedVideoUri));
+                    String oldVideoPath = fileDealer.getPath(this, Uri.parse(filmedVideoUri));
+
+                    // save it locally
+                    final String newVideoPath = fileDealer.saveVideoLocally(this, oldVideoPath);
 
                     // update the Moment in Realm
                     mMoment.persistUpdates(new PersistenceExecutor() {
@@ -594,7 +601,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                         @Override
                         public void execute() {
 
-                            mMoment.setLocalVideoFilePath(filmedVideoPath);
+                            mMoment.setLocalVideoFilePath(newVideoPath);
 
                         }
 

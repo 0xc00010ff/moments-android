@@ -17,7 +17,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -275,6 +277,55 @@ public class FileDealer {
         filePathString = pictureFile.getAbsolutePath();
 
         return filePathString;
+
+    }
+
+    public String saveVideoLocally(Context context, String videoFilePath) {
+        // saves a file to our app's local file directory
+
+        String finalFilePath = null;
+
+        // make a file from the video's path
+        File sourceFile = new File(videoFilePath);
+
+        // get the local file directory
+        File directory = context.getApplicationContext().getFilesDir();
+
+        // generate the date at the time this code's executed, for use as a file name
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+        Date now = new Date();
+        String fileName = formatter.format(now) + ".mp4";
+
+        // make the file to return
+        File outputFile = new File(directory, fileName);
+
+        try {
+
+            // try to stream the data from the source file to the new local file
+
+            FileInputStream inputStream = new FileInputStream(sourceFile);
+
+            FileOutputStream outputStream = new FileOutputStream(outputFile);
+
+            FileChannel inChannel = inputStream.getChannel();
+            FileChannel outChannel = outputStream.getChannel();
+            inChannel.transferTo(0, inChannel.size(), outChannel);
+
+            inputStream.close();
+
+            outputStream.close();
+
+            finalFilePath = outputFile.getAbsolutePath();
+
+        }
+
+        catch(IOException exception) {
+
+            Log.e(TAG, exception.toString());
+
+        }
+
+        return finalFilePath;
 
     }
 

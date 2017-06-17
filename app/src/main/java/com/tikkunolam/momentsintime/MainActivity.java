@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -243,16 +245,44 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
         // if the Moment is PRIVATE
         else if(moment.getMomentState() == MomentStateEnum.PRIVATE) {
 
+            // express a send Intent
             Intent sendIntent = new Intent();
-
             sendIntent.setAction(Intent.ACTION_SEND);
 
+            // fetch the Moment's local video file
             File videoFile = new File(moment.getLocalVideoFilePath());
 
-            Uri videoUri = Uri.fromFile(videoFile);
+            Uri videoUri;
 
-            sendIntent.setDataAndType(videoUri, URLConnection.guessContentTypeFromName(videoUri.toString()));
+            // if this phone is running Nougat
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
+                // we have to use a FileProvider to get a content Uri
+                videoUri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", videoFile);
+
+            }
+
+            else {
+
+                // otherwise we can just get the file Uri
+                videoUri = Uri.fromFile(videoFile);
+
+            }
+
+
+            // add the text to the Intent
+            sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.sms_message));
+
+            // put the video data on the Intent
+            sendIntent.putExtra(Intent.EXTRA_STREAM, videoUri);
+
+            // sending all types
+            sendIntent.setType("*/*");
+
+            // grant the receiving Activity permission to access the content Uri
+            sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            // start the Activity
             startActivity(sendIntent);
 
         }
