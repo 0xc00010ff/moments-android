@@ -25,7 +25,7 @@
     <!--strings for use as JSON filters in the API requests-->
     <string name="community_filter">fields=uri,status,name,description,link,pictures.sizes</string>
     <string name="playable_video_filter">fields=files,link</string>
-    <string name="single_moment_filter">fields=name,description,pictures,link</string>
+    <string name="single_moment_filter">fields=name,description,pictures,link,status</string>
     <string name="delete_moment_filter">fields=uri</string>
     <string name="upload_ticket_filter">fields=uri,complete_uri,upload_link,upload_link_secure</string>
     <string name="upload_filter">fields=uri</string>
@@ -99,7 +99,7 @@
     <string name="save_item">Save</string>
 
     <!--strings for the moment_card_with_state-->
-    <string name="state_in_progress">In Progress</string>
+    <string name="state_private">Private</string>
     <string name="state_uploading">Uploading...</string>
     <string name="state_failed">Upload failed! Tap to retry</string>
     <string name="state_live">Live</string>
@@ -112,8 +112,8 @@
     <string name="welcome_message_moment_prompt">Let\'s make a Moment</string>
 
     <!--strings for the UploadMessage-->
-    <string name="upload_message_title">You made a Moment!</string>
-    <string name="upload_message_content">We got your Moment and people are going to love it! We are processing it and making sure the content is safe for the community before they can see it. Want to share your creation?</string>
+    <string name="upload_message_title">Your Moment is live!</string>
+    <string name="upload_message_content">The Moments moderators will review your post before adding it to the community. In the mean time, feel free to share your awesome creation.</string>
     <string name="upload_message_prompt">Share your Moment</string>
 
     <!--strings for dialogs-->
@@ -139,6 +139,10 @@
     <string name="terms_and_conditions_negative_text">Cancel</string>
 
     <string name="note_dialog_delete">Delete</string>
+
+    <string name="video_processing_dialog_title">Almost there!</string>
+    <string name="video_processing_dialog_content">Your Moment uploaded successfully and is being processed. Check back soon!</string>
+    <string name="video_processing_dialog_prompt">OK</string>
 
     <!--String for the sms Intent-->
     <string name="sms_message">Check out this story on Moments In Time! </string>

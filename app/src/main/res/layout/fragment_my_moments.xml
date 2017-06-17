@@ -77,18 +77,31 @@
             android:textSize="18sp" />
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <pl.bclogic.pulsator4droid.library.PulsatorLayout
+        android:id="@+id/fab_pulse"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_gravity="bottom|right"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
-        android:clickable="true"
-        app:backgroundTint="@color/colorPrimary"
-        app:fabSize="normal"
-        app:srcCompat="@drawable/plus" />
+        app:pulse_color="@color/actionBlue"
+        app:pulse_count="5"
+        app:pulse_duration="750"
+        app:pulse_interpolator="Linear"
+        app:pulse_repeat="0"
+        app:pulse_startFromScratch="true">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:clickable="true"
+            app:backgroundTint="@color/colorPrimary"
+            app:elevation="0dp"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/plus" />
+
+    </pl.bclogic.pulsator4droid.library.PulsatorLayout>
 
 </RelativeLayout>

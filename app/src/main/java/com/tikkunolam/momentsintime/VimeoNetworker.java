@@ -435,6 +435,7 @@ public class VimeoNetworker {
             String name = jsonResponse.getString("name");
             String description = jsonResponse.getString("description");
             String url = jsonResponse.getString("link");
+            String status = jsonResponse.getString("status");
 
             if(description.equals("null")) {
                 // API returns "null" so make it empty instead
@@ -442,6 +443,9 @@ public class VimeoNetworker {
                 description = "";
 
             }
+
+            // determine if the Moment is available yet
+            boolean availability = status.equals(mAvailabilityString);
 
             // get the pictures JSONObject (a list of the same pic in different sizes)
             JSONObject picturesObject = jsonResponse.getJSONObject("pictures");
@@ -458,6 +462,7 @@ public class VimeoNetworker {
             moment.setDescription(description);
             moment.setPictureUrl(pictureUrl);
             moment.setVideoUrl(url);
+            moment.setAvailable(availability);
 
 
         }

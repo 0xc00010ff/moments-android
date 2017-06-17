@@ -5,22 +5,29 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+
+import java.io.File;
+import java.net.URLConnection;
 
 import static android.os.Build.VERSION_CODES.M;
 
@@ -123,25 +130,80 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
     public void onVideoSelect(Moment moment) {
         // open a new Activity to view the Moment
 
-        // create the Intent
-        Intent videoIntent = new Intent(getBaseContext(), VideoViewActivity.class);
+        // a boolean that determines whether or not we're allowed to open the VideoViewActivity
+        // if there is a Live Moment that hasn't finished processing on Vimeo, watchable will be false.
+        boolean watchable = true;
 
-        // if there is a Vimeo video uri then attach that to the Intent
-        if(moment.getVideoUri() != null) {
+        // if the Moment is Live
+        if(moment.getMomentState() == MomentStateEnum.LIVE) {
+            // it may not be available from Vimeo. If it isn't, we can't open the VideoViewActivity
+            // or it will try to play a video that isn't processed and crashed
 
-            videoIntent.putExtra(mVimeoVideoUriExtra, moment.getVideoUri());
+            // if it's not available
+            if(!moment.isAvailable()) {
+
+                // set the boolean to false
+                watchable = false;
+
+            }
+
 
         }
 
-        // otherwise attach the local video uri to it
+        // if the Moment is Private
+        if(moment.getMomentState() == MomentStateEnum.PRIVATE) {
+
+            // if the Moment doesn't have a video
+            if(moment.getLocalVideoFilePath() == null) {
+
+                // it isn't watchable
+                watchable = false;
+
+            }
+
+        }
+
+        if(watchable) {
+
+            // create the Intent
+            Intent videoIntent = new Intent(getBaseContext(), VideoViewActivity.class);
+
+            // if there is a Vimeo video uri then attach that to the Intent
+            if(moment.getVideoUri() != null) {
+
+                videoIntent.putExtra(mVimeoVideoUriExtra, moment.getVideoUri());
+
+            }
+
+            // otherwise attach the local video uri to it
+            else {
+
+                videoIntent.putExtra(mLocalVideoFileExtra, moment.getLocalVideoFilePath());
+
+            }
+
+            // open the activity
+            startActivity(videoIntent);
+
+        }
+
         else {
+            // the Moment is Live and unavailable... tell the user that
 
-            videoIntent.putExtra(mLocalVideoFileExtra, moment.getLocalVideoFilePath());
+            if(moment.getMomentState() == MomentStateEnum.LIVE) {
+
+                // show the dialog explaining
+                MaterialDialog dialog = new MaterialDialog.Builder(this)
+                        .title(getString(R.string.video_processing_dialog_title))
+                        .content(R.string.video_processing_dialog_content)
+                        .positiveText(R.string.video_processing_dialog_prompt)
+                        .positiveColor(getResources().getColor(R.color.actionBlue))
+                        .show();
+
+
+            }
 
         }
-
-        // open the activity
-        startActivity(videoIntent);
 
     }
 
@@ -160,52 +222,70 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
         final Context context = this;
 
-        // produce the dialog that presents sharing options
-        MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .items(R.array.moment_share_dialog_array)
-                .itemsColor(getResources().getColor(R.color.actionBlue))
-                .itemsCallback(new MaterialDialog.ListCallback() {
+        // if the Moment is LIVE
+        if(moment.getMomentState() == MomentStateEnum.LIVE) {
 
-                    @Override
-                    public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+            // make an intent
+            Intent sendIntent = new Intent();
 
-                        switch(position) {
+            // express that the Intent is to send data
+            sendIntent.setAction(Intent.ACTION_SEND);
 
-                            case 0:
-                                // user chose to share on Facebook
+            // attach some text to it
+            sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.sms_message) + " " + moment.getVideoUrl());
 
-                                MaterialDialog anotherDialog = new MaterialDialog.Builder(context)
-                                        .title(getString(R.string.in_development_title))
-                                        .content(getString(R.string.in_development_content))
-                                        .positiveText(getString(R.string.in_development_ok))
-                                        .positiveColor(getResources().getColor(R.color.actionBlue))
-                                        .show();
+            // set the type as text
+            sendIntent.setType("text/plain");
 
-                                break;
+            // start the Activity
+            startActivity(sendIntent);
 
-                            case 1:
-                                // user chose to share through message
+        }
 
-                                // make an Intent for sending an sms
-                                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                                sendIntent.setData(Uri.parse("sms:"));
+        // if the Moment is PRIVATE
+        else if(moment.getMomentState() == MomentStateEnum.PRIVATE) {
 
-                                // add a message to it
-                                sendIntent.putExtra("sms_body", getString(R.string.sms_message) + moment.getVideoUrl());
+            // express a send Intent
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
 
-                                // start the Activity
-                                startActivity(sendIntent);
+            // fetch the Moment's local video file
+            File videoFile = new File(moment.getLocalVideoFilePath());
 
-                                break;
+            Uri videoUri;
 
-                        }
+            // if this phone is running Nougat
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
-                    }
+                // we have to use a FileProvider to get a content Uri
+                videoUri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", videoFile);
 
-                })
-                .positiveText(getString(R.string.dialog_cancel))
-                .positiveColor(getResources().getColor(R.color.textLight))
-                .show();
+            }
+
+            else {
+
+                // otherwise we can just get the file Uri
+                videoUri = Uri.fromFile(videoFile);
+
+            }
+
+
+            // add the text to the Intent
+            sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.sms_message));
+
+            // put the video data on the Intent
+            sendIntent.putExtra(Intent.EXTRA_STREAM, videoUri);
+
+            // sending all types
+            sendIntent.setType("*/*");
+
+            // grant the receiving Activity permission to access the content Uri
+            sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            // start the Activity
+            startActivity(sendIntent);
+
+        }
 
     }
 
@@ -442,14 +522,13 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
     // the callback method that will be called when the MomentPrompt is clicked in the CommunityFragment RecyclerView
     public void onMomentPromptClick() {
 
-        // tell the MyMomentsFragment it should open MakeAMomentActivity
-        myMomentsFragment.openMakeAMomentActivity();
-
         // get the MyMomentsFragment
         TabLayout.Tab myMomentsTab = mTabLayout.getTabAt(MY_MOMENTS_POSITION);
 
         // select it
         myMomentsTab.select();
+
+        myMomentsFragment.openMakeAMomentActivity();
 
     }
 
@@ -474,14 +553,20 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
             if(deleted) {
                 // it was deleted successfully. tell the fragment to reload its mViewModelList
 
-                myMomentsFragment.refreshListFromActivity();
+                // wait for half a second to let Realm catch up
+                // this is BAD™ but Realm only allows callbacks for general changes to objects, not delete specifically
+                // so without some funny business, this is the easiest way
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
 
-            }
+                    public void run() {
 
-            else {
-                // it wasn't deleted successfully
+                        // refresh the list to reflect the delete
+                        myMomentsFragment.refreshListFromActivity();
 
-                // display a dialog saying something went wrong
+                    }
+
+                }, 500);
 
             }
 

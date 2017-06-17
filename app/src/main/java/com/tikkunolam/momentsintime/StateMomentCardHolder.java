@@ -30,7 +30,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
     MomentInteractionListener mActivityCallback;
 
     // Strings to be filled from resources and to fill the momentStateTextView
-    String mStateInProgress, mStateUploading, mStateFailed, mStateLive;
+    String mStatePrivate, mStateUploading, mStateFailed, mStateLive;
 
     // the CardView containing everything
     CardView wholeCardView;
@@ -76,7 +76,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         mActivityCallback = (MainActivity) context;
 
         // fetch the state Strings from resources
-        mStateInProgress = context.getString(R.string.state_in_progress);
+        mStatePrivate = context.getString(R.string.state_private);
         mStateUploading = context.getString(R.string.state_uploading);
         mStateFailed = context.getString(R.string.state_failed);
         mStateLive = context.getString(R.string.state_live);
@@ -104,10 +104,10 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
 
         switch(state) {
 
-            case IN_PROGRESS:
-                // configure the views with an IN_PROGRESS Moment
+            case PRIVATE:
+                // configure the views with a PRIVATE Moment
 
-                configureInProgress(moment);
+                configurePrivate(moment);
 
                 break;
 
@@ -136,8 +136,8 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
 
     }
 
-    private void configureInProgress(Moment moment) {
-        // configures the views with an IN_PROGRESS Moment
+    private void configurePrivate(Moment moment) {
+        // configures the views with a PRIVATE Moment
 
         // stop the pulse
         circlePulse.stop();
@@ -149,7 +149,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         videoNameTextView.setVisibility(View.VISIBLE);
         videoDescriptionTextView.setVisibility(View.VISIBLE);
 
-        // if the Moment has a localVideoUri, fill the videoPreviewImageView with a preview from it
+        // if the Moment has a localVideoUri, fill the videoPreviewImageView with a preview from it, and offer sharing
         if(moment.getLocalVideoFilePath() != null) {
 
             // gets the video file path string from the Moment and makes a file with it
@@ -158,6 +158,8 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
             // set the preview image with Glide, using the local video uri
             Glide.with(mContext).load(Uri.fromFile(videoFile)).asBitmap().centerCrop().into(videoPreviewImageView);
 
+            // show the share prompt
+            shareTextView.setVisibility(View.VISIBLE);
 
         }
 
@@ -171,7 +173,19 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         // if the Moment has a title, fill that field
         if(moment.getTitle() != null) {
 
-            videoNameTextView.setText(moment.getTitle());
+            // if the Moment has an interviewee as well we can get the formatted title (name - title)
+            if(moment.getInterviewee() != null) {
+
+                videoNameTextView.setText(moment.getCanonicalTitle());
+
+            }
+
+            // otherwise just use the title itself
+            else {
+
+                videoNameTextView.setText(moment.getTitle());
+
+            }
 
         }
 
@@ -196,13 +210,14 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
 
         }
 
-        momentStateTextView.setText(mStateInProgress);
+        momentStateTextView.setText(mStatePrivate);
         coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_yellow));
 
         // set all the onClickListeners
         setOnCardClick(moment);
         setOnVideoClick(moment);
         setOnDotsClick(moment);
+        setOnShareClick(moment);
 
     }
 
@@ -222,7 +237,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         // set the preview image with Glide, using the local video uri
         Glide.with(mContext).load(Uri.fromFile(videoFile)).asBitmap().into(videoPreviewImageView);
 
-        videoNameTextView.setText(moment.getTitle());
+        videoNameTextView.setText(moment.getCanonicalTitle());
         videoDescriptionTextView.setText(moment.getDescription());
         momentStateTextView.setText(mStateUploading);
         coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_blue));
@@ -250,7 +265,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         // set the preview image with Glide, using the local video file
         Glide.with(mContext).load(Uri.fromFile(videoFile)).asBitmap().into(videoPreviewImageView);
 
-        videoNameTextView.setText(moment.getTitle());
+        videoNameTextView.setText(moment.getCanonicalTitle());
         videoDescriptionTextView.setText(moment.getDescription());
         momentStateTextView.setText(mStateFailed);
         coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_red));
@@ -299,14 +314,41 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
 
             // doInBackground is required to accept variadic arguments, but there will only ever be one...
             // ... so take the Moment from position moments[0]
-            Moment moment = moments[0];
+            final Moment moment = moments[0];
 
             VimeoNetworker vimeoNetworker = new VimeoNetworker(mContext);
 
             // get the Moment off of Vimeo to populate the views
-            Moment newMoment = vimeoNetworker.getSingleMoment(Uri.parse(moment.getVideoUri()));
+            final Moment newMoment = vimeoNetworker.getSingleMoment(Uri.parse(moment.getVideoUri()));
 
-            moment = newMoment;
+            moment.persistUpdates(new PersistenceExecutor() {
+
+                @Override
+                public void execute() {
+
+                    if(newMoment.getDescription() != null) {
+
+                        moment.setDescription(newMoment.getDescription());
+
+                    }
+
+                    if(newMoment.getPictureUrl() != null) {
+
+                        moment.setPictureUrl(newMoment.getPictureUrl());
+
+                    }
+
+                    if(newMoment.getVideoUrl() != null) {
+
+                        moment.setVideoUrl(newMoment.getVideoUrl());
+
+                    }
+
+                    moment.setAvailable(newMoment.isAvailable());
+
+                }
+
+            });
 
             return moment;
 
@@ -340,11 +382,24 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
             }
 
             // set the rest of the values
-            videoNameTextView.setText(moment.getTitle());
+            videoNameTextView.setText(moment.getCanonicalTitle());
             videoNameTextView.setVisibility(View.VISIBLE);
             momentStateTextView.setText(mStateLive);
             shareTextView.setVisibility(View.VISIBLE);
-            Glide.with(mContext).load(moment.getPictureUrl()).into(videoPreviewImageView);
+
+            if(moment.getPictureUrl() != null) {
+                // if there is a picture provided by Vimeo, display it
+
+                Glide.with(mContext).load(moment.getPictureUrl()).into(videoPreviewImageView);
+
+            }
+
+            else {
+                // otherwise display the local picture
+
+                Glide.with(mContext).load(Uri.fromFile(new File(moment.getLocalVideoFilePath()))).asBitmap().into(videoPreviewImageView);
+
+            }
 
         }
 
