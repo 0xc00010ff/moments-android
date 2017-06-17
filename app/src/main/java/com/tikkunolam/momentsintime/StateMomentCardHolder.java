@@ -143,13 +143,13 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         circlePulse.stop();
 
         // hide the shareTextView
-        shareTextView.setVisibility(View.VISIBLE);
+        shareTextView.setVisibility(View.INVISIBLE);
 
         // show the rest of the views in case they were hidden in another configure
         videoNameTextView.setVisibility(View.VISIBLE);
         videoDescriptionTextView.setVisibility(View.VISIBLE);
 
-        // if the Moment has a localVideoUri, fill the videoPreviewImageView with a preview from it
+        // if the Moment has a localVideoUri, fill the videoPreviewImageView with a preview from it, and offer sharing
         if(moment.getLocalVideoFilePath() != null) {
 
             // gets the video file path string from the Moment and makes a file with it
@@ -158,6 +158,8 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
             // set the preview image with Glide, using the local video uri
             Glide.with(mContext).load(Uri.fromFile(videoFile)).asBitmap().centerCrop().into(videoPreviewImageView);
 
+            // show the share prompt
+            shareTextView.setVisibility(View.VISIBLE);
 
         }
 

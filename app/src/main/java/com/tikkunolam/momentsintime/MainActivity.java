@@ -24,6 +24,9 @@ import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 
+import java.io.File;
+import java.net.URLConnection;
+
 import static android.os.Build.VERSION_CODES.M;
 
 public class MainActivity extends AppCompatActivity implements MomentInteractionListener {
@@ -217,52 +220,42 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
         final Context context = this;
 
-        // produce the dialog that presents sharing options
-        MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .items(R.array.moment_share_dialog_array)
-                .itemsColor(getResources().getColor(R.color.actionBlue))
-                .itemsCallback(new MaterialDialog.ListCallback() {
+        // if the Moment is LIVE
+        if(moment.getMomentState() == MomentStateEnum.LIVE) {
 
-                    @Override
-                    public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+            // make an intent
+            Intent sendIntent = new Intent();
 
-                        switch(position) {
+            // express that the Intent is to send data
+            sendIntent.setAction(Intent.ACTION_SEND);
 
-                            case 0:
-                                // user chose to share on Facebook
+            // attach some text to it
+            sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.sms_message) + " " + moment.getVideoUrl());
 
-                                MaterialDialog anotherDialog = new MaterialDialog.Builder(context)
-                                        .title(getString(R.string.in_development_title))
-                                        .content(getString(R.string.in_development_content))
-                                        .positiveText(getString(R.string.in_development_ok))
-                                        .positiveColor(getResources().getColor(R.color.actionBlue))
-                                        .show();
+            // set the type as text
+            sendIntent.setType("text/plain");
 
-                                break;
+            // start the Activity
+            startActivity(sendIntent);
 
-                            case 1:
-                                // user chose to share through message
+        }
 
-                                // make an Intent for sending an sms
-                                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                                sendIntent.setData(Uri.parse("sms:"));
+        // if the Moment is PRIVATE
+        else if(moment.getMomentState() == MomentStateEnum.PRIVATE) {
 
-                                // add a message to it
-                                sendIntent.putExtra("sms_body", getString(R.string.sms_message) + moment.getVideoUrl());
+            Intent sendIntent = new Intent();
 
-                                // start the Activity
-                                startActivity(sendIntent);
+            sendIntent.setAction(Intent.ACTION_SEND);
 
-                                break;
+            File videoFile = new File(moment.getLocalVideoFilePath());
 
-                        }
+            Uri videoUri = Uri.fromFile(videoFile);
 
-                    }
+            sendIntent.setDataAndType(videoUri, URLConnection.guessContentTypeFromName(videoUri.toString()));
 
-                })
-                .positiveText(getString(R.string.dialog_cancel))
-                .positiveColor(getResources().getColor(R.color.textLight))
-                .show();
+            startActivity(sendIntent);
+
+        }
 
     }
 
