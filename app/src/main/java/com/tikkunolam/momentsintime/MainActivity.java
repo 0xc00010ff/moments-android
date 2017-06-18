@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.FileProvider;
@@ -25,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
@@ -152,7 +154,47 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
                                 switch(position) {
 
                                     case 0:
-                                        // they chose to rate the app
+                                        // they chose to rate the app. show the next dialog
+
+                                        MaterialDialog materialDialog = new MaterialDialog.Builder(mContext)
+                                                .title(getString(R.string.app_review_dialog_title))
+                                                .content(getString(R.string.app_review_dialog_content))
+                                                .positiveText(getString(R.string.app_review_dialog_positive_text))
+                                                .positiveColor(getResources().getColor(R.color.actionBlue))
+                                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+
+                                                    @Override
+                                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                        // the user chose to leave a review. go to the play store
+
+                                                        // make the Uri for our app in the store
+                                                        Uri marketUri = Uri.parse(getString(R.string.marketplace_address) + getPackageName());
+
+                                                        // make  new Intent
+                                                        Intent marketIntent = new Intent(Intent.ACTION_VIEW);
+
+                                                        // set its data with the Uri
+                                                        marketIntent.setData(marketUri);
+
+                                                        // start the Activity
+                                                        startActivity(marketIntent);
+
+                                                    }
+
+                                                })
+                                                .negativeText(getString(R.string.app_review_dialog_negative_text))
+                                                .negativeColor(getResources().getColor(R.color.textLight))
+                                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+
+                                                    @Override
+                                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                        // the user chose not to leave a review. do nothing. auto dismiss.
+
+
+                                                    }
+
+                                                })
+                                                .show();
 
 
                                         break;
