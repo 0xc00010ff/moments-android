@@ -158,6 +158,8 @@
     <string name="email_subject">Moment Video Report</string>
     <string name="email_recipient">justinmilrad@gmail.com</string>
     <string name="email_content">Hello, I would like to report this video: </string>
+    <string name="email_report_subject">Moment in Time Feedback</string>
+    <string name="email_report_content">Hello, I have a problem.</string>
 
     <!--STRINGS THAT HELP WITH COORDINATION-->
 

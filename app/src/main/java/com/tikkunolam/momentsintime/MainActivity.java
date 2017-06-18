@@ -144,6 +144,37 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
                         .content(getString(R.string.feedback_dialog_content))
                         .items(R.array.feedback_dialog_items)
                         .itemsColor(getResources().getColor(R.color.actionBlue))
+                        .itemsCallback(new MaterialDialog.ListCallback() {
+
+                            @Override
+                            public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+
+                                switch(position) {
+
+                                    case 0:
+                                        // they chose to rate the app
+
+
+                                        break;
+
+                                    case 1:
+                                        // they chose to report a problem. send an email
+
+                                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                                        emailIntent.setType("text/html");
+                                        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {getString(R.string.email_recipient)});
+                                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_report_subject));
+                                        emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_report_content));
+
+                                        startActivity(emailIntent);
+
+                                        break;
+
+                                }
+
+                            }
+
+                        })
                         .positiveText(getString(R.string.feedback_dialog_positive))
                         .positiveColor(getResources().getColor(R.color.textLight))
                         .show();
@@ -511,7 +542,7 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
                                 Intent emailIntent = new Intent(Intent.ACTION_SEND);
                                 emailIntent.setType("text/html");
-                                emailIntent.putExtra(Intent.EXTRA_EMAIL, getString(R.string.email_recipient));
+                                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {getString(R.string.email_recipient)});
                                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
                                 emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_content) + " " + moment.getVideoUrl());
 
