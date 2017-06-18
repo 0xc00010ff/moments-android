@@ -19,6 +19,9 @@ import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
     ViewPager mViewPager;
     PagerAdapter mPagerAdapter;
     TabLayout mTabLayout;
+    MenuItem mStarOfDavidMenuItem;
 
     // tab position of the MyMomentsFragment
     final int MY_MOMENTS_POSITION = 1;
@@ -112,6 +116,45 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
             startActivityForResult(termsAndConditionsIntent, TERMS_AND_CONDITIONS_REQUEST_CODE);
 
         }
+
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // inflates the menu and applies it to the toolbar
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+
+        mStarOfDavidMenuItem = menu.findItem(R.id.star_of_david);
+
+        return true;
+
+    }
+
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+
+        switch(menuItem.getItemId()) {
+
+            case R.id.star_of_david:
+                // the star of david was clicked
+
+                // show the feedback dialog
+                MaterialDialog dialog = new MaterialDialog.Builder(this)
+                        .title(getString(R.string.feedback_dialog_title))
+                        .content(getString(R.string.feedback_dialog_content))
+                        .items(R.array.feedback_dialog_items)
+                        .itemsColor(getResources().getColor(R.color.actionBlue))
+                        .positiveText(getString(R.string.feedback_dialog_positive))
+                        .positiveColor(getResources().getColor(R.color.textLight))
+                        .show();
+
+
+
+                break;
+
+        }
+
+        return true;
 
     }
 

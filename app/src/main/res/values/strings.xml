@@ -98,6 +98,9 @@
     <!--strings for the save_menu-->
     <string name="save_item">Save</string>
 
+    <!--strings for the main_menu-->
+    <string name="star_of_david">Star of David</string>
+
     <!--strings for the moment_card_with_state-->
     <string name="state_private">Private</string>
     <string name="state_uploading">Uploading...</string>
@@ -143,6 +146,10 @@
     <string name="video_processing_dialog_title">Almost there!</string>
     <string name="video_processing_dialog_content">Your Moment uploaded successfully and is being processed. Check back soon!</string>
     <string name="video_processing_dialog_prompt">OK</string>
+
+    <string name="feedback_dialog_title">We\'re glad you\'re here.</string>
+    <string name="feedback_dialog_content">We want this to be a warm and enriching community, and that takes feedback from you. How are we doing?</string>
+    <string name="feedback_dialog_positive">Cancel</string>
 
     <!--String for the sms Intent-->
     <string name="sms_message">Check out this story on Moments In Time! </string>

@@ -57,4 +57,12 @@
 
     </string-array>
 
+    <!--string array for the content of the feedback dialog-->
+    <string-array name="feedback_dialog_items">
+
+        <item>I LOVE IT</item>
+        <item>I have a problem</item>
+
+    </string-array>
+
 </resources>
