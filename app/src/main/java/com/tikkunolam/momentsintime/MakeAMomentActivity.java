@@ -89,6 +89,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     // a boolean indicating whether the views should be clickable or not
     boolean mClickable = true;
 
+    // a boolean to indicate whether a Contact was just selected
+    boolean mGotContact = false;
+
     // the Uri to be returned from a contact fetch
     Uri uriContact;
     String mContactID;
@@ -447,8 +450,16 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     // enable or disable submission depending on mMoment's contents
                     enableDisableMomentSubmission();
 
-                    // go through the invite motions if necessary
-                    inviteContact();
+                    if(mGotContact) {
+
+                        // flip the indactor back to false, indicating any further return form InterviewingActivity...
+                        // ...wasn't after selecting a contact
+                        mGotContact = false;
+
+                        // go through the invite motions
+                        inviteContact();
+
+                    }
 
                     break;
 
@@ -457,6 +468,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     // get their name, role, and photo file, set them on the Moment, and insertInterviewingCard
 
                     uriContact = data.getData();
+
+                    // indicate that we just selected a contact
+                    mGotContact = true;
 
                     // get the Contact's information, and save them to the Moment
                     retrieveContactInfo();
