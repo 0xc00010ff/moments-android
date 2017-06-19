@@ -1,7 +1,6 @@
 package com.tikkunolam.momentsintime;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -10,11 +9,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Environment;
 import android.provider.ContactsContract;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -26,35 +22,25 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.content.CursorLoader;
-import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.Toast;
 import android.provider.ContactsContract.Contacts;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import io.realm.RealmList;
-import io.realm.RealmResults;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
-import static android.net.Uri.withAppendedPath;
+import static android.R.attr.data;
+import static android.R.attr.id;
+import static android.R.attr.name;
 import static com.tikkunolam.momentsintime.R.string.primary_key_extra;
+import static java.security.AccessController.getContext;
 
 public class MakeAMomentActivity extends AppCompatActivity implements HolderInteractionListener{
 
@@ -102,6 +88,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
     // a boolean indicating whether the views should be clickable or not
     boolean mClickable = true;
+
+    // a boolean to indicate whether a Contact was just selected
+    boolean mGotContact = false;
 
     // the Uri to be returned from a contact fetch
     Uri uriContact;
@@ -449,7 +438,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                             mMoment.setInterviewee(interviewee);
                             mMoment.setIntervieweeRole(intervieweeRole);
-                            mMoment.setIntervieweePhotoUri(intervieweePhotoFile);
+                            mMoment.setIntervieweePhotoFile(intervieweePhotoFile);
 
                         }
 
@@ -461,6 +450,17 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     // enable or disable submission depending on mMoment's contents
                     enableDisableMomentSubmission();
 
+                    if(mGotContact) {
+
+                        // flip the indactor back to false, indicating any further return form InterviewingActivity...
+                        // ...wasn't after selecting a contact
+                        mGotContact = false;
+
+                        // go through the invite motions
+                        inviteContact();
+
+                    }
+
                     break;
 
                 case INTERVIEWEE_FROM_CONTACTS:
@@ -469,9 +469,11 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                     uriContact = data.getData();
 
-                    // get the Contact's name and photo, and save them to the Moment
-                    retrieveContactName();
-                    retrieveContactPhoto();
+                    // indicate that we just selected a contact
+                    mGotContact = true;
+
+                    // get the Contact's information, and save them to the Moment
+                    retrieveContactInfo();
 
                     // make an intent with the InterviewingActivity
                     Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
@@ -688,11 +690,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                                     // make an intent with the InterviewingActivity
                                     Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
-
-                                    // attach the Moment's interviewee, interviewee role, and interviewee photo uri
-                                    interviewingIntent.putExtra(mIntervieweeExtra, mMoment.getInterviewee());
-                                    interviewingIntent.putExtra(mRoleExtra, mMoment.getIntervieweeRole());
-                                    interviewingIntent.putExtra(mIntervieweePhotoFileExtra, mMoment.getIntervieweePhotoFile());
 
                                     startActivityForResult(interviewingIntent, INTERVIEWING_INTENT);
 
@@ -1074,7 +1071,25 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         
     }
 
+    private void retrieveContactInfo() {
+        // retrieves all the info we need from the Contact Uri returned from the contact intent
+
+        // get the name
+        retrieveContactName();
+
+        // get the phone number
+        retrieveContactPhoneNumber();
+
+        // get the email
+        retrieveContactEmail();
+
+        // get the thumbnail photo
+        retrieveContactPhoto();
+
+    }
+
     private void retrieveContactName() {
+        // get the Contact's name
 
         // get a Cursor to get the Contact's name
         Cursor cursor = getContentResolver().query(uriContact, null, null, null, null);
@@ -1111,6 +1126,98 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         }
 
         cursorID.close();
+
+    }
+
+    public void retrieveContactPhoneNumber() {
+        // get the Contact's phone number
+
+        // get a Cursor to get the Contact
+        Cursor cursor = getContentResolver().query(uriContact, null, null, null, null);
+
+        String phoneNumber = null;
+
+        if (cursor != null && cursor.moveToFirst()) {
+
+            // check that there is a phone number
+            int numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.HAS_PHONE_NUMBER);
+
+            // will return a 1 if the contact has a number
+            final String hasNumber = cursor.getString(numberIndex);
+
+            // if there is a phone number
+            if(hasNumber.equalsIgnoreCase("1")) {
+                // get the phone number
+
+                Cursor phones = getContentResolver().query(
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = "+ mContactID,
+                        null, null);
+
+                phones.moveToFirst();
+
+                phoneNumber = phones.getString(phones.getColumnIndex("data1"));
+
+                phones.close();
+
+            }
+
+            // we're returned a number with parentheses and dashes, remove everything that's not a digit
+            if(phoneNumber != null) {
+
+                final String number = phoneNumber.replaceAll("[^0-9]", "");
+
+                mMoment.persistUpdates(new PersistenceExecutor() {
+
+                    @Override
+                    public void execute() {
+
+                        mMoment.setIntervieweePhoneNumber(number);
+
+                    }
+
+                });
+
+            }
+
+        }
+
+        cursor.close();
+
+    }
+
+    public void retrieveContactEmail() {
+
+        // query for everything email
+        Cursor cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,  null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=?", new String[] { mContactID }, null);
+
+        // index of the email data
+        int emailIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA);
+
+        if (cursor.moveToFirst()) {
+
+            // get the first email
+            final String email = cursor.getString(emailIdx);
+
+            if(email != null) {
+
+                // save the email to the Moment
+                mMoment.persistUpdates(new PersistenceExecutor() {
+
+                    @Override
+                    public void execute() {
+
+                        mMoment.setIntervieweeEmail(email);
+
+                    }
+
+                });
+
+            }
+
+        }
+
+        cursor.close();
 
     }
 
@@ -1154,7 +1261,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                             @Override
                             public void execute() {
 
-                                mMoment.setIntervieweePhotoUri(pictureFile);
+                                mMoment.setIntervieweePhotoFile(pictureFile);
 
                             }
 
@@ -1173,6 +1280,111 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
             }
 
         }
+
+    }
+
+    public void inviteContact() {
+        // present the user with the options to share by text message and email. act on their choice.
+
+        // build the dialog
+        MaterialDialog interviewDialog = new MaterialDialog.Builder(this)
+                .title(getString(R.string.contact_share_dialog_title, mMoment.getInterviewee()))
+                .items(R.array.sms_and_email_share)
+                .itemsColor(getResources().getColor(R.color.actionBlue))
+                .itemsCallback(new MaterialDialog.ListCallback() {
+
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+
+                        switch(position) {
+
+                            // user chose to share by text message
+                            case 0:
+
+                                Intent smsIntent;
+                                Uri phoneNumberUri;
+
+                                // if there is a phone number for the interviewee
+                                if(mMoment.getIntervieweePhoneNumber() != null) {
+
+                                    // make a Uri from the phone number
+                                    phoneNumberUri = Uri.parse("smsto:" + mMoment.getIntervieweePhoneNumber());
+
+                                }
+
+                                else {
+                                    // otherwise make a Uri with no phone number
+
+                                    phoneNumberUri = Uri.parse("smsto:" + "");
+
+                                }
+
+                                // create the Intent with the phone number Uri
+                                smsIntent = new Intent(Intent.ACTION_SENDTO, phoneNumberUri);
+
+                                // if the Moment has a title
+                                if(mMoment.getTitle() != null) {
+                                    // send the message with the title included
+
+                                    smsIntent.putExtra("sms_body", getString(R.string.contact_invite_content_with_title, mMoment.getTitle()));
+
+                                }
+
+                                else {
+                                    // otherwise send the message with no title
+
+                                    smsIntent.putExtra("sms_body", getString(R.string.contact_invite_content_no_title));
+
+                                }
+
+                                // express the sms Intent
+                                startActivity(smsIntent);
+
+                                break;
+
+                            case 1:
+                                // the user chose to share by email.
+
+                                Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                                emailIntent.setType("text/html");
+                                emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_invite_subject));
+
+                                // if there is an email for the interviewee
+                                if(mMoment.getIntervieweeEmail() != null) {
+
+                                    // add the interviewee's email as an extra
+                                    emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {mMoment.getIntervieweeEmail()});
+
+                                }
+
+                                // if the Moment has a title
+                                if(mMoment.getTitle() != null) {
+                                    // add the title to the email content
+
+                                    emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.contact_invite_content_with_title, mMoment.getTitle()));
+
+                                }
+
+                                else {
+                                    // just send the content without the title
+
+                                    emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.contact_invite_content_no_title));
+
+                                }
+
+                                // express the email Intent
+                                startActivity(emailIntent);
+
+                                break;
+
+                        }
+
+                    }
+
+                })
+                .negativeText(getString(R.string.contact_share_negative_text))
+                .negativeColor(getResources().getColor(R.color.textLight))
+                .show();
 
     }
 

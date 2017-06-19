@@ -156,6 +156,9 @@
     <string name="app_review_dialog_positive_text">Yes!</string>
     <string name="app_review_dialog_negative_text">Not now</string>
 
+    <string name="contact_share_dialog_title">Would you like to message %1$s about the interview?</string>
+    <string name="contact_share_negative_text">Not now</string>
+
     <!--String for the sms Intent-->
     <string name="sms_message">Check out this story on Moments In Time! </string>
 
@@ -165,6 +168,11 @@
     <string name="email_content">Hello, I would like to report this video: </string>
     <string name="email_report_subject">Moment in Time Feedback</string>
     <string name="email_report_content">Hello, I have a problem.</string>
+
+    <!--Strings for the contact invite-->
+    <string name="email_invite_subject">Moments in Time Interview</string>
+    <string name="contact_invite_content_with_title">Hey! I want to interview you on the Moments in Time app about %1$s. When are you available?</string>
+    <string name="contact_invite_content_no_title">Hey! I want to interview you on the Moments in Time app. When are you available?</string>
 
     <!--Strings for the app store intent-->
     <string name="marketplace_address">market://details?id=</string>

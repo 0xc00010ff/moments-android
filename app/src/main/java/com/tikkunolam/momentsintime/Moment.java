@@ -50,6 +50,12 @@ public class Moment extends RealmObject {
     // the uri of the picture of the interviewee on phone
     private String intervieweePhotoFile;
 
+    // the interviewee's phone number
+    private String intervieweePhoneNumber;
+
+    // the interviewee's email
+    private String intervieweeEmail;
+
     // the video uri for any further operation on the video
     private String videoUri;
 
@@ -132,6 +138,18 @@ public class Moment extends RealmObject {
     public String getIntervieweePhotoFile() {
 
         return intervieweePhotoFile;
+
+    }
+
+    public String getIntervieweePhoneNumber() {
+
+        return intervieweePhoneNumber;
+
+    }
+
+    public String getIntervieweeEmail() {
+
+        return intervieweeEmail;
 
     }
 
@@ -224,6 +242,24 @@ public class Moment extends RealmObject {
 
     }
 
+    public void setIntervieweePhotoFile(String intervieweePhotoFile) {
+
+        this.intervieweePhotoFile = intervieweePhotoFile;
+
+    }
+
+    public void setIntervieweePhoneNumber(String intervieweePhoneNumber) {
+
+        this.intervieweePhoneNumber = intervieweePhoneNumber;
+
+    }
+
+    public void setIntervieweeEmail(String intervieweeEmail) {
+
+        this.intervieweeEmail = intervieweeEmail;
+
+    }
+
     public void setVideoUri(String videoUri) {
 
         this.videoUri = videoUri;
@@ -246,12 +282,6 @@ public class Moment extends RealmObject {
     public void setAvailable(boolean available) {
 
         this.available = available;
-
-    }
-
-    public void setIntervieweePhotoUri(String intervieweePhotoFile) {
-
-        this.intervieweePhotoFile = intervieweePhotoFile;
 
     }
 

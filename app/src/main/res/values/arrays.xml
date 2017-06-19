@@ -65,4 +65,12 @@
 
     </string-array>
 
+    <!--string arrays for the contact invite options-->
+    <string-array name="sms_and_email_share">
+
+        <item>Send text</item>
+        <item>Send email</item>
+
+    </string-array>
+
 </resources>
