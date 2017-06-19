@@ -18,11 +18,14 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.provider.ContactsContract.Contacts;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -33,7 +36,11 @@ import java.util.ArrayList;
 
 import io.realm.RealmList;
 
+import static android.R.attr.data;
+import static android.R.attr.id;
+import static android.R.attr.name;
 import static com.tikkunolam.momentsintime.R.string.primary_key_extra;
+import static java.security.AccessController.getContext;
 
 public class MakeAMomentActivity extends AppCompatActivity implements HolderInteractionListener{
 
@@ -448,9 +455,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                     uriContact = data.getData();
 
-                    // get the Contact's name and photo, and save them to the Moment
-                    retrieveContactName();
-                    retrieveContactPhoto();
+                    // get the Contact's information, and save them to the Moment
+                    retrieveContactInfo();
 
                     // make an intent with the InterviewingActivity
                     Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
@@ -1048,7 +1054,25 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         
     }
 
+    private void retrieveContactInfo() {
+        // retrieves all the info we need from the Contact Uri returned from the contact intent
+
+        // get the name
+        retrieveContactName();
+
+        // get the phone number
+        retrieveContactPhoneNumber();
+
+        // get the email
+        retrieveContactEmail();
+
+        // get the thumbnail photo
+        retrieveContactPhoto();
+
+    }
+
     private void retrieveContactName() {
+        // get the Contact's name
 
         // get a Cursor to get the Contact's name
         Cursor cursor = getContentResolver().query(uriContact, null, null, null, null);
@@ -1085,6 +1109,101 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         }
 
         cursorID.close();
+
+    }
+
+    public void retrieveContactPhoneNumber() {
+        // get the Contact's phone number
+
+        // get a Cursor to get the Contact
+        Cursor cursor = getContentResolver().query(uriContact, null, null, null, null);
+
+        String phoneNumber = null;
+
+        if (cursor != null && cursor.moveToFirst()) {
+
+            // check that there is a phone number
+            int numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.HAS_PHONE_NUMBER);
+
+            // will return a 1 if the contact has a number
+            final String hasNumber = cursor.getString(numberIndex);
+
+            // if there is a phone number
+            if(hasNumber.equalsIgnoreCase("1")) {
+                // get the phone number
+
+                Cursor phones = getContentResolver().query(
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = "+ mContactID,
+                        null, null);
+
+                phones.moveToFirst();
+
+                phoneNumber = phones.getString(phones.getColumnIndex("data1"));
+
+                phones.close();
+
+            }
+
+            // we're returned a number with parentheses and dashes, remove everything that's not a digit
+            final String number = phoneNumber.replaceAll("[^0-9]", "");
+
+            // persist the phone number
+            if(number != null) {
+
+                mMoment.persistUpdates(new PersistenceExecutor() {
+
+                    @Override
+                    public void execute() {
+
+                        mMoment.setIntervieweePhoneNumber(number);
+
+                    }
+
+                });
+
+            }
+
+
+
+        }
+
+        cursor.close();
+
+    }
+
+    public void retrieveContactEmail() {
+
+        // query for everything email
+        Cursor cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,  null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=?", new String[] { mContactID }, null);
+
+        // index of the email data
+        int emailIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA);
+
+        if (cursor.moveToFirst()) {
+
+            // get the first email
+            final String email = cursor.getString(emailIdx);
+
+            if(email != null) {
+
+                // save the email to the Moment
+                mMoment.persistUpdates(new PersistenceExecutor() {
+
+                    @Override
+                    public void execute() {
+
+                        mMoment.setIntervieweeEmail(email);
+
+                    }
+
+                });
+
+            }
+
+        }
+
+        cursor.close();
 
     }
 
