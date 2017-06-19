@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.FileProvider;
@@ -19,9 +20,13 @@ import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
@@ -59,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
     ViewPager mViewPager;
     PagerAdapter mPagerAdapter;
     TabLayout mTabLayout;
+    MenuItem mStarOfDavidMenuItem;
 
     // tab position of the MyMomentsFragment
     final int MY_MOMENTS_POSITION = 1;
@@ -112,6 +118,116 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
             startActivityForResult(termsAndConditionsIntent, TERMS_AND_CONDITIONS_REQUEST_CODE);
 
         }
+
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // inflates the menu and applies it to the toolbar
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+
+        mStarOfDavidMenuItem = menu.findItem(R.id.star_of_david);
+
+        return true;
+
+    }
+
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+
+        switch(menuItem.getItemId()) {
+
+            case R.id.star_of_david:
+                // the star of david was clicked
+
+                // show the feedback dialog
+                MaterialDialog dialog = new MaterialDialog.Builder(this)
+                        .title(getString(R.string.feedback_dialog_title))
+                        .content(getString(R.string.feedback_dialog_content))
+                        .items(R.array.feedback_dialog_items)
+                        .itemsColor(getResources().getColor(R.color.actionBlue))
+                        .itemsCallback(new MaterialDialog.ListCallback() {
+
+                            @Override
+                            public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+
+                                switch(position) {
+
+                                    case 0:
+                                        // they chose to rate the app. show the next dialog
+
+                                        MaterialDialog materialDialog = new MaterialDialog.Builder(mContext)
+                                                .title(getString(R.string.app_review_dialog_title))
+                                                .content(getString(R.string.app_review_dialog_content))
+                                                .positiveText(getString(R.string.app_review_dialog_positive_text))
+                                                .positiveColor(getResources().getColor(R.color.actionBlue))
+                                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+
+                                                    @Override
+                                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                        // the user chose to leave a review. go to the play store
+
+                                                        // make the Uri for our app in the store
+                                                        Uri marketUri = Uri.parse(getString(R.string.marketplace_address) + getPackageName());
+
+                                                        // make  new Intent
+                                                        Intent marketIntent = new Intent(Intent.ACTION_VIEW);
+
+                                                        // set its data with the Uri
+                                                        marketIntent.setData(marketUri);
+
+                                                        // start the Activity
+                                                        startActivity(marketIntent);
+
+                                                    }
+
+                                                })
+                                                .negativeText(getString(R.string.app_review_dialog_negative_text))
+                                                .negativeColor(getResources().getColor(R.color.textLight))
+                                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+
+                                                    @Override
+                                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                        // the user chose not to leave a review. do nothing. auto dismiss.
+
+
+                                                    }
+
+                                                })
+                                                .show();
+
+
+                                        break;
+
+                                    case 1:
+                                        // they chose to report a problem. send an email
+
+                                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                                        emailIntent.setType("text/html");
+                                        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {getString(R.string.email_recipient)});
+                                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_report_subject));
+                                        emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_report_content));
+
+                                        startActivity(emailIntent);
+
+                                        break;
+
+                                }
+
+                            }
+
+                        })
+                        .positiveText(getString(R.string.feedback_dialog_positive))
+                        .positiveColor(getResources().getColor(R.color.textLight))
+                        .show();
+
+
+
+                break;
+
+        }
+
+        return true;
 
     }
 
@@ -468,7 +584,7 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
                                 Intent emailIntent = new Intent(Intent.ACTION_SEND);
                                 emailIntent.setType("text/html");
-                                emailIntent.putExtra(Intent.EXTRA_EMAIL, getString(R.string.email_recipient));
+                                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {getString(R.string.email_recipient)});
                                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
                                 emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_content) + " " + moment.getVideoUrl());
 

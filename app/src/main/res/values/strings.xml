@@ -98,6 +98,9 @@
     <!--strings for the save_menu-->
     <string name="save_item">Save</string>
 
+    <!--strings for the main_menu-->
+    <string name="star_of_david">Star of David</string>
+
     <!--strings for the moment_card_with_state-->
     <string name="state_private">Private</string>
     <string name="state_uploading">Uploading...</string>
@@ -144,6 +147,15 @@
     <string name="video_processing_dialog_content">Your Moment uploaded successfully and is being processed. Check back soon!</string>
     <string name="video_processing_dialog_prompt">OK</string>
 
+    <string name="feedback_dialog_title">We\'re glad you\'re here.</string>
+    <string name="feedback_dialog_content">We want this to be a warm and enriching community, and that takes feedback from you. How are we doing?</string>
+    <string name="feedback_dialog_positive">Cancel</string>
+
+    <string name="app_review_dialog_title">Thanks for the love!</string>
+    <string name="app_review_dialog_content">Would you like to share your love and spread the word by giving us a 5-star rating on the Google Play Store?</string>
+    <string name="app_review_dialog_positive_text">Yes!</string>
+    <string name="app_review_dialog_negative_text">Not now</string>
+
     <!--String for the sms Intent-->
     <string name="sms_message">Check out this story on Moments In Time! </string>
 
@@ -151,6 +163,11 @@
     <string name="email_subject">Moment Video Report</string>
     <string name="email_recipient">justinmilrad@gmail.com</string>
     <string name="email_content">Hello, I would like to report this video: </string>
+    <string name="email_report_subject">Moment in Time Feedback</string>
+    <string name="email_report_content">Hello, I have a problem.</string>
+
+    <!--Strings for the app store intent-->
+    <string name="marketplace_address">market://details?id=</string>
 
     <!--STRINGS THAT HELP WITH COORDINATION-->
 
