@@ -1,7 +1,6 @@
 package com.tikkunolam.momentsintime;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -10,11 +9,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Environment;
 import android.provider.ContactsContract;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -22,38 +18,21 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.content.CursorLoader;
-import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.Toast;
 import android.provider.ContactsContract.Contacts;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import io.realm.RealmList;
-import io.realm.RealmResults;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
-import static android.net.Uri.withAppendedPath;
 import static com.tikkunolam.momentsintime.R.string.primary_key_extra;
 
 public class MakeAMomentActivity extends AppCompatActivity implements HolderInteractionListener{
@@ -449,7 +428,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                             mMoment.setInterviewee(interviewee);
                             mMoment.setIntervieweeRole(intervieweeRole);
-                            mMoment.setIntervieweePhotoUri(intervieweePhotoFile);
+                            mMoment.setIntervieweePhotoFile(intervieweePhotoFile);
 
                         }
 
@@ -688,11 +667,6 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                                     // make an intent with the InterviewingActivity
                                     Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
-
-                                    // attach the Moment's interviewee, interviewee role, and interviewee photo uri
-                                    interviewingIntent.putExtra(mIntervieweeExtra, mMoment.getInterviewee());
-                                    interviewingIntent.putExtra(mRoleExtra, mMoment.getIntervieweeRole());
-                                    interviewingIntent.putExtra(mIntervieweePhotoFileExtra, mMoment.getIntervieweePhotoFile());
 
                                     startActivityForResult(interviewingIntent, INTERVIEWING_INTENT);
 
@@ -1154,7 +1128,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                             @Override
                             public void execute() {
 
-                                mMoment.setIntervieweePhotoUri(pictureFile);
+                                mMoment.setIntervieweePhotoFile(pictureFile);
 
                             }
 
