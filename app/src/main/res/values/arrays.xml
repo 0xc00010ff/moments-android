@@ -66,18 +66,6 @@
     </string-array>
 
     <!--string arrays for the contact invite options-->
-    <string-array name="just_sms_share">
-
-        <item>Send text</item>
-
-    </string-array>
-
-    <string-array name="just_email_share">
-
-        <item>Send email</item>
-
-    </string-array>
-
     <string-array name="sms_and_email_share">
 
         <item>Send text</item>

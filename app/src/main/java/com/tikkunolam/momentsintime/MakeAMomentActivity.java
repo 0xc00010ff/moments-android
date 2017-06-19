@@ -1270,194 +1270,107 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     }
 
     public void inviteContact() {
-        // if there is a phone number or email, give the user options to invite the contact
+        // present the user with the options to share by text message and email. act on their choice.
 
-        // if there is a phone number for the interviewee
-        if(mMoment.getIntervieweePhoneNumber() != null) {
+        // build the dialog
+        MaterialDialog interviewDialog = new MaterialDialog.Builder(this)
+                .title(getString(R.string.contact_share_dialog_title, mMoment.getInterviewee()))
+                .items(R.array.sms_and_email_share)
+                .itemsColor(getResources().getColor(R.color.actionBlue))
+                .itemsCallback(new MaterialDialog.ListCallback() {
 
-            // if there is an email
-            if(mMoment.getIntervieweeEmail() != null) {
-                // display a dialog for sms and email sharing
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
 
-                MaterialDialog dialog = new MaterialDialog.Builder(this)
-                        .title(getString(R.string.contact_share_dialog_title, mMoment.getInterviewee()))
-                        .items(R.array.sms_and_email_share)
-                        .itemsColor(getResources().getColor(R.color.actionBlue))
-                        .itemsCallback(new MaterialDialog.ListCallback() {
+                        switch(position) {
 
-                            @Override
-                            public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                            // user chose to share by text message
+                            case 0:
 
-                                switch(position) {
+                                Intent smsIntent;
+                                Uri phoneNumberUri;
 
-                                    case 0:
-                                        // they chose to send a text. compose that Intent.
+                                // if there is a phone number for the interviewee
+                                if(mMoment.getIntervieweePhoneNumber() != null) {
 
-                                        Uri uri = Uri.parse("smsto:" + mMoment.getIntervieweePhoneNumber());
-
-                                        Intent smsIntent = new Intent(Intent.ACTION_SENDTO, uri);
-
-                                        // if the Moment has a title
-                                        if(mMoment.getTitle() != null) {
-                                            // send the message with the title included
-
-                                            smsIntent.putExtra("sms_body", getString(R.string.contact_invite_content_with_title, mMoment.getTitle()));
-
-                                        }
-
-                                        else {
-
-                                            smsIntent.putExtra("sms_body", getString(R.string.contact_invite_content_no_title));
-
-                                        }
-
-                                        startActivity(smsIntent);
-
-
-                                        break;
-
-                                    case 1:
-                                        // they chose to send an email. compose that Intent.
-
-                                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                                        emailIntent.setType("text/html");
-                                        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {mMoment.getIntervieweeEmail()});
-                                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_invite_subject));
-
-                                        // if the Moment has a title
-                                        if(mMoment.getTitle() != null) {
-                                            // add the title to the email content
-
-                                            emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.contact_invite_content_with_title, mMoment.getTitle()));
-
-                                        }
-
-                                        else {
-                                            // just send the content without the title
-
-                                            emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.contact_invite_content_no_title));
-
-                                        }
-
-                                        startActivity(emailIntent);
-
-                                        break;
+                                    // make a Uri from the phone number
+                                    phoneNumberUri = Uri.parse("smsto:" + mMoment.getIntervieweePhoneNumber());
 
                                 }
 
-                            }
+                                else {
+                                    // otherwise make a Uri with no phone number
 
-                        })
-                        .negativeText(getString(R.string.contact_share_negative_text))
-                        .negativeColor(getResources().getColor(R.color.textLight))
-                        .show();
-
-            }
-
-            // otherwise display a dialog for just sms sharing
-            else {
-
-                MaterialDialog dialog = new MaterialDialog.Builder(this)
-                        .title(getString(R.string.contact_share_dialog_title, mMoment.getInterviewee()))
-                        .items(R.array.just_sms_share)
-                        .itemsColor(getResources().getColor(R.color.actionBlue))
-                        .itemsCallback(new MaterialDialog.ListCallback() {
-
-                            @Override
-                            public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
-
-                                switch(position) {
-
-                                    case 0:
-                                        // the user chose the only option... to share by text message. compose that Intent.
-
-                                        Uri uri = Uri.parse("smsto:" + mMoment.getIntervieweePhoneNumber());
-
-                                        Intent smsIntent = new Intent(Intent.ACTION_SENDTO, uri);
-
-                                        // if the Moment has a title
-                                        if(mMoment.getTitle() != null) {
-                                            // send the message with the title included
-
-                                            smsIntent.putExtra("sms_body", getString(R.string.contact_invite_content_with_title, mMoment.getTitle()));
-
-                                        }
-
-                                        else {
-
-                                            smsIntent.putExtra("sms_body", getString(R.string.contact_invite_content_no_title));
-
-                                        }
-
-                                        startActivity(smsIntent);
-
-                                        break;
+                                    phoneNumberUri = Uri.parse("smsto:" + "");
 
                                 }
 
-                            }
+                                // create the Intent with the phone number Uri
+                                smsIntent = new Intent(Intent.ACTION_SENDTO, phoneNumberUri);
 
-                        })
-                        .negativeText(getString(R.string.contact_share_negative_text))
-                        .negativeColor(getResources().getColor(R.color.textLight))
-                        .show();
+                                // if the Moment has a title
+                                if(mMoment.getTitle() != null) {
+                                    // send the message with the title included
 
-            }
+                                    smsIntent.putExtra("sms_body", getString(R.string.contact_invite_content_with_title, mMoment.getTitle()));
 
-        }
+                                }
 
-        // if there's not a phone number, but there is an email
-        else if(mMoment.getIntervieweeEmail() != null) {
+                                else {
+                                    // otherwise send the message with no title
 
-            MaterialDialog dialog = new MaterialDialog.Builder(this)
-                    .title(getString(R.string.contact_share_dialog_title, mMoment.getInterviewee()))
-                    .items(R.array.just_email_share)
-                    .itemsColor(getResources().getColor(R.color.actionBlue))
-                    .itemsCallback(new MaterialDialog.ListCallback() {
+                                    smsIntent.putExtra("sms_body", getString(R.string.contact_invite_content_no_title));
 
-                        @Override
-                        public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                                }
 
-                            switch(position) {
+                                // express the sms Intent
+                                startActivity(smsIntent);
 
-                                case 0:
-                                    // the user chose to share by email. compose that Intent.
+                                break;
 
-                                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                                    emailIntent.setType("text/html");
+                            case 1:
+                                // the user chose to share by email.
+
+                                Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                                emailIntent.setType("text/html");
+                                emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_invite_subject));
+
+                                // if there is an email for the interviewee
+                                if(mMoment.getIntervieweeEmail() != null) {
+
+                                    // add the interviewee's email as an extra
                                     emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {mMoment.getIntervieweeEmail()});
-                                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_invite_subject));
 
-                                    // if the Moment has a title
-                                    if(mMoment.getTitle() != null) {
-                                        // add the title to the email content
+                                }
 
-                                        emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.contact_invite_content_with_title, mMoment.getTitle()));
+                                // if the Moment has a title
+                                if(mMoment.getTitle() != null) {
+                                    // add the title to the email content
 
-                                    }
+                                    emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.contact_invite_content_with_title, mMoment.getTitle()));
 
-                                    else {
-                                        // just send the content without the title
+                                }
 
-                                        emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.contact_invite_content_no_title));
+                                else {
+                                    // just send the content without the title
 
-                                    }
+                                    emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.contact_invite_content_no_title));
 
-                                    startActivity(emailIntent);
+                                }
 
-                                    break;
+                                // express the email Intent
+                                startActivity(emailIntent);
 
-                            }
+                                break;
 
                         }
 
-                    })
-                    .negativeText(getString(R.string.contact_share_negative_text))
-                    .negativeColor(getResources().getColor(R.color.textLight))
-                    .show();
+                    }
 
-        }
-
+                })
+                .negativeText(getString(R.string.contact_share_negative_text))
+                .negativeColor(getResources().getColor(R.color.textLight))
+                .show();
 
     }
 
