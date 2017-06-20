@@ -48,7 +48,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     final String TAG = "MakeAMomentActivity";
 
     // Strings for use as Extra argument identifiers
-    String mPrimaryKeyExtra, mNoteExtra, mLocalVideoFileExtra, mIntervieweeExtra, mRoleExtra, mIntervieweePhotoFileExtra,
+    String mPrimaryKeyExtra, mNoteExtra, mLocalVideoFileExtra, mIntervieweeExtra, mRelationExtra, mIntervieweePhotoFileExtra,
             mTitleExtra, mDescriptionExtra;
 
     // integers for use as request codes between Intents
@@ -110,7 +110,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         mNoteExtra = getString(R.string.note_extra);
         mLocalVideoFileExtra = getString(R.string.local_video_file_extra);
         mIntervieweeExtra = getString(R.string.interviewee_extra);
-        mRoleExtra = getString(R.string.interviewee_role_extra);
+        mRelationExtra = getString(R.string.interviewee_relation_extra);
         mIntervieweePhotoFileExtra = getString(R.string.interviewee_photo_file_extra);
         mTitleExtra = getString(R.string.title_extra);
         mDescriptionExtra = getString(R.string.description_extra);
@@ -427,7 +427,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                     // get the Strings returned from the InterviewingActivity
                     final String interviewee = data.getStringExtra(mIntervieweeExtra);
-                    final String intervieweeRole = data.getStringExtra(mRoleExtra);
+                    final String intervieweeRelation = data.getStringExtra(mRelationExtra);
                     final String intervieweePhotoFile = data.getStringExtra(mIntervieweePhotoFileExtra);
 
                     // add these to the Moment and update them in Realm
@@ -437,7 +437,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                         public void execute() {
 
                             mMoment.setInterviewee(interviewee);
-                            mMoment.setIntervieweeRole(intervieweeRole);
+                            mMoment.setIntervieweeRelation(intervieweeRelation);
                             mMoment.setIntervieweePhotoFile(intervieweePhotoFile);
 
                         }
@@ -465,7 +465,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                 case INTERVIEWEE_FROM_CONTACTS:
                     // the user just chose an interviewee from Contacts...
-                    // get their name, role, and photo file, set them on the Moment, and insertInterviewingCard
+                    // get their name, relation, and photo file, set them on the Moment, and insertInterviewingCard
 
                     uriContact = data.getData();
 
@@ -478,9 +478,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     // make an intent with the InterviewingActivity
                     Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
 
-                    // attach the Moment's interviewee, interviewee role, and interviewee photo uri
+                    // attach the Moment's interviewee, interviewee relation, and interviewee photo uri
                     interviewingIntent.putExtra(mIntervieweeExtra, mMoment.getInterviewee());
-                    interviewingIntent.putExtra(mRoleExtra, mMoment.getIntervieweeRole());
+                    interviewingIntent.putExtra(mRelationExtra, mMoment.getIntervieweeRelation());
                     interviewingIntent.putExtra(mIntervieweePhotoFileExtra, mMoment.getIntervieweePhotoFile());
 
                     startActivityForResult(interviewingIntent, INTERVIEWING_INTENT);
@@ -638,9 +638,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
             // make an intent with the InterviewingActivity
             Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
 
-            // attach the Moment's interviewee, interviewee role, and interviewee photo uri
+            // attach the Moment's interviewee, interviewee relation, and interviewee photo uri
             interviewingIntent.putExtra(mIntervieweeExtra, mMoment.getInterviewee());
-            interviewingIntent.putExtra(mRoleExtra, mMoment.getIntervieweeRole());
+            interviewingIntent.putExtra(mRelationExtra, mMoment.getIntervieweeRelation());
             interviewingIntent.putExtra(mIntervieweePhotoFileExtra, mMoment.getIntervieweePhotoFile());
 
             startActivityForResult(interviewingIntent, INTERVIEWING_INTENT);
@@ -920,10 +920,10 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // make a new InterviewingCardData
         InterviewingCardData interviewingCardData = new InterviewingCardData(mMoment.getInterviewee());
 
-        // add the mIntervieweeRole if there is one
-        if(mMoment.getIntervieweeRole() != null && !mMoment.getIntervieweeRole().equals("")) {
+        // add the mIntervieweeRelation if there is one
+        if(mMoment.getIntervieweeRelation() != null && !mMoment.getIntervieweeRelation().equals("")) {
 
-            interviewingCardData.setIntervieweeRole(mMoment.getIntervieweeRole());
+            interviewingCardData.setIntervieweeRelation(mMoment.getIntervieweeRelation());
 
         }
 

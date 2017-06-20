@@ -77,7 +77,7 @@
     <!--strings for the InterviewingActivity-->
     <string name="interviewing_toolbar_title">Interviewing</string>
     <string name="interviewing_name_hint">Name</string>
-    <string name="interviewing_role_hint">Role</string>
+    <string name="interviewing_relation_hint">Relation</string>
     <string name="add_a_picture">Add a Picture (optional)</string>
 
     <!--strings for the TopicActivity-->
@@ -184,7 +184,7 @@
     <string name="photo_uri_extra">photoUri</string>
     <string name="note_extra">note</string>
     <string name="interviewee_extra">interviewee</string>
-    <string name="interviewee_role_extra">role</string>
+    <string name="interviewee_relation_extra">relation</string>
     <string name="interviewee_photo_file_extra">intervieweePhoto</string>
     <string name="title_extra">title</string>
     <string name="description_extra">description</string>

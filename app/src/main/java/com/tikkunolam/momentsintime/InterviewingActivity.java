@@ -37,7 +37,7 @@ public class InterviewingActivity extends AppCompatActivity {
     // ui references
     Toolbar mToolbar;
     MaterialEditText mNameEditText;
-    MaterialEditText mRoleEditText;
+    MaterialEditText mRelationEditText;
     RelativeLayout mPhotoViewRelativeLayout;
     ImageView mCameraImageView;
     ImageView mIntervieweeImageView;
@@ -51,11 +51,11 @@ public class InterviewingActivity extends AppCompatActivity {
     String mActivityTitle;
 
     // Strings for Extra argument identification
-    String mIntervieweeExtra, mIntervieweeRoleExtra, mIntervieweePhotoFileExtra;
+    String mIntervieweeExtra, mIntervieweeRelationExtra, mIntervieweePhotoFileExtra;
 
     // Strings for holding the values set within this Activity
     String mIntervieweeName;
-    String mIntervieweeRole;
+    String mIntervieweeRelation;
     String mIntervieweePhotoFile;
 
     // request codes for implicit intent receipt
@@ -72,12 +72,12 @@ public class InterviewingActivity extends AppCompatActivity {
 
         // get the Extra argument identifiers from resources
         mIntervieweeExtra = getString(R.string.interviewee_extra);
-        mIntervieweeRoleExtra = getString(R.string.interviewee_role_extra);
+        mIntervieweeRelationExtra = getString(R.string.interviewee_relation_extra);
         mIntervieweePhotoFileExtra = getString(R.string.interviewee_photo_file_extra);
 
         // get the mIntervieweeName, mIntervieweeDescription, and mIntervieweePhotoFile if they were passed in
         mIntervieweeName = getIntent().getStringExtra(mIntervieweeExtra);
-        mIntervieweeRole = getIntent().getStringExtra(mIntervieweeRoleExtra);
+        mIntervieweeRelation = getIntent().getStringExtra(mIntervieweeRelationExtra);
         mIntervieweePhotoFile = getIntent().getStringExtra(mIntervieweePhotoFileExtra);
 
         // get the Toolbar, get the activity title from resources, and set the toolbar title
@@ -88,12 +88,12 @@ public class InterviewingActivity extends AppCompatActivity {
 
         // get the MaterialEditTexts
         mNameEditText = (MaterialEditText) findViewById(R.id.name_editText);
-        mRoleEditText = (MaterialEditText) findViewById(R.id.role_editText);
+        mRelationEditText = (MaterialEditText) findViewById(R.id.relation_editText);
 
         // get a TextWatcher and add it to the MaterialEditTexts to indicate save is clickable if there is text
         TextWatcher mTextWatcher = buildTextWatcher();
         mNameEditText.addTextChangedListener(mTextWatcher);
-        mRoleEditText.addTextChangedListener(mTextWatcher);
+        mRelationEditText.addTextChangedListener(mTextWatcher);
 
         // get the views dealing with the picture
         mPhotoViewRelativeLayout = (RelativeLayout) findViewById(R.id.photo_view_relativeLayout);
@@ -172,8 +172,8 @@ public class InterviewingActivity extends AppCompatActivity {
                 // get the text from the mNameEditText
                 mIntervieweeName = mNameEditText.getText().toString();
 
-                // get the text from the mRoleEditText
-                mIntervieweeRole = mRoleEditText.getText().toString();
+                // get the text from the mRelationEditText
+                mIntervieweeRelation = mRelationEditText.getText().toString();
 
                 if (mIntervieweeName != null && mIntervieweeName.length() >= 1) {
                     // if the necessary information has been entered
@@ -183,7 +183,7 @@ public class InterviewingActivity extends AppCompatActivity {
 
                     // add all the fields' values to it
                     makeAMomentIntent.putExtra(mIntervieweeExtra, mIntervieweeName);
-                    makeAMomentIntent.putExtra(mIntervieweeRoleExtra, mIntervieweeRole);
+                    makeAMomentIntent.putExtra(mIntervieweeRelationExtra, mIntervieweeRelation);
                     makeAMomentIntent.putExtra(mIntervieweePhotoFileExtra, mIntervieweePhotoFile);
 
                     // signal that the results are okay and attach the Intent
@@ -281,7 +281,7 @@ public class InterviewingActivity extends AppCompatActivity {
 
                 // if they've exceeded the character limit, disable it
                 if(mNameEditText.getText().length() > mNameEditText.getMaxCharacters()
-                        || mRoleEditText.getText().length() > mRoleEditText.getMaxCharacters()) {
+                        || mRelationEditText.getText().length() > mRelationEditText.getMaxCharacters()) {
 
                     mSaveMenuItem.setEnabled(false);
 
@@ -304,9 +304,9 @@ public class InterviewingActivity extends AppCompatActivity {
 
         }
 
-        if(mIntervieweeRole != null) {
+        if(mIntervieweeRelation != null) {
 
-            mRoleEditText.setText(mIntervieweeRole);
+            mRelationEditText.setText(mIntervieweeRelation);
 
         }
 

@@ -44,8 +44,8 @@ public class Moment extends RealmObject {
     // the person being interviewed. likely will change to a Person object
     private String interviewee;
 
-    // the role of the person being interviewed
-    private String intervieweeRole;
+    // the relation of the person being interviewed
+    private String intervieweeRelation;
 
     // the uri of the picture of the interviewee on phone
     private String intervieweePhotoFile;
@@ -129,9 +129,9 @@ public class Moment extends RealmObject {
 
     }
 
-    public String getIntervieweeRole() {
+    public String getIntervieweeRelation() {
 
-        return intervieweeRole;
+        return intervieweeRelation;
 
     }
 
@@ -236,9 +236,9 @@ public class Moment extends RealmObject {
 
     }
 
-    public void setIntervieweeRole(String intervieweeRole) {
+    public void setIntervieweeRelation(String intervieweeRelation) {
 
-        this.intervieweeRole = intervieweeRole;
+        this.intervieweeRelation = intervieweeRelation;
 
     }
 
