@@ -39,7 +39,7 @@
             android:layout_marginTop="8dp"
             android:layout_weight="1"
             android:clickable="true"
-            android:fontFamily="sans-serif-black"
+            android:fontFamily="sans-serif-light"
             android:text="@string/no_moments"
             android:textAlignment="center"
             android:textColor="@color/text"
