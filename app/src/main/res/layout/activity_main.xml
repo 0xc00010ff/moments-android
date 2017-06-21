@@ -26,7 +26,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
+                android:background="@color/actionBlue"
                 android:fitsSystemWindows="false"
                 app:layout_scrollFlags="scroll|enterAlways">
 
@@ -37,7 +37,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/toolbar"
-                android:background="@color/colorPrimary"
+                android:background="@color/white"
+                app:tabTextColor="@color/deselectedTab"
+                app:tabSelectedTextColor="@color/actionBlue"
+                app:tabIndicatorColor="@color/actionBlue"
                 app:tabMode="fixed" />
 
         </android.support.design.widget.AppBarLayout>

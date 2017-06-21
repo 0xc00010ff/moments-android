@@ -2,7 +2,6 @@ package com.tikkunolam.momentsintime;
 
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -22,7 +21,7 @@ public class InterviewingCardHolder extends RecyclerView.ViewHolder{
     ConstraintLayout mConstraintLayout;
     ImageView mIntervieweePhotoImageView;
     TextView mIntervieweeNameTextView;
-    TextView mIntervieweeRoleTextView;
+    TextView mIntervieweeRelationTextView;
 
     // boolean indicating whether the onClickListeners should be set
     boolean mClickable = true;
@@ -46,7 +45,7 @@ public class InterviewingCardHolder extends RecyclerView.ViewHolder{
         mConstraintLayout = (ConstraintLayout) view.findViewById(R.id.interviewing_constraintLayout);
         mIntervieweePhotoImageView = (ImageView) view.findViewById(R.id.interviewing_card_imageView);
         mIntervieweeNameTextView = (TextView) view.findViewById(R.id.interviewing_card_name_textView);
-        mIntervieweeRoleTextView = (TextView) view.findViewById(R.id.interviewing_card_role_textView);
+        mIntervieweeRelationTextView = (TextView) view.findViewById(R.id.interviewing_card_relation_textView);
 
         if(mClickable) {
 
@@ -68,19 +67,19 @@ public class InterviewingCardHolder extends RecyclerView.ViewHolder{
 
     }
 
-    public void removeRole() {
-        // constrain the interviewee name to the bottom of the ConstraintLayout, for when role is made GONE
+    public void removeRelation() {
+        // constrain the interviewee name to the bottom of the ConstraintLayout, for when relation is made GONE
 
-        // remove the role view
-        mIntervieweeRoleTextView.setVisibility(View.GONE);
+        // remove the relation view
+        mIntervieweeRelationTextView.setVisibility(View.GONE);
 
     }
 
-    public void addRole() {
-        // make the role visible and change the constraints to constrain interviewee to role
+    public void addRelation() {
+        // make the relation visible and change the constraints to constrain interviewee to relation
 
         // make it visible
-        mIntervieweeRoleTextView.setVisibility(View.VISIBLE);
+        mIntervieweeRelationTextView.setVisibility(View.VISIBLE);
 
     }
 

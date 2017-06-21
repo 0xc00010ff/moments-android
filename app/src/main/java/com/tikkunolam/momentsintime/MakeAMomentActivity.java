@@ -48,7 +48,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     final String TAG = "MakeAMomentActivity";
 
     // Strings for use as Extra argument identifiers
-    String mPrimaryKeyExtra, mNoteExtra, mLocalVideoFileExtra, mIntervieweeExtra, mRoleExtra, mIntervieweePhotoFileExtra,
+    String mPrimaryKeyExtra, mNoteExtra, mLocalVideoFileExtra, mIntervieweeExtra, mRelationExtra, mIntervieweePhotoFileExtra,
             mTitleExtra, mDescriptionExtra;
 
     // integers for use as request codes between Intents
@@ -99,6 +99,12 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     // String array that will hold the default notes to be supplied to every new Moment
     String[] defaultNotes;
 
+    // int representing the position of the selected note
+    int mSelectedNotePosition;
+
+    // boolean signifying whether a note was just selected for editing
+    boolean mEditingNote = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -110,7 +116,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         mNoteExtra = getString(R.string.note_extra);
         mLocalVideoFileExtra = getString(R.string.local_video_file_extra);
         mIntervieweeExtra = getString(R.string.interviewee_extra);
-        mRoleExtra = getString(R.string.interviewee_role_extra);
+        mRelationExtra = getString(R.string.interviewee_relation_extra);
         mIntervieweePhotoFileExtra = getString(R.string.interviewee_photo_file_extra);
         mTitleExtra = getString(R.string.title_extra);
         mDescriptionExtra = getString(R.string.description_extra);
@@ -427,7 +433,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                     // get the Strings returned from the InterviewingActivity
                     final String interviewee = data.getStringExtra(mIntervieweeExtra);
-                    final String intervieweeRole = data.getStringExtra(mRoleExtra);
+                    final String intervieweeRelation = data.getStringExtra(mRelationExtra);
                     final String intervieweePhotoFile = data.getStringExtra(mIntervieweePhotoFileExtra);
 
                     // add these to the Moment and update them in Realm
@@ -437,7 +443,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                         public void execute() {
 
                             mMoment.setInterviewee(interviewee);
-                            mMoment.setIntervieweeRole(intervieweeRole);
+                            mMoment.setIntervieweeRelation(intervieweeRelation);
                             mMoment.setIntervieweePhotoFile(intervieweePhotoFile);
 
                         }
@@ -465,7 +471,7 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                 case INTERVIEWEE_FROM_CONTACTS:
                     // the user just chose an interviewee from Contacts...
-                    // get their name, role, and photo file, set them on the Moment, and insertInterviewingCard
+                    // get their name, relation, and photo file, set them on the Moment, and insertInterviewingCard
 
                     uriContact = data.getData();
 
@@ -478,9 +484,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                     // make an intent with the InterviewingActivity
                     Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
 
-                    // attach the Moment's interviewee, interviewee role, and interviewee photo uri
+                    // attach the Moment's interviewee, interviewee relation, and interviewee photo uri
                     interviewingIntent.putExtra(mIntervieweeExtra, mMoment.getInterviewee());
-                    interviewingIntent.putExtra(mRoleExtra, mMoment.getIntervieweeRole());
+                    interviewingIntent.putExtra(mRelationExtra, mMoment.getIntervieweeRelation());
                     interviewingIntent.putExtra(mIntervieweePhotoFileExtra, mMoment.getIntervieweePhotoFile());
 
                     startActivityForResult(interviewingIntent, INTERVIEWING_INTENT);
@@ -520,28 +526,66 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                     final String noteString = data.getStringExtra(mNoteExtra);
 
-                    // make a new note and add it to realm and to the Moment
-                    mMoment.persistUpdates(new PersistenceExecutor() {
+                    // if we're returning from editing a note
+                    if(mEditingNote) {
+                        // replace the note with the new String
 
-                        @Override
-                        public void execute() {
+                        // flip the editing indicator back to false
+                        mEditingNote = false;
 
-                            RealmList noteList = mMoment.getNotes();
-                            Note note = new Note();
-                            note.setNote(noteString);
-                            noteList.add(0, note);
+                        // add it to the view list
+                        mViewModelList.set(mSelectedNotePosition, noteString);
 
-                        }
+                        // get the position within the RealmList to update it
+                        final int noteListPosition = mSelectedNotePosition - FIRST_NOTE_LOCATION;
 
-                    });
+                        // update the Note
+                        mMoment.persistUpdates(new PersistenceExecutor() {
 
-                    // add it to the viewlist
-                    RealmList<Note> notes = mMoment.getNotes();
-                    Note newNote = notes.get(0);
+                            @Override
+                            public void execute() {
 
-                    mViewModelList.add(FIRST_NOTE_LOCATION, newNote.getNote());
+                                RealmList<Note> notes = mMoment.getNotes();
 
-                    mMakeAMomentAdapter.notifyDataSetChanged();
+                                Note note = notes.get(noteListPosition);
+
+                                note.setNote(noteString);
+
+                            }
+
+                        });
+
+                        mMakeAMomentAdapter.notifyDataSetChanged();
+
+                    }
+
+                    else {
+                        // we're returning from making a new note, not editing one.
+
+                        // make a new note and add it to realm and to the Moment
+                        mMoment.persistUpdates(new PersistenceExecutor() {
+
+                            @Override
+                            public void execute() {
+
+                                RealmList noteList = mMoment.getNotes();
+                                Note note = new Note();
+                                note.setNote(noteString);
+                                noteList.add(0, note);
+
+                            }
+
+                        });
+
+                        // add it to the viewlist
+                        RealmList<Note> notes = mMoment.getNotes();
+                        Note newNote = notes.get(0);
+
+                        mViewModelList.add(FIRST_NOTE_LOCATION, newNote.getNote());
+
+                        mMakeAMomentAdapter.notifyDataSetChanged();
+
+                    }
 
                     break;
 
@@ -638,9 +682,9 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
             // make an intent with the InterviewingActivity
             Intent interviewingIntent = new Intent(getBaseContext(), InterviewingActivity.class);
 
-            // attach the Moment's interviewee, interviewee role, and interviewee photo uri
+            // attach the Moment's interviewee, interviewee relation, and interviewee photo uri
             interviewingIntent.putExtra(mIntervieweeExtra, mMoment.getInterviewee());
-            interviewingIntent.putExtra(mRoleExtra, mMoment.getIntervieweeRole());
+            interviewingIntent.putExtra(mRelationExtra, mMoment.getIntervieweeRelation());
             interviewingIntent.putExtra(mIntervieweePhotoFileExtra, mMoment.getIntervieweePhotoFile());
 
             startActivityForResult(interviewingIntent, INTERVIEWING_INTENT);
@@ -895,6 +939,23 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
     }
 
+    public void onNoteCardClick(int position) {
+        // a note card was clicked so go to edit the note and remember that we're editing this particular note
+
+        mSelectedNotePosition = position;
+
+        mEditingNote = true;
+
+        String note = (String) mViewModelList.get(position);
+
+        Intent noteIntent = new Intent(this, NoteActivity.class);
+
+        noteIntent.putExtra(mNoteExtra, note);
+
+        startActivityForResult(noteIntent, NOTE_INTENT);
+
+    }
+
     // the callback for when the play button in the video_card is clicked
     public void onPlayButtonClick() {
         // start a VideoViewActivity
@@ -920,10 +981,10 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
         // make a new InterviewingCardData
         InterviewingCardData interviewingCardData = new InterviewingCardData(mMoment.getInterviewee());
 
-        // add the mIntervieweeRole if there is one
-        if(mMoment.getIntervieweeRole() != null && !mMoment.getIntervieweeRole().equals("")) {
+        // add the mIntervieweeRelation if there is one
+        if(mMoment.getIntervieweeRelation() != null && !mMoment.getIntervieweeRelation().equals("")) {
 
-            interviewingCardData.setIntervieweeRole(mMoment.getIntervieweeRole());
+            interviewingCardData.setIntervieweeRelation(mMoment.getIntervieweeRelation());
 
         }
 

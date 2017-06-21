@@ -30,4 +30,7 @@ public interface HolderInteractionListener {
     // callback for when the note_card dots are clicked
     void onNoteCardDotsClick(int position);
 
+    // callback for when the note_card itself if clicked
+    void onNoteCardClick(int position);
+
 }

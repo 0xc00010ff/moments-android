@@ -7,7 +7,7 @@ public class InterviewingCardData {
     // values that will fill an InterviewingCardHolder
     Uri mIntervieweePhotoUri;
     String mIntervieweeName;
-    String mIntervieweeRole;
+    String mIntervieweeRelation;
 
     /**
      * CONSTRUCTORS
@@ -33,9 +33,9 @@ public class InterviewingCardData {
 
     }
 
-    public String getIntervieweeRole() {
+    public String getIntervieweeRelation() {
 
-        return mIntervieweeRole;
+        return mIntervieweeRelation;
 
     }
 
@@ -51,9 +51,9 @@ public class InterviewingCardData {
 
     }
 
-    public void setIntervieweeRole(String intervieweeRole) {
+    public void setIntervieweeRelation(String intervieweeRelation) {
 
-        mIntervieweeRole = intervieweeRole;
+        mIntervieweeRelation = intervieweeRelation;
 
     }
 

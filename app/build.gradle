@@ -40,4 +40,5 @@ dependencies {
     compile 'pl.bclogic:pulsator4droid:1.0.3'
     testCompile 'junit:junit:4.12'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.wang.avi:library:2.1.3'
 }

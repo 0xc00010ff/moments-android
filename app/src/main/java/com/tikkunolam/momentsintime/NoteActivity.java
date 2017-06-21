@@ -71,6 +71,14 @@ public class NoteActivity extends AppCompatActivity {
         // disable it to begin with
         mSaveMenuItem.setEnabled(false);
 
+        String note = getIntent().getStringExtra(mNoteExtra);
+
+        if(note != null) {
+
+            mNoteEditText.setText(note);
+
+        }
+
         return true;
 
     }

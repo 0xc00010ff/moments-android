@@ -1,6 +1,10 @@
 package com.tikkunolam.momentsintime;
 
+import java.util.UUID;
+
+import io.realm.Realm;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 public class Note extends RealmObject {
     /**

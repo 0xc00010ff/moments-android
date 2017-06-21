@@ -17,6 +17,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
+import com.wang.avi.AVLoadingIndicatorView;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -37,7 +39,7 @@ public class CommunityFragment extends Fragment {
     FrameLayout mCommunityFrameLayout;
     SwipeRefreshLayout mSwipeRefreshLayout;
     RecyclerView mCommunityRecyclerView;
-    ProgressBar mProgressBar;
+    AVLoadingIndicatorView mProgressBar;
 
     // adapter for the RecyclerView
     MomentCardAdapter mMomentCardAdapter;
@@ -87,7 +89,7 @@ public class CommunityFragment extends Fragment {
         mCommunityFrameLayout = (FrameLayout) entireView;
 
         // the the ProgressBar
-        mProgressBar = (ProgressBar) mCommunityFrameLayout.findViewById(R.id.progressBar);
+        mProgressBar = (AVLoadingIndicatorView) mCommunityFrameLayout.findViewById(R.id.progressBar);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) mCommunityFrameLayout.findViewById(R.id.community_swipeRefreshLayout);
 
@@ -267,6 +269,7 @@ public class CommunityFragment extends Fragment {
 
                 // show the progress bar
                 mProgressBar.setVisibility(View.VISIBLE);
+                mProgressBar.show();
 
             }
 
@@ -296,6 +299,7 @@ public class CommunityFragment extends Fragment {
             }
 
             // stop the progressBar
+            mProgressBar.hide();
             mProgressBar.setVisibility(View.GONE);
 
             // clear the list for the sake of the endless scroll
