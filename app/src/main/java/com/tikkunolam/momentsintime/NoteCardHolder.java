@@ -1,6 +1,7 @@
 package com.tikkunolam.momentsintime;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -41,15 +42,31 @@ public class NoteCardHolder extends RecyclerView.ViewHolder {
 
         mClickable = clickable;
 
-        // set the textView
-        mNoteCardTextView = (TextView) view.findViewById(R.id.note_card_textView);
+        // set the entire CardView
+        CardView noteCardView = (CardView) view;
 
-        mDotsContainer = (FrameLayout) view.findViewById(R.id.note_card_dots_container);
+        // set the textView
+        mNoteCardTextView = (TextView) noteCardView.findViewById(R.id.note_card_textView);
+
+        mDotsContainer = (FrameLayout) noteCardView.findViewById(R.id.note_card_dots_container);
 
         // set the mDotsImageView
-        mDotsImageView = (ImageView) view.findViewById(R.id.note_card_dots_imageView);
+        mDotsImageView = (ImageView) noteCardView.findViewById(R.id.note_card_dots_imageView);
 
         if(mClickable) {
+
+            // set the onClick for the entire CardView
+            noteCardView.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View view) {
+
+                    mActivityCallback.onNoteCardClick(mPosition);
+
+                }
+
+            });
+
 
             // set the onClick on the mDotsImageView to display the appropriate dialog
             mDotsContainer.setOnClickListener(new View.OnClickListener() {

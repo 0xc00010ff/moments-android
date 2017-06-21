@@ -99,6 +99,12 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     // String array that will hold the default notes to be supplied to every new Moment
     String[] defaultNotes;
 
+    // int representing the position of the selected note
+    int mSelectedNotePosition;
+
+    // boolean signifying whether a note was just selected for editing
+    boolean mEditingNote = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -520,28 +526,66 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                     final String noteString = data.getStringExtra(mNoteExtra);
 
-                    // make a new note and add it to realm and to the Moment
-                    mMoment.persistUpdates(new PersistenceExecutor() {
+                    // if we're returning from editing a note
+                    if(mEditingNote) {
+                        // replace the note with the new String
 
-                        @Override
-                        public void execute() {
+                        // flip the editing indicator back to false
+                        mEditingNote = false;
 
-                            RealmList noteList = mMoment.getNotes();
-                            Note note = new Note();
-                            note.setNote(noteString);
-                            noteList.add(0, note);
+                        // add it to the view list
+                        mViewModelList.set(mSelectedNotePosition, noteString);
 
-                        }
+                        // get the position within the RealmList to update it
+                        final int noteListPosition = mSelectedNotePosition - FIRST_NOTE_LOCATION;
 
-                    });
+                        // update the Note
+                        mMoment.persistUpdates(new PersistenceExecutor() {
 
-                    // add it to the viewlist
-                    RealmList<Note> notes = mMoment.getNotes();
-                    Note newNote = notes.get(0);
+                            @Override
+                            public void execute() {
 
-                    mViewModelList.add(FIRST_NOTE_LOCATION, newNote.getNote());
+                                RealmList<Note> notes = mMoment.getNotes();
 
-                    mMakeAMomentAdapter.notifyDataSetChanged();
+                                Note note = notes.get(noteListPosition);
+
+                                note.setNote(noteString);
+
+                            }
+
+                        });
+
+                        mMakeAMomentAdapter.notifyDataSetChanged();
+
+                    }
+
+                    else {
+                        // we're returning from making a new note, not editing one.
+
+                        // make a new note and add it to realm and to the Moment
+                        mMoment.persistUpdates(new PersistenceExecutor() {
+
+                            @Override
+                            public void execute() {
+
+                                RealmList noteList = mMoment.getNotes();
+                                Note note = new Note();
+                                note.setNote(noteString);
+                                noteList.add(0, note);
+
+                            }
+
+                        });
+
+                        // add it to the viewlist
+                        RealmList<Note> notes = mMoment.getNotes();
+                        Note newNote = notes.get(0);
+
+                        mViewModelList.add(FIRST_NOTE_LOCATION, newNote.getNote());
+
+                        mMakeAMomentAdapter.notifyDataSetChanged();
+
+                    }
 
                     break;
 
@@ -892,6 +936,23 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                 .positiveColor(getResources().getColor(R.color.textLight))
                 .show();
 
+
+    }
+
+    public void onNoteCardClick(int position) {
+        // a note card was clicked so go to edit the note and remember that we're editing this particular note
+
+        mSelectedNotePosition = position;
+
+        mEditingNote = true;
+
+        String note = (String) mViewModelList.get(position);
+
+        Intent noteIntent = new Intent(this, NoteActivity.class);
+
+        noteIntent.putExtra(mNoteExtra, note);
+
+        startActivityForResult(noteIntent, NOTE_INTENT);
 
     }
 
