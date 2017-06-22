@@ -123,6 +123,11 @@
 
     <string name="dialog_cancel">Cancel</string>
 
+    <string name="submit_confirmation_dialog_title">Show the world?</string>
+    <string name="submit_confirmation_dialog_content">By submitting this video you’re allowing Moments In Time to share this video to the public. Is that okay?</string>
+    <string name="submit_confirmation_dialog_positive">Yes</string>
+    <string name="submit_confirmation_dialog_negative">No</string>
+
     <string name="cant_delete_title">Oh No!</string>
     <string name="cant_delete_content">Sorry, but you\'ll need to wait until the upload is finished to modify this Moment</string>
     <string name="cant_delete_ok">OK</string>

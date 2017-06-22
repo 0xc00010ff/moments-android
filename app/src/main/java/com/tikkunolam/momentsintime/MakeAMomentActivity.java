@@ -201,25 +201,43 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                 if(isMomentComplete()) {
 
-                    // submit the Moment
-                    submitMoment();
+                    // display a dialog to ask them if they're sure
+                    MaterialDialog dialog = new MaterialDialog.Builder(this)
+                            .title(getString(R.string.submit_confirmation_dialog_title))
+                            .content(getString(R.string.submit_confirmation_dialog_content))
+                            .positiveText(getString(R.string.submit_confirmation_dialog_positive))
+                            .positiveColor(getResources().getColor(R.color.actionBlue))
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
 
-                    // set its status to UPLOADING
-                    final MomentStateEnum momentState = MomentStateEnum.UPLOADING;
-                    mMoment.persistUpdates(new PersistenceExecutor() {
-                        @Override
-                        public void execute() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
 
-                            mMoment.setEnumState(momentState);
+                                    // submit the Moment
+                                    submitMoment();
 
-                        }
-                    });
+                                    // set its status to UPLOADING
+                                    final MomentStateEnum momentState = MomentStateEnum.UPLOADING;
+                                    mMoment.persistUpdates(new PersistenceExecutor() {
+                                        @Override
+                                        public void execute() {
 
-                    // signify the operation went through and send the primaryKey of the Moment back to the calling fragment
-                    Intent MyMomentsIntent = new Intent(this, MyMomentsFragment.class);
-                    MyMomentsIntent.putExtra(mPrimaryKeyExtra, mMoment.getPrimaryKey());
-                    setResult(RESULT_OK, MyMomentsIntent);
-                    finish();
+                                            mMoment.setEnumState(momentState);
+
+                                        }
+                                    });
+
+                                    // signify the operation went through and send the primaryKey of the Moment back to the calling fragment
+                                    Intent MyMomentsIntent = new Intent(getBaseContext(), MyMomentsFragment.class);
+                                    MyMomentsIntent.putExtra(mPrimaryKeyExtra, mMoment.getPrimaryKey());
+                                    setResult(RESULT_OK, MyMomentsIntent);
+                                    finish();
+
+                                }
+
+                            })
+                            .negativeText(getString(R.string.submit_confirmation_dialog_negative))
+                            .negativeColor(getResources().getColor(R.color.textLight))
+                            .show();
 
                 }
 
