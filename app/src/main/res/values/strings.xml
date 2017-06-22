@@ -50,7 +50,7 @@
 
     <!--strings for the community fragment-->
     <string name="moment_prompt">Make a Moment</string>
-    <string name="moment_prompt_cont">Create a moment of your own. Save to your stash or submit to the world.</string>
+    <string name="moment_prompt_cont">Nominate someone to tell their story. You can even nominate yourself!</string>
     <string name="moment_prompt_link">Let\'s make a Moment</string>
 
     <!--strings for the mymoments fragment-->
@@ -111,7 +111,7 @@
 
     <!--strings for the WelcomeMessage-->
     <string name="welcome_message_title">Welcome to Moments In Time</string>
-    <string name="welcome_message_content">Watch moments from the community and get inspired to share your own moments. Scroll down to start.</string>
+    <string name="welcome_message_content">Watch stories from the community and get inspired to share your own moments. Scroll down to start.</string>
     <string name="welcome_message_moment_prompt">Let\'s make a Moment</string>
 
     <!--strings for the UploadMessage-->
@@ -171,8 +171,8 @@
 
     <!--Strings for the contact invite-->
     <string name="email_invite_subject">Moments in Time Interview</string>
-    <string name="contact_invite_content_with_title">Hey! I want to interview you on the Moments in Time app about %1$s. When are you available?</string>
-    <string name="contact_invite_content_no_title">Hey! I want to interview you on the Moments in Time app. When are you available?</string>
+    <string name="contact_invite_content_no_title">Hi, I think you’d be a great candidate to interview for the Moments in Time Project. The videos are short 1-4 minute videos telling stories. It’s quick and easy. When would you be available? \nYou can check out the app at %1$s</string>
+    <string name="contact_invite_store_link">http://play.google.com/store/apps/details?id=</string>
 
     <!--Strings for the app store intent-->
     <string name="marketplace_address">market://details?id=</string>

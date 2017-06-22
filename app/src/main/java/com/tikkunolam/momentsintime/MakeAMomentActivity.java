@@ -36,11 +36,7 @@ import java.util.ArrayList;
 
 import io.realm.RealmList;
 
-import static android.R.attr.data;
-import static android.R.attr.id;
-import static android.R.attr.name;
 import static com.tikkunolam.momentsintime.R.string.primary_key_extra;
-import static java.security.AccessController.getContext;
 
 public class MakeAMomentActivity extends AppCompatActivity implements HolderInteractionListener{
 
@@ -1383,20 +1379,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                                 // create the Intent with the phone number Uri
                                 smsIntent = new Intent(Intent.ACTION_SENDTO, phoneNumberUri);
 
-                                // if the Moment has a title
-                                if(mMoment.getTitle() != null) {
-                                    // send the message with the title included
-
-                                    smsIntent.putExtra("sms_body", getString(R.string.contact_invite_content_with_title, mMoment.getTitle()));
-
-                                }
-
-                                else {
-                                    // otherwise send the message with no title
-
-                                    smsIntent.putExtra("sms_body", getString(R.string.contact_invite_content_no_title));
-
-                                }
+                                // attach the content of the message
+                                smsIntent.putExtra("sms_body", getString(R.string.contact_invite_content_no_title, getString(R.string.contact_invite_store_link) + getPackageName()));
 
                                 // express the sms Intent
                                 startActivity(smsIntent);
@@ -1418,20 +1402,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                                 }
 
-                                // if the Moment has a title
-                                if(mMoment.getTitle() != null) {
-                                    // add the title to the email content
-
-                                    emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.contact_invite_content_with_title, mMoment.getTitle()));
-
-                                }
-
-                                else {
-                                    // just send the content without the title
-
-                                    emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.contact_invite_content_no_title));
-
-                                }
+                                // attach the message content
+                                emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.contact_invite_content_no_title, getString(R.string.contact_invite_store_link) + getPackageName()));
 
                                 // express the email Intent
                                 startActivity(emailIntent);
