@@ -873,14 +873,18 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                                         .title(R.string.edit_video_title)
                                         .content(R.string.edit_video_content)
                                         .positiveText(R.string.edit_video_positive_text)
-                                        .positiveColor(getResources().getColor(R.color.actionBlue))
-                                        .negativeText(R.string.edit_video_delete_video)
-                                        .negativeColor(getResources().getColor(R.color.red))
+                                        .positiveColor(getResources().getColor(R.color.textLight))
+                                        .negativeText(R.string.edit_video_camera_roll)
+                                        .negativeColor(getResources().getColor(R.color.actionBlue))
                                         .onNegative(new MaterialDialog.SingleButtonCallback() {
                                             @Override
                                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
 
-                                                deleteVideo();
+                                                // Open the video gallery
+                                                Intent intent = new Intent();
+                                                intent.setType("video/*");
+                                                intent.setAction(Intent.ACTION_GET_CONTENT);
+                                                startActivityForResult(Intent.createChooser(intent,"Select Video"),VIDEO_FROM_GALLERY);
 
                                             }
                                         })
