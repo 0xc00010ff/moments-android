@@ -37,7 +37,7 @@ public class MomentCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public MomentCardAdapter(Context context, ArrayList<Object> viewModelList) {
 
         mContext = context;
-        mActivityCallback = (MainActivity) context;
+        mActivityCallback = (MomentInteractionListener) context;
         mViewModelList = viewModelList;
 
         // get the Strings from resources

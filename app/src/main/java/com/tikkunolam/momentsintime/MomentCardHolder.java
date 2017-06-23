@@ -48,7 +48,7 @@ public class MomentCardHolder extends RecyclerView.ViewHolder{
 
         mContext = context;
 
-        mActivityCallback = (MainActivity) context;
+        mActivityCallback = (MomentInteractionListener) context;
 
         videoPreviewImageView = (ImageView) view.findViewById(R.id.video_preview_imageView);
         videoNameTextView = (TextView) view.findViewById(R.id.video_name_textView);

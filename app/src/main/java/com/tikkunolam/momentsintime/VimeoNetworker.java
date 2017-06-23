@@ -521,4 +521,60 @@ public class VimeoNetworker {
 
     }
 
+    public ArrayList<Moment> searchVimeo(String searchString) {
+        /**
+         * searches Vimeo for videos with titles matching the searchString and returns them in an ArrayList<Moment>
+         */
+
+        ArrayList<Moment> moments = null;
+
+        OkHttpClient client = new OkHttpClient();
+
+        Response response = null;
+
+        try {
+
+            Request request = new Request.Builder()
+                    .url(mApiAddress + "/videos?query=" + searchString + "&" + mCommunityFilter + "&per_page=25")
+                    .addHeader("Authorization", "Bearer " + mAccessToken)
+                    .addHeader("Accept", mApiVersion)
+                    .build();
+
+            response = client.newCall(request).execute();
+
+            // convert the body to a String
+            String responseString = response.body().string();
+
+            // convert the String to a JSONObject
+            JSONObject jsonResponse = new JSONObject(responseString);
+
+            // get a list of Moments
+            moments = jsonToMomentList(jsonResponse);
+
+        }
+
+        catch(IOException exception) {
+
+            Log.e(TAG, exception.toString());
+
+        }
+
+        catch(JSONException exception) {
+
+            Log.e(TAG, exception.toString());
+
+        }
+
+        finally {
+
+            // close the response
+            response.body().close();
+
+        }
+
+
+        return moments;
+
+    }
+
 }

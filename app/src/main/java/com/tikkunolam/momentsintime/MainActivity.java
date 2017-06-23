@@ -33,6 +33,8 @@ import com.afollestad.materialdialogs.Theme;
 
 import java.io.File;
 import java.net.URLConnection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static android.os.Build.VERSION_CODES.M;
 
@@ -68,6 +70,9 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
     // tab position of the MyMomentsFragment
     final int MY_MOMENTS_POSITION = 1;
+
+    // regular expression to use to grab a Moment's subject
+    Pattern pattern = Pattern.compile("([A-Za-z\\s?]+)\\s*-\\s*([A-Za-z\\s?]+)");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -407,55 +412,20 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
     public void onCommunityShareClick(final Moment moment) {
 
-        final Context context = this;
+        // make an intent
+        Intent sendIntent = new Intent();
 
-        // produce the dialog that presents sharing options
-        MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .items(R.array.moment_share_dialog_array)
-                .itemsColor(getResources().getColor(R.color.actionBlue))
-                .itemsCallback(new MaterialDialog.ListCallback() {
+        // express that the Intent is to send data
+        sendIntent.setAction(Intent.ACTION_SEND);
 
-                    @Override
-                    public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+        // attach some text to it
+        sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.sms_message) + " " + moment.getVideoUrl());
 
-                        switch(position) {
+        // set the type as text
+        sendIntent.setType("text/plain");
 
-                            case 0:
-                                // user chose to share on Facebook
-
-                                // show the coming soon dialog
-                                MaterialDialog anotherDialog = new MaterialDialog.Builder(context)
-                                        .title(getString(R.string.in_development_title))
-                                        .content(getString(R.string.in_development_content))
-                                        .positiveText(getString(R.string.in_development_ok))
-                                        .positiveColor(getResources().getColor(R.color.actionBlue))
-                                        .show();
-
-                                break;
-
-                            case 1:
-                                // user chose to share through message
-
-                                // make an Intent for sending an sms
-                                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                                sendIntent.setData(Uri.parse("sms:"));
-
-                                // add a message to it
-                                sendIntent.putExtra("sms_body", getString(R.string.sms_message) + moment.getVideoUrl());
-
-                                // start the Activity
-                                startActivity(sendIntent);
-
-                                break;
-
-                        }
-
-                    }
-
-                })
-                .positiveText(getString(R.string.dialog_cancel))
-                .positiveColor(getResources().getColor(R.color.textLight))
-                .show();
+        // start the Activity
+        startActivity(sendIntent);
 
     }
 
@@ -524,7 +494,7 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
         final Context context = this;
 
         MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .items(R.array.community_moments_dots_dialog_array)
+                .items(moment.getTitle().contains("-") ? R.array.community_moments_dots_dialog_array : R.array.community_moments_dots_dialog_array_sans_search)
                 .itemsColor(getResources().getColor(R.color.actionBlue))
                 .itemsCallback(new MaterialDialog.ListCallback() {
 
@@ -534,52 +504,6 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
                         switch(position) {
 
                             case 0:
-                                // user chose to share
-
-                                MaterialDialog newDialog = new MaterialDialog.Builder(context)
-                                        .items(R.array.moment_share_dialog_array)
-                                        .itemsColor(getResources().getColor(R.color.actionBlue))
-                                        .itemsCallback(new MaterialDialog.ListCallback() {
-
-                                            @Override
-                                            public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
-
-                                                switch(position) {
-
-                                                    case 0:
-                                                        // user chose facebook
-
-                                                        // show the comming soon dialog
-                                                        MaterialDialog anotherDialog = new MaterialDialog.Builder(context)
-                                                                .title(getString(R.string.in_development_title))
-                                                                .content(getString(R.string.in_development_content))
-                                                                .positiveText(getString(R.string.in_development_ok))
-                                                                .positiveColor(getResources().getColor(R.color.actionBlue))
-                                                                .show();
-
-                                                        break;
-                                                    case 1:
-                                                        // user chose Message
-
-                                                        // make an Intent for sending an sms
-                                                        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                                                        sendIntent.setData(Uri.parse("sms:"));
-
-                                                        // add a message to it
-                                                        sendIntent.putExtra("sms_body", getString(R.string.sms_message) + moment.getVideoUrl());
-
-                                                        // start the Activity
-                                                        startActivity(sendIntent);
-                                                }
-
-                                            }
-
-                                        })
-                                        .show();
-
-                                break;
-
-                            case 1:
                                 // user chose to report. compose an email.
 
                                 Intent emailIntent = new Intent(Intent.ACTION_SEND);
@@ -589,6 +513,30 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
                                 emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_content) + " " + moment.getVideoUrl());
 
                                 startActivity(emailIntent);
+
+                                break;
+
+                            case 1:
+                                // user chose to search for more videos by this person
+
+                                String title = moment.getTitle();
+
+                                Matcher matcher = pattern.matcher(title);
+
+
+                                if(matcher.find()) {
+                                    // we found a match. send it to the SearchResultActivity
+
+                                    String matchedString = matcher.group(1);
+
+                                    Intent searchResultIntent = new Intent(mContext, SearchResultActivity.class);
+
+                                    searchResultIntent.putExtra(getString(R.string.search_extra), matchedString);
+
+                                    startActivity(searchResultIntent);
+
+                                }
+
 
                                 break;
 
