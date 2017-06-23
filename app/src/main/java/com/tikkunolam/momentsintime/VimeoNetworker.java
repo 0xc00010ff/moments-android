@@ -535,7 +535,7 @@ public class VimeoNetworker {
         try {
 
             Request request = new Request.Builder()
-                    .url(mApiAddress + "/videos?query=" + searchString + "&" + mCommunityFilter)
+                    .url(mApiAddress + "/videos?query=" + searchString + "&" + mCommunityFilter + "&per_page=25")
                     .addHeader("Authorization", "Bearer " + mAccessToken)
                     .addHeader("Accept", mApiVersion)
                     .build();
@@ -548,6 +548,7 @@ public class VimeoNetworker {
             // convert the String to a JSONObject
             JSONObject jsonResponse = new JSONObject(responseString);
 
+            // get a list of Moments
             moments = jsonToMomentList(jsonResponse);
 
         }
@@ -566,6 +567,7 @@ public class VimeoNetworker {
 
         finally {
 
+            // close the response
             response.body().close();
 
         }

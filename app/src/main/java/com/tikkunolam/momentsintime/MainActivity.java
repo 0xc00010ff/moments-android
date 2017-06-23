@@ -529,7 +529,7 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
         final Context context = this;
 
         MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .items(R.array.community_moments_dots_dialog_array)
+                .items(moment.getTitle().contains("-") ? R.array.community_moments_dots_dialog_array : R.array.community_moments_dots_dialog_array_sans_search)
                 .itemsColor(getResources().getColor(R.color.actionBlue))
                 .itemsCallback(new MaterialDialog.ListCallback() {
 
@@ -539,52 +539,6 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
                         switch(position) {
 
                             case 0:
-                                // user chose to share
-
-                                MaterialDialog newDialog = new MaterialDialog.Builder(context)
-                                        .items(R.array.moment_share_dialog_array)
-                                        .itemsColor(getResources().getColor(R.color.actionBlue))
-                                        .itemsCallback(new MaterialDialog.ListCallback() {
-
-                                            @Override
-                                            public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
-
-                                                switch(position) {
-
-                                                    case 0:
-                                                        // user chose facebook
-
-                                                        // show the comming soon dialog
-                                                        MaterialDialog anotherDialog = new MaterialDialog.Builder(context)
-                                                                .title(getString(R.string.in_development_title))
-                                                                .content(getString(R.string.in_development_content))
-                                                                .positiveText(getString(R.string.in_development_ok))
-                                                                .positiveColor(getResources().getColor(R.color.actionBlue))
-                                                                .show();
-
-                                                        break;
-                                                    case 1:
-                                                        // user chose Message
-
-                                                        // make an Intent for sending an sms
-                                                        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                                                        sendIntent.setData(Uri.parse("sms:"));
-
-                                                        // add a message to it
-                                                        sendIntent.putExtra("sms_body", getString(R.string.sms_message) + moment.getVideoUrl());
-
-                                                        // start the Activity
-                                                        startActivity(sendIntent);
-                                                }
-
-                                            }
-
-                                        })
-                                        .show();
-
-                                break;
-
-                            case 1:
                                 // user chose to report. compose an email.
 
                                 Intent emailIntent = new Intent(Intent.ACTION_SEND);
@@ -597,7 +551,7 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
                                 break;
 
-                            case 2:
+                            case 1:
                                 // user chose to search for more videos by this person
 
                                 String title = moment.getTitle();

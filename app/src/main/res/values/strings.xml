@@ -165,7 +165,7 @@
     <string name="contact_share_negative_text">Not now</string>
 
     <!--String for the sms Intent-->
-    <string name="sms_message">Check out this story on Moments In Time! </string>
+    <string name="sms_message">Check out this story on Moments In Time! \n</string>
 
     <!--Strings for the email Intent-->
     <string name="email_subject">Moment Video Report</string>
