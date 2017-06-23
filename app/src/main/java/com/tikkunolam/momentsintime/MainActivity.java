@@ -412,55 +412,20 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
     public void onCommunityShareClick(final Moment moment) {
 
-        final Context context = this;
+        // make an intent
+        Intent sendIntent = new Intent();
 
-        // produce the dialog that presents sharing options
-        MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .items(R.array.moment_share_dialog_array)
-                .itemsColor(getResources().getColor(R.color.actionBlue))
-                .itemsCallback(new MaterialDialog.ListCallback() {
+        // express that the Intent is to send data
+        sendIntent.setAction(Intent.ACTION_SEND);
 
-                    @Override
-                    public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+        // attach some text to it
+        sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.sms_message) + " " + moment.getVideoUrl());
 
-                        switch(position) {
+        // set the type as text
+        sendIntent.setType("text/plain");
 
-                            case 0:
-                                // user chose to share on Facebook
-
-                                // show the coming soon dialog
-                                MaterialDialog anotherDialog = new MaterialDialog.Builder(context)
-                                        .title(getString(R.string.in_development_title))
-                                        .content(getString(R.string.in_development_content))
-                                        .positiveText(getString(R.string.in_development_ok))
-                                        .positiveColor(getResources().getColor(R.color.actionBlue))
-                                        .show();
-
-                                break;
-
-                            case 1:
-                                // user chose to share through message
-
-                                // make an Intent for sending an sms
-                                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                                sendIntent.setData(Uri.parse("sms:"));
-
-                                // add a message to it
-                                sendIntent.putExtra("sms_body", getString(R.string.sms_message) + moment.getVideoUrl());
-
-                                // start the Activity
-                                startActivity(sendIntent);
-
-                                break;
-
-                        }
-
-                    }
-
-                })
-                .positiveText(getString(R.string.dialog_cancel))
-                .positiveColor(getResources().getColor(R.color.textLight))
-                .show();
+        // start the Activity
+        startActivity(sendIntent);
 
     }
 
