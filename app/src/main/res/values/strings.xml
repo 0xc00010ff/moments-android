@@ -197,5 +197,6 @@
     <string name="local_video_file_extra">localVideo</string>
     <string name="vimeo_video_uri_extra">vimeoVideo</string>
     <string name="video_file_extra">videoFile</string>
+    <string name="search_extra">searchString</string>
 
 </resources>

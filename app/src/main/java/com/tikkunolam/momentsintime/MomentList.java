@@ -76,6 +76,14 @@ public class MomentList {
 
     }
 
+    public void getMomentsByName(String searchString) {
+
+        mMoments.clear();
+
+        mMoments = mVimeoNetworker.searchVimeo(searchString);
+
+    }
+
     public int getCurrentPage() {
 
         return mCurrentPage;

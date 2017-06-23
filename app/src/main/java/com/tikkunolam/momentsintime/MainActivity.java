@@ -33,6 +33,8 @@ import com.afollestad.materialdialogs.Theme;
 
 import java.io.File;
 import java.net.URLConnection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static android.os.Build.VERSION_CODES.M;
 
@@ -68,6 +70,9 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
     // tab position of the MyMomentsFragment
     final int MY_MOMENTS_POSITION = 1;
+
+    // regular expression to use to grab a Moment's subject
+    Pattern pattern = Pattern.compile("([A-Za-z\\s?]+)\\s*-\\s*([A-Za-z\\s?]+)");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -589,6 +594,30 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
                                 emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_content) + " " + moment.getVideoUrl());
 
                                 startActivity(emailIntent);
+
+                                break;
+
+                            case 2:
+                                // user chose to search for more videos by this person
+
+                                String title = moment.getTitle();
+
+                                Matcher matcher = pattern.matcher(title);
+
+
+                                if(matcher.find()) {
+                                    // we found a match. send it to the SearchResultActivity
+
+                                    String matchedString = matcher.group(1);
+
+                                    Intent searchResultIntent = new Intent(mContext, SearchResultActivity.class);
+
+                                    searchResultIntent.putExtra(getString(R.string.search_extra), matchedString);
+
+                                    startActivity(searchResultIntent);
+
+                                }
+
 
                                 break;
 
