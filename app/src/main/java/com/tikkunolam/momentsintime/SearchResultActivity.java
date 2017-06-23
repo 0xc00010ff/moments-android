@@ -34,11 +34,16 @@ public class SearchResultActivity extends AppCompatActivity implements MomentInt
     // the String to be passed in, with which to search Vimeo
     String mSearchString;
 
+    MomentList mMomentList;
+
     // list of objects to be displayed in the RecyclerView (mostly Moments)
     ArrayList<Object> mViewModelList = new ArrayList<>();
 
     // the Adapter for the moment_cards
     MomentCardAdapter mMomentCardAdapter;
+
+    // listener for RecyclerView's scroll
+    EndlessRecyclerViewScrollListener mScrollListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +62,8 @@ public class SearchResultActivity extends AppCompatActivity implements MomentInt
         mToolbar = (Toolbar) findViewById(R.id.search_result_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(mSearchString);
+
+        mMomentList = new MomentList(this);
 
         // set up the RecyclerView
         setupRecyclerView();
@@ -191,14 +198,50 @@ public class SearchResultActivity extends AppCompatActivity implements MomentInt
             // apply a GridLayoutManager to the RecyclerView, making it a grid of 3 columns
             StaggeredGridLayoutManager staggeredGridLayoutManager =
                     new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+
             mRecyclerView.setLayoutManager(staggeredGridLayoutManager);
+
+            // make a new EndlessScrollRecyclerViewListener
+            mScrollListener = new EndlessRecyclerViewScrollListener(staggeredGridLayoutManager) {
+
+                @Override
+                public void onLoadMore() {
+
+                    AsyncSearchForMoments asyncSearch = new AsyncSearchForMoments();
+
+                    asyncSearch.execute(mSearchString);
+
+                }
+
+            };
+
+            // add the scroll listener to the RecyclerView
+            mRecyclerView.addOnScrollListener(mScrollListener);
 
         }
         else {
 
             //apply a LinearLayoutManager to the RecyclerView, making it a vertical list
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+
             mRecyclerView.setLayoutManager(linearLayoutManager);
+
+            // make a new EndlessScrollRecyclerViewListener
+            mScrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+
+                @Override
+                public void onLoadMore() {
+
+                    AsyncSearchForMoments asyncSearch = new AsyncSearchForMoments();
+
+                    asyncSearch.execute(mSearchString);
+
+                }
+
+            };
+
+            // add the scroll listener to the RecyclerView
+            mRecyclerView.addOnScrollListener(mScrollListener);
 
         }
 
@@ -226,14 +269,11 @@ public class SearchResultActivity extends AppCompatActivity implements MomentInt
             // variadic arguments are required when extending AsyncTask. We won't use them so just grab the first one.
             String searchString = searchStrings[0];
 
-            // get a MomentList object
-            MomentList momentList = new MomentList(getApplicationContext());
-
             // search for Moments with the search String
-            momentList.getMomentsByName(searchString);
+            mMomentList.getMomentsByName(searchString);
 
             // get the Moments from the MomentList
-            ArrayList<Moment> moments = momentList.getMomentList();
+            ArrayList<Moment> moments = mMomentList.getMomentList();
 
             return moments;
 
@@ -245,7 +285,7 @@ public class SearchResultActivity extends AppCompatActivity implements MomentInt
             mProgressBar.hide();
             mProgressBar.setVisibility(View.INVISIBLE);
 
-            // clear whatever may be in the list now
+            // clear the list
             mViewModelList.clear();
 
             // add all the Moments we were returned to the list
