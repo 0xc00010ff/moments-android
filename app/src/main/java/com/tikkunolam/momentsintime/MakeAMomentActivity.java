@@ -36,11 +36,7 @@ import java.util.ArrayList;
 
 import io.realm.RealmList;
 
-import static android.R.attr.data;
-import static android.R.attr.id;
-import static android.R.attr.name;
 import static com.tikkunolam.momentsintime.R.string.primary_key_extra;
-import static java.security.AccessController.getContext;
 
 public class MakeAMomentActivity extends AppCompatActivity implements HolderInteractionListener{
 
@@ -205,25 +201,43 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                 if(isMomentComplete()) {
 
-                    // submit the Moment
-                    submitMoment();
+                    // display a dialog to ask them if they're sure
+                    MaterialDialog dialog = new MaterialDialog.Builder(this)
+                            .title(getString(R.string.submit_confirmation_dialog_title))
+                            .content(getString(R.string.submit_confirmation_dialog_content))
+                            .positiveText(getString(R.string.submit_confirmation_dialog_positive))
+                            .positiveColor(getResources().getColor(R.color.actionBlue))
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
 
-                    // set its status to UPLOADING
-                    final MomentStateEnum momentState = MomentStateEnum.UPLOADING;
-                    mMoment.persistUpdates(new PersistenceExecutor() {
-                        @Override
-                        public void execute() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
 
-                            mMoment.setEnumState(momentState);
+                                    // submit the Moment
+                                    submitMoment();
 
-                        }
-                    });
+                                    // set its status to UPLOADING
+                                    final MomentStateEnum momentState = MomentStateEnum.UPLOADING;
+                                    mMoment.persistUpdates(new PersistenceExecutor() {
+                                        @Override
+                                        public void execute() {
 
-                    // signify the operation went through and send the primaryKey of the Moment back to the calling fragment
-                    Intent MyMomentsIntent = new Intent(this, MyMomentsFragment.class);
-                    MyMomentsIntent.putExtra(mPrimaryKeyExtra, mMoment.getPrimaryKey());
-                    setResult(RESULT_OK, MyMomentsIntent);
-                    finish();
+                                            mMoment.setEnumState(momentState);
+
+                                        }
+                                    });
+
+                                    // signify the operation went through and send the primaryKey of the Moment back to the calling fragment
+                                    Intent MyMomentsIntent = new Intent(getBaseContext(), MyMomentsFragment.class);
+                                    MyMomentsIntent.putExtra(mPrimaryKeyExtra, mMoment.getPrimaryKey());
+                                    setResult(RESULT_OK, MyMomentsIntent);
+                                    finish();
+
+                                }
+
+                            })
+                            .negativeText(getString(R.string.submit_confirmation_dialog_negative))
+                            .negativeColor(getResources().getColor(R.color.textLight))
+                            .show();
 
                 }
 
@@ -859,14 +873,18 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                                         .title(R.string.edit_video_title)
                                         .content(R.string.edit_video_content)
                                         .positiveText(R.string.edit_video_positive_text)
-                                        .positiveColor(getResources().getColor(R.color.actionBlue))
-                                        .negativeText(R.string.edit_video_delete_video)
-                                        .negativeColor(getResources().getColor(R.color.red))
+                                        .positiveColor(getResources().getColor(R.color.textLight))
+                                        .negativeText(R.string.edit_video_camera_roll)
+                                        .negativeColor(getResources().getColor(R.color.actionBlue))
                                         .onNegative(new MaterialDialog.SingleButtonCallback() {
                                             @Override
                                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
 
-                                                deleteVideo();
+                                                // Open the video gallery
+                                                Intent intent = new Intent();
+                                                intent.setType("video/*");
+                                                intent.setAction(Intent.ACTION_GET_CONTENT);
+                                                startActivityForResult(Intent.createChooser(intent,"Select Video"),VIDEO_FROM_GALLERY);
 
                                             }
                                         })
@@ -1383,20 +1401,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
                                 // create the Intent with the phone number Uri
                                 smsIntent = new Intent(Intent.ACTION_SENDTO, phoneNumberUri);
 
-                                // if the Moment has a title
-                                if(mMoment.getTitle() != null) {
-                                    // send the message with the title included
-
-                                    smsIntent.putExtra("sms_body", getString(R.string.contact_invite_content_with_title, mMoment.getTitle()));
-
-                                }
-
-                                else {
-                                    // otherwise send the message with no title
-
-                                    smsIntent.putExtra("sms_body", getString(R.string.contact_invite_content_no_title));
-
-                                }
+                                // attach the content of the message
+                                smsIntent.putExtra("sms_body", getString(R.string.contact_invite_content_no_title, getString(R.string.contact_invite_store_link) + getPackageName()));
 
                                 // express the sms Intent
                                 startActivity(smsIntent);
@@ -1418,20 +1424,8 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
 
                                 }
 
-                                // if the Moment has a title
-                                if(mMoment.getTitle() != null) {
-                                    // add the title to the email content
-
-                                    emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.contact_invite_content_with_title, mMoment.getTitle()));
-
-                                }
-
-                                else {
-                                    // just send the content without the title
-
-                                    emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.contact_invite_content_no_title));
-
-                                }
+                                // attach the message content
+                                emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.contact_invite_content_no_title, getString(R.string.contact_invite_store_link) + getPackageName()));
 
                                 // express the email Intent
                                 startActivity(emailIntent);
