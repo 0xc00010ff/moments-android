@@ -40,6 +40,16 @@
             android:layout_centerInParent="true"
             app:srcCompat="@drawable/camera" />
 
+        <ImageView
+            android:id="@+id/interviewee_imageView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_below="@+id/interviewing_toolbar"
+            android:layout_centerInParent="true"
+            android:layout_margin="8dp"
+            android:visibility="invisible"
+            app:srcCompat="@mipmap/ic_launcher" />
+
         <TextView
             android:id="@+id/add_picture_textView"
             android:layout_width="wrap_content"
@@ -52,15 +62,6 @@
             android:textSize="16sp" />
 
     </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/interviewee_imageView"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_below="@+id/interviewing_toolbar"
-        android:layout_margin="8dp"
-        android:visibility="gone"
-        app:srcCompat="@mipmap/ic_launcher" />
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/interviewing_toolbar"
