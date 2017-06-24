@@ -521,10 +521,13 @@ public class VimeoNetworker {
 
     }
 
-    public ArrayList<Moment> searchVimeo(String searchString) {
+    public GetMomentsResponse searchVimeo(SearchByNameArgument searchArguments) {
         /**
          * searches Vimeo for videos with titles matching the searchString and returns them in an ArrayList<Moment>
          */
+
+        // make a new GetMomentsResponse to return to the caller
+        GetMomentsResponse getMomentsResponse = new GetMomentsResponse();
 
         ArrayList<Moment> moments = null;
 
@@ -535,7 +538,7 @@ public class VimeoNetworker {
         try {
 
             Request request = new Request.Builder()
-                    .url(mApiAddress + "/videos?query=" + searchString + "&" + mCommunityFilter + "&per_page=25")
+                    .url(mApiAddress + "/me/videos?query=" + searchArguments.getSearchString() + "&" + mCommunityFilter + "&per_page=25" + "&page=" + searchArguments.getPageNumber())
                     .addHeader("Authorization", "Bearer " + mAccessToken)
                     .addHeader("Accept", mApiVersion)
                     .build();
@@ -547,6 +550,24 @@ public class VimeoNetworker {
 
             // convert the String to a JSONObject
             JSONObject jsonResponse = new JSONObject(responseString);
+
+            // get the JSONObject related to pagination from the response
+            JSONObject paginationObject = jsonResponse.getJSONObject("paging");
+
+            // get the String signifying if there is a next page
+            String isNextPage = paginationObject.getString("next");
+
+            if(isNextPage.equals("null")) {
+
+                getMomentsResponse.setNextPageExists(false);
+
+            }
+
+            else {
+
+                getMomentsResponse.setNextPageExists(true);
+
+            }
 
             // get a list of Moments
             moments = jsonToMomentList(jsonResponse);
@@ -572,8 +593,10 @@ public class VimeoNetworker {
 
         }
 
+        // set the response's Moment list with the Moments we've just fetched
+        getMomentsResponse.setMomentList(moments);
 
-        return moments;
+        return getMomentsResponse;
 
     }
 

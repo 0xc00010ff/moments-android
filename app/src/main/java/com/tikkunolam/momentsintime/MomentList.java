@@ -78,9 +78,23 @@ public class MomentList {
 
     public void getMomentsByName(String searchString) {
 
-        mMoments.clear();
+        // if there is another page of videos to pull from
+        if(mNextPageExists) {
+            // get the videos
 
-        mMoments = mVimeoNetworker.searchVimeo(searchString);
+            // construct a SearchByNameArgument with the current page and the search string
+            SearchByNameArgument searchArguments = new SearchByNameArgument(++mCurrentPage, searchString);
+
+            // get a GetMomentsResponse from the networker
+            GetMomentsResponse response = mVimeoNetworker.searchVimeo(searchArguments);
+
+            // determine if there is another page to fetch from in the future
+            mNextPageExists = response.nextPageExists();
+
+            // dump all the fetched moments into our list
+            mMoments.addAll(response.getMomentList());
+
+        }
 
     }
 

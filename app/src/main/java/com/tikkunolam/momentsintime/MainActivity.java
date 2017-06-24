@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
     final int MY_MOMENTS_POSITION = 1;
 
     // regular expression to use to grab a Moment's subject
-    Pattern pattern = Pattern.compile("([A-Za-z\\s?]+)\\s*-\\s*([A-Za-z\\s?]+)");
+    Pattern pattern = Pattern.compile("([A-Za-z\\s\\.&\\-\\(\\)']+)\\s-\\s([A-Za-z\\s?]+)");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
