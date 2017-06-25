@@ -163,15 +163,9 @@ public class VimeoNetworker {
 
         catch(IOException exception) {
 
-            // log it so I'm sure where it came from
-            Log.e(TAG, exception.toString());
-
         }
 
         catch(JSONException exception) {
-
-            // log it so I'm sure where it came from
-            Log.e(TAG, exception.toString());
 
         }
 
@@ -232,15 +226,11 @@ public class VimeoNetworker {
 
         catch(IOException exception) {
 
-            Log.e(TAG, exception.toString());
-
             return null;
 
         }
 
         catch(JSONException exception) {
-
-            Log.e(TAG, exception.toString());
 
             return null;
 
@@ -339,9 +329,6 @@ public class VimeoNetworker {
         }
         catch(JSONException exception) {
 
-            // log it so I'm sure where it came from
-            Log.e(TAG, exception.toString());
-
         }
 
         // return the list
@@ -391,8 +378,6 @@ public class VimeoNetworker {
         }
 
         catch(JSONException jsonException) {
-
-            Log.e(TAG, jsonException.toString());
 
         }
 
@@ -465,13 +450,9 @@ public class VimeoNetworker {
 
         catch(IOException exception) {
 
-            Log.e(TAG, exception.toString());
-
         }
 
         catch(JSONException jsonException) {
-
-            Log.e(TAG, jsonException.toString());
 
         }
 
@@ -503,8 +484,6 @@ public class VimeoNetworker {
         }
 
         catch(IOException exception) {
-
-            Log.e(TAG, exception.toString());
 
         }
 
@@ -572,13 +551,9 @@ public class VimeoNetworker {
 
         catch(IOException exception) {
 
-            Log.e(TAG, exception.toString());
-
         }
 
         catch(JSONException exception) {
-
-            Log.e(TAG, exception.toString());
 
         }
 

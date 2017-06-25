@@ -330,13 +330,9 @@ public class UploadService extends IntentService {
 
         catch(IOException exception) {
 
-            Log.e(TAG, exception.toString());
-
         }
 
         catch(JSONException exception) {
-
-            Log.e(TAG, exception.toString());
 
         }
 
@@ -400,8 +396,6 @@ public class UploadService extends IntentService {
 
         catch(IOException exception) {
 
-            Log.e(TAG, exception.toString());
-
         }
 
         finally {
@@ -448,8 +442,6 @@ public class UploadService extends IntentService {
         }
 
         catch(IOException exception) {
-
-            Log.e(TAG, exception.toString());
 
         }
 
@@ -501,8 +493,6 @@ public class UploadService extends IntentService {
         }
 
         catch(IOException exception) {
-
-            Log.e(TAG, exception.toString());
 
         }
 
@@ -564,19 +554,13 @@ public class UploadService extends IntentService {
             // the thread was interrupted. not a big deal.
             // this method will just end and the Moment will be updated to Live
 
-            Log.e(TAG, exception.toString());
-
         }
 
         catch(IOException exception) {
 
-            Log.e(TAG, exception.toString());
-
         }
 
         catch(JSONException exception) {
-
-            Log.e(TAG, exception.toString());
 
         }
 
@@ -615,8 +599,6 @@ public class UploadService extends IntentService {
         }
 
         catch(IOException exception) {
-
-            Log.e(TAG, exception.toString());
 
         }
 

@@ -321,8 +321,6 @@ public class FileDealer {
 
         catch(IOException exception) {
 
-            Log.e(TAG, exception.toString());
-
         }
 
         return finalFilePath;

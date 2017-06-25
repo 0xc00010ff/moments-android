@@ -131,8 +131,6 @@ public class TopicActivity extends AppCompatActivity implements TopicAdapter.Top
 
         catch(IOException exception) {
 
-            Log.e(TAG, exception.toString());
-
         }
 
         // close the InputStream
@@ -149,8 +147,6 @@ public class TopicActivity extends AppCompatActivity implements TopicAdapter.Top
             }
 
             catch(IOException exception) {
-
-                Log.e(TAG, exception.toString());
 
             }
 
@@ -196,8 +192,6 @@ public class TopicActivity extends AppCompatActivity implements TopicAdapter.Top
         }
 
         catch(JSONException exception) {
-
-            Log.e(TAG, exception.toString());
 
         }
 
