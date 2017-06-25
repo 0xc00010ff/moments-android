@@ -164,18 +164,14 @@ public class VimeoNetworker {
         catch(IOException exception) {
 
             // log it so I'm sure where it came from
-            Log.e(TAG, "IO EXCEPTION!!!!!!");
-
-            throw new RuntimeException(exception);
+            Log.e(TAG, exception.toString());
 
         }
 
         catch(JSONException exception) {
 
             // log it so I'm sure where it came from
-            Log.e(TAG, "JSON EXCEPTION!!!!!");
-
-            throw new RuntimeException(exception);
+            Log.e(TAG, exception.toString());
 
         }
 
@@ -236,7 +232,7 @@ public class VimeoNetworker {
 
         catch(IOException exception) {
 
-            Log.e(TAG, "getPlayableVideo" + exception.toString());
+            Log.e(TAG, exception.toString());
 
             return null;
 
@@ -244,7 +240,7 @@ public class VimeoNetworker {
 
         catch(JSONException exception) {
 
-            Log.e(TAG, "getPlayableVideo" + exception.toString());
+            Log.e(TAG, exception.toString());
 
             return null;
 
@@ -344,7 +340,7 @@ public class VimeoNetworker {
         catch(JSONException exception) {
 
             // log it so I'm sure where it came from
-            Log.e(TAG, "JSON Exception!!!");
+            Log.e(TAG, exception.toString());
 
         }
 
@@ -396,7 +392,7 @@ public class VimeoNetworker {
 
         catch(JSONException jsonException) {
 
-            Log.e(TAG, "fetchHighestQualityVideo " + jsonException);
+            Log.e(TAG, jsonException.toString());
 
         }
 

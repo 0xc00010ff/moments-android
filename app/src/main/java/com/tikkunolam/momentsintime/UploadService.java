@@ -330,13 +330,13 @@ public class UploadService extends IntentService {
 
         catch(IOException exception) {
 
-            Log.e(TAG, "generateUploadTicket: " + exception.toString());
+            Log.e(TAG, exception.toString());
 
         }
 
         catch(JSONException exception) {
 
-            Log.e(TAG, "generateUploadTicket: " + exception.toString());
+            Log.e(TAG, exception.toString());
 
         }
 
@@ -616,7 +616,7 @@ public class UploadService extends IntentService {
 
         catch(IOException exception) {
 
-            Log.d(TAG, exception.toString());
+            Log.e(TAG, exception.toString());
 
         }
 

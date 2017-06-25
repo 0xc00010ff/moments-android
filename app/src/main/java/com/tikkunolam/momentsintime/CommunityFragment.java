@@ -34,6 +34,7 @@ public class CommunityFragment extends Fragment {
     // string for shared preference argument
     String mIsFirstTimeArg;
 
+    // boolean indicating this is the user's first time in the app
     boolean mIsFirstTime;
 
     // ui references
@@ -142,6 +143,7 @@ public class CommunityFragment extends Fragment {
     }
 
     public void insertWelcomeMessage() {
+        // put the welcome message at the top of the page if this is the user's first time in the app
 
         if(mIsFirstTime) {
 
@@ -153,6 +155,7 @@ public class CommunityFragment extends Fragment {
     }
 
     public void checkIfFirstTime() {
+        // check if this is the first time the app is opened
 
         // get the shared preferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -234,6 +237,7 @@ public class CommunityFragment extends Fragment {
     }
 
     private void setUpSwipeToRefresh() {
+        // sets up the SwipeRefreshLayout
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
