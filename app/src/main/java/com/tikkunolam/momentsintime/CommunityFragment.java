@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 
-public class CommunityFragment extends Fragment {
+public class CommunityFragment extends Fragment implements MainActivity.communityMomentsInterface {
 
     Context mContext;
 
@@ -162,11 +162,6 @@ public class CommunityFragment extends Fragment {
 
         // get the isFirstVisit value from them
         mIsFirstTime = sharedPreferences.getBoolean(mIsFirstTimeArg, true);
-
-        // set the value to false so it'll never insert one again
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(mIsFirstTimeArg, false);
-        editor.commit();
 
     }
 
@@ -365,6 +360,15 @@ public class CommunityFragment extends Fragment {
             mViewModelList.add(mViewModelList.size(), momentPrompt);
 
         }
+
+    }
+
+    // callbacks from the MainActivity
+    public void dismissWelcomeMessage() {
+
+        mViewModelList.remove(WELCOME_MESSAGE_POSITION);
+
+        mMomentCardAdapter.notifyDataSetChanged();
 
     }
 

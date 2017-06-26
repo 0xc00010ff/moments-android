@@ -42,15 +42,15 @@
     <!--string array for the dots in the Community Moments Card-->
     <string-array name="community_moments_dots_dialog_array">
 
-        <item>Report</item>
-        <item>Show more by this person</item>
+        <item>Contact a moderator</item>
+        <item>Show more by %1$s</item>
 
     </string-array>
 
     <!--string array for the community dots when querying Vimeo shouldn't be an option-->
     <string-array name="community_moments_dots_dialog_array_sans_search">
 
-        <item>Report</item>
+        <item>Contact a moderator</item>
 
     </string-array>
 

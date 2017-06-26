@@ -9,7 +9,7 @@
     android:layout_marginRight="12dp"
     app:cardBackgroundColor="@color/cardBackground"
     app:cardCornerRadius="6dp"
-    app:cardElevation="4dp"
+    app:cardElevation="1dp"
     app:cardUseCompatPadding="true">
 
 
@@ -29,7 +29,7 @@
             android:singleLine="true"
             android:text="TextView"
             android:textColor="@color/text"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
@@ -42,7 +42,7 @@
             android:maxLines="5"
             android:text="TextView"
             android:textColor="@color/text"
-            android:textSize="18sp" />
+            android:textSize="15sp" />
 
     </LinearLayout>
 

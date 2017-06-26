@@ -116,9 +116,9 @@ Contact Us \n\nIf you have any questions about these Terms, please contact us.</
     <string name="moment_description"></string>
 
     <!--strings for the WelcomeMessage-->
-    <string name="welcome_message_title">Welcome to Moments In Time</string>
-    <string name="welcome_message_content">Watch stories from the community and get inspired to share your own moments. Scroll down to start.</string>
-    <string name="welcome_message_moment_prompt">Let\'s make a Moment</string>
+    <string name="welcome_message_title">Welcome to Moments In Time!</string>
+    <string name="welcome_message_content">Watch stories from the community and get inspired to share your own Moments. Scroll down to start.</string>
+    <string name="welcome_message_moment_prompt">Ok, let\'s go!</string>
 
     <!--strings for the UploadMessage-->
     <string name="upload_message_title">Your Moment is live!</string>
@@ -177,7 +177,7 @@ Contact Us \n\nIf you have any questions about these Terms, please contact us.</
     <string name="email_subject">Moment Video Report</string>
     <string name="email_recipient">justinmilrad@gmail.com</string>
     <string name="email_content">Hello, I would like to report this video: </string>
-    <string name="email_report_subject">Moment in Time Feedback</string>
+    <string name="email_report_subject">Moments in Time Feedback</string>
     <string name="email_report_content">Hello, I have a problem.</string>
 
     <!--Strings for the contact invite-->

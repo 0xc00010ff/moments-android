@@ -479,4 +479,10 @@ public class SearchResultActivity extends AppCompatActivity implements MomentInt
 
     }
 
+    @Override
+    public void onWelcomeDismiss() {
+        // the welcome message was dismissed
+
+    }
+
 }
