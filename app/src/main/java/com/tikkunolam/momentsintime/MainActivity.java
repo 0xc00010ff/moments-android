@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.StackingBehavior;
 import com.afollestad.materialdialogs.Theme;
 
 import java.io.File;
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
     String mHasAgreedToTermsFlag;
 
     // the Fragments in the ViewPager
-    Fragment communityFragment;
+    communityMomentsInterface communityFragment;
     myMomentInterface myMomentsFragment;
 
     // integers for request codes from startActivityForResult
@@ -493,8 +494,27 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
         final Context context = this;
 
+        // user chose to search for more videos by this person
+
+        String title = moment.getTitle();
+
+        Matcher matcher = pattern.matcher(title);
+
+        matcher.find();
+
+        final String matchedString = matcher.group(1);
+
+        String[] communityDotsArray = getResources().getStringArray(R.array.community_moments_dots_dialog_array);
+
+        String formattedString = String.format(communityDotsArray[1], matchedString);
+
+        communityDotsArray[1] = formattedString;
+
+        String[] communityDotsArraySansSearch = getResources().getStringArray(R.array.community_moments_dots_dialog_array_sans_search);
+
+
         MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .items(moment.getTitle().contains("-") ? R.array.community_moments_dots_dialog_array : R.array.community_moments_dots_dialog_array_sans_search)
+                .items(moment.getTitle().contains("-") ? communityDotsArray: communityDotsArraySansSearch)
                 .itemsColor(getResources().getColor(R.color.actionBlue))
                 .itemsCallback(new MaterialDialog.ListCallback() {
 
@@ -521,21 +541,11 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
 
                                 String title = moment.getTitle();
 
-                                Matcher matcher = pattern.matcher(title);
+                                Intent searchResultIntent = new Intent(mContext, SearchResultActivity.class);
 
+                                searchResultIntent.putExtra(getString(R.string.search_extra), matchedString);
 
-                                if(matcher.find()) {
-                                    // we found a match. send it to the SearchResultActivity
-
-                                    String matchedString = matcher.group(1);
-
-                                    Intent searchResultIntent = new Intent(mContext, SearchResultActivity.class);
-
-                                    searchResultIntent.putExtra(getString(R.string.search_extra), matchedString);
-
-                                    startActivity(searchResultIntent);
-
-                                }
+                                startActivity(searchResultIntent);
 
 
                                 break;
@@ -593,6 +603,20 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
         myMomentsTab.select();
 
         myMomentsFragment.openMakeAMomentActivity();
+
+    }
+
+    public void onWelcomeDismiss() {
+
+        // get the shared preferences
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+
+        // set the value to false so it'll never insert one again
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(getString(R.string.is_first_visit), false);
+        editor.commit();
+
+        communityFragment.dismissWelcomeMessage();
 
     }
 
@@ -724,6 +748,12 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
         void refreshListFromActivity();
 
         void openMakeAMomentActivity();
+
+    }
+
+    public interface communityMomentsInterface {
+
+        void dismissWelcomeMessage();
 
     }
 

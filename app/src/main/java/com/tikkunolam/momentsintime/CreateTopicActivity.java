@@ -124,8 +124,10 @@ public class CreateTopicActivity extends AppCompatActivity {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+                // if at any point the title and description are both present(relevant on entering Activity)
                 if(mTitle != null && mDescription != null) {
 
+                    // enable save
                     mSaveMenuItem.setEnabled(true);
 
                 }

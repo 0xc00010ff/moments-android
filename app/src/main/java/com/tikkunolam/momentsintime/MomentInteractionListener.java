@@ -26,6 +26,9 @@ public interface MomentInteractionListener {
     // when the moment_prompt is clicked
     void onMomentPromptClick();
 
+    // when the welcome message is dismissed
+    void onWelcomeDismiss();
+
     // when the state_constraintLayout is clicked on a FAILED upload Moment
     void onFailedStateClick(Moment moment);
 }

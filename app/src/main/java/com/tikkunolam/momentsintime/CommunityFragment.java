@@ -27,13 +27,14 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 
-public class CommunityFragment extends Fragment {
+public class CommunityFragment extends Fragment implements MainActivity.communityMomentsInterface {
 
     Context mContext;
 
     // string for shared preference argument
     String mIsFirstTimeArg;
 
+    // boolean indicating this is the user's first time in the app
     boolean mIsFirstTime;
 
     // ui references
@@ -142,6 +143,7 @@ public class CommunityFragment extends Fragment {
     }
 
     public void insertWelcomeMessage() {
+        // put the welcome message at the top of the page if this is the user's first time in the app
 
         if(mIsFirstTime) {
 
@@ -153,17 +155,13 @@ public class CommunityFragment extends Fragment {
     }
 
     public void checkIfFirstTime() {
+        // check if this is the first time the app is opened
 
         // get the shared preferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
 
         // get the isFirstVisit value from them
         mIsFirstTime = sharedPreferences.getBoolean(mIsFirstTimeArg, true);
-
-        // set the value to false so it'll never insert one again
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(mIsFirstTimeArg, false);
-        editor.commit();
 
     }
 
@@ -234,6 +232,7 @@ public class CommunityFragment extends Fragment {
     }
 
     private void setUpSwipeToRefresh() {
+        // sets up the SwipeRefreshLayout
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
@@ -361,6 +360,15 @@ public class CommunityFragment extends Fragment {
             mViewModelList.add(mViewModelList.size(), momentPrompt);
 
         }
+
+    }
+
+    // callbacks from the MainActivity
+    public void dismissWelcomeMessage() {
+
+        mViewModelList.remove(WELCOME_MESSAGE_POSITION);
+
+        mMomentCardAdapter.notifyDataSetChanged();
 
     }
 

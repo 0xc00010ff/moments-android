@@ -34,6 +34,7 @@ public class InterviewingActivity extends AppCompatActivity {
 
 
     Context mContext = this;
+
     // ui references
     Toolbar mToolbar;
     MaterialEditText mNameEditText;
