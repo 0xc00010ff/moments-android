@@ -358,7 +358,7 @@ public class UploadService extends IntentService {
 
         Response response = null;
 
-        // try to convert the file to a byte array and make the request
+        // try to make the request
         try{
 
             // make the upload request
