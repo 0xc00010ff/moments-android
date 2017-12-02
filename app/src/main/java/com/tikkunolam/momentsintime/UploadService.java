@@ -356,28 +356,18 @@ public class UploadService extends IntentService {
         // create a file from the videoFileString
         File file = new File(mVideoFileString);
 
-        // make a byte array into which the file's data will be streamed
-        int size = (int) file.length();
-        byte[] bytes = new byte[size];
-
         Response response = null;
 
         // try to convert the file to a byte array and make the request
         try{
 
-            FileDealer fileDealer = new FileDealer();
-
-            // read the file into the byte array
-            bytes = fileDealer.fullyReadFileToBytes(file);
-
             // make the upload request
             OkHttpClient client = new OkHttpClient();
-            RequestBody requestBody = RequestBody.create(MediaType.parse("mp4"), bytes);
             Request request = new Request.Builder()
                     .url(mUploadLink)
                     .addHeader("Authorization", "Bearer " + mAccessToken)
                     .addHeader("Accept", mApiVersion)
-                    .put(requestBody)
+                    .put(RequestBody.create(MediaType.parse("mp4"), file))
                     .build();
 
             // get the response
