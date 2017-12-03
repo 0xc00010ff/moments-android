@@ -108,8 +108,6 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
         mTabLayout = (TabLayout) findViewById(R.id.tabLayout);
         setupTabLayout();
 
-        throw new RuntimeException("This is a crash");
-
     }
 
     private void checkForTermsAndConditions() {
