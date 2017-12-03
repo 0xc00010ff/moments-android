@@ -37,6 +37,9 @@ public class CommunityFragment extends Fragment implements MainActivity.communit
     // boolean indicating this is the user's first time in the app
     boolean mIsFirstTime;
 
+    // boolean indicating if the user has refreshed so we don't add the welcome message again
+    boolean mUserHasRefreshed = false;
+
     // ui references
     FrameLayout mCommunityFrameLayout;
     SwipeRefreshLayout mSwipeRefreshLayout;
@@ -143,9 +146,9 @@ public class CommunityFragment extends Fragment implements MainActivity.communit
     }
 
     public void insertWelcomeMessage() {
-        // put the welcome message at the top of the page if this is the user's first time in the app
+        // put the welcome message at the top of the page if this is the user's first time in the app, and they haven't refreshed yet
 
-        if(mIsFirstTime) {
+        if(mIsFirstTime && !mUserHasRefreshed) {
 
             WelcomeMessage welcomeMessage = new WelcomeMessage(mContext);
             mViewModelList.add(WELCOME_MESSAGE_POSITION, welcomeMessage);
@@ -238,6 +241,8 @@ public class CommunityFragment extends Fragment implements MainActivity.communit
 
             @Override
             public void onRefresh() {
+
+                mUserHasRefreshed = true;
 
                 mScrollListener.resetState();
 
