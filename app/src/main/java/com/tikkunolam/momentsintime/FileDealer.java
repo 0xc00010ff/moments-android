@@ -181,56 +181,6 @@ public class FileDealer {
     }
 
 
-    public byte[] fullyReadFileToBytes(File file) throws IOException {
-        // takes a file and reads it into a byte array
-
-        // get the size of the file
-        int size = (int) file.length();
-
-        // make a byte array to house the file
-        byte bytes[] = new byte[size];
-
-        // a buffer to read into
-        byte tmpBuff[] = new byte[size];
-
-        FileInputStream fileInputStream= new FileInputStream(file);
-
-        try {
-
-            int read = fileInputStream.read(bytes, 0, size);
-
-            if (read < size) {
-
-                int remain = size - read;
-
-                while (remain > 0) {
-
-                    read = fileInputStream.read(tmpBuff, 0, remain);
-
-                    System.arraycopy(tmpBuff, 0, bytes, size - remain, read);
-
-                    remain -= read;
-
-                }
-
-            }
-
-        }
-        catch (IOException e) {
-
-            throw e;
-
-        }
-        finally {
-
-            fileInputStream.close();
-
-        }
-
-        return bytes;
-
-    }
-
     public String bitmapToFile(Context context, Bitmap picture) {
         // takes a bitmap, saves it locally, and return a String containing the file's path
 

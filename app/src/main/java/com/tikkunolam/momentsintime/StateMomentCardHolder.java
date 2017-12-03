@@ -134,6 +134,12 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
 
         }
 
+        // set all the onClickListeners
+        setOnCardClick(moment);
+        setOnVideoClick(moment);
+        setOnDotsClick(moment);
+        setOnShareClick(moment);
+
     }
 
     private void configurePrivate(Moment moment) {
@@ -176,6 +182,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
             // if the Moment has an interviewee as well we can get the formatted title (name - title)
             if(moment.getInterviewee() != null) {
 
+                videoNameTextView.setVisibility(View.VISIBLE);
                 videoNameTextView.setText(moment.getCanonicalTitle());
 
             }
@@ -183,6 +190,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
             // otherwise just use the title itself
             else {
 
+                videoNameTextView.setVisibility(View.VISIBLE);
                 videoNameTextView.setText(moment.getTitle());
 
             }
@@ -199,6 +207,7 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         // if the Moment has a description, fill that field
         if(moment.getDescription() != null) {
 
+            videoDescriptionTextView.setVisibility(View.VISIBLE);
             videoDescriptionTextView.setText(moment.getDescription());
 
         }
@@ -212,12 +221,6 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
 
         momentStateTextView.setText(mStatePrivate);
         coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_yellow));
-
-        // set all the onClickListeners
-        setOnCardClick(moment);
-        setOnVideoClick(moment);
-        setOnDotsClick(moment);
-        setOnShareClick(moment);
 
     }
 
@@ -237,16 +240,18 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         // set the preview image with Glide, using the local video uri
         Glide.with(mContext).load(Uri.fromFile(videoFile)).asBitmap().into(videoPreviewImageView);
 
+        videoNameTextView.setVisibility(View.VISIBLE);
         videoNameTextView.setText(moment.getCanonicalTitle());
+
+        videoDescriptionTextView.setVisibility(View.VISIBLE);
         videoDescriptionTextView.setText(moment.getDescription());
+
         momentStateTextView.setText(mStateUploading);
         coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_blue));
 
         // start the pulse
         circlePulse.start();
-
-        setOnVideoClick(moment);
-        setOnDotsClick(moment);
+        circlePulse.setVisibility(View.VISIBLE);
 
     }
 
@@ -265,8 +270,12 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         // set the preview image with Glide, using the local video file
         Glide.with(mContext).load(Uri.fromFile(videoFile)).asBitmap().into(videoPreviewImageView);
 
+        videoNameTextView.setVisibility(View.VISIBLE);
         videoNameTextView.setText(moment.getCanonicalTitle());
+
+        videoDescriptionTextView.setVisibility(View.VISIBLE);
         videoDescriptionTextView.setText(moment.getDescription());
+
         momentStateTextView.setText(mStateFailed);
         coloredCircleView.setBackground(mContext.getResources().getDrawable(R.drawable.circle_red));
 
@@ -282,9 +291,6 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
 
         });
 
-        setOnVideoClick(moment);
-        setOnDotsClick(moment);
-
     }
 
     private void configureLive(Moment moment) {
@@ -298,12 +304,6 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
         AsyncMomentFetch asyncMomentFetch = new AsyncMomentFetch();
 
         asyncMomentFetch.execute(moment);
-
-        // set all the onClickListeners
-        setOnCardClick(moment);
-        setOnVideoClick(moment);
-        setOnDotsClick(moment);
-        setOnShareClick(moment);
 
     }
 
@@ -412,32 +412,52 @@ public class StateMomentCardHolder extends RecyclerView.ViewHolder{
     private void setOnCardClick(final Moment moment) {
         // sets a listener on the entire card that will call the Activity's onMyMomentCardClick method
 
-        wholeCardView.setOnClickListener(new View.OnClickListener() {
+        if(moment.getMomentState() == MomentStateEnum.PRIVATE || moment.getMomentState() == MomentStateEnum.LIVE) {
 
-            @Override
-            public void onClick(View view) {
+            wholeCardView.setOnClickListener(new View.OnClickListener() {
 
-                mActivityCallback.onMyMomentCardClick(moment);
+                @Override
+                public void onClick(View view) {
 
-            }
+                    mActivityCallback.onMyMomentCardClick(moment);
 
-        });
+                }
+
+            });
+
+        }
+
+        else {
+
+            wholeCardView.setOnClickListener(null);
+
+        }
 
     }
 
     private void setOnShareClick(final Moment moment) {
         // sets a listener on the share button that will call the Activity's onMyShareClick method
 
-        shareTextView.setOnClickListener(new View.OnClickListener() {
+        if(moment.getMomentState() == MomentStateEnum.PRIVATE || moment.getMomentState() == MomentStateEnum.LIVE) {
 
-            @Override
-            public void onClick(View view) {
+            shareTextView.setOnClickListener(new View.OnClickListener() {
 
-                mActivityCallback.onMyShareClick(moment);
+                @Override
+                public void onClick(View view) {
 
-            }
+                    mActivityCallback.onMyShareClick(moment);
 
-        });
+                }
+
+            });
+
+        }
+
+        else {
+
+            shareTextView.setOnClickListener(null);
+
+        }
 
     }
 

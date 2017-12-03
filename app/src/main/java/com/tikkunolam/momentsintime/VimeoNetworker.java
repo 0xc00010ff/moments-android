@@ -238,7 +238,11 @@ public class VimeoNetworker {
 
         finally {
 
-            response.body().close();
+            if(response != null) {
+
+                response.body().close();
+
+            }
 
         }
     }
@@ -456,6 +460,17 @@ public class VimeoNetworker {
 
         }
 
+        finally {
+            // close the response
+
+            if(response != null) {
+
+                response.body().close();
+
+            }
+
+        }
+
         return moment;
 
     }
@@ -487,11 +502,16 @@ public class VimeoNetworker {
 
         }
 
-        if(response != null) {
+        finally {
 
-            response.body().close();
+            if(response != null) {
+
+                response.body().close();
+
+            }
 
         }
+
         return success;
 
     }
@@ -559,8 +579,12 @@ public class VimeoNetworker {
 
         finally {
 
-            // close the response
-            response.body().close();
+            if(response != null) {
+
+                // close the response
+                response.body().close();
+
+            }
 
         }
 
