@@ -347,20 +347,26 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
         // if the Moment is LIVE
         if(moment.getMomentState() == MomentStateEnum.LIVE) {
 
-            // make an intent
-            Intent sendIntent = new Intent();
+            if(moment.getVideoUrl() != null) {
 
-            // express that the Intent is to send data
-            sendIntent.setAction(Intent.ACTION_SEND);
+                // make an intent
+                Intent sendIntent = new Intent();
 
-            // attach some text to it
-            sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.sms_message) + " " + moment.getVideoUrl());
+                // express that the Intent is to send data
+                sendIntent.setAction(Intent.ACTION_SEND);
 
-            // set the type as text
-            sendIntent.setType("text/plain");
+                // attach some text to it
+                sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.sms_message) + " " + moment.getVideoUrl());
 
-            // start the Activity
-            startActivity(sendIntent);
+                // set the type as text
+                sendIntent.setType("text/plain");
+
+                // start the Activity
+                startActivity(sendIntent);
+
+            }
+
+
 
         }
 
@@ -390,7 +396,6 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
                 videoUri = Uri.fromFile(videoFile);
 
             }
-
 
             // add the text to the Intent
             sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.sms_message));
