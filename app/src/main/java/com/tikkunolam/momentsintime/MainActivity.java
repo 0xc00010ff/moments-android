@@ -31,6 +31,7 @@ import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.StackingBehavior;
 import com.afollestad.materialdialogs.Theme;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
 import java.net.URLConnection;
@@ -106,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements MomentInteraction
         //set up the TabLayout
         mTabLayout = (TabLayout) findViewById(R.id.tabLayout);
         setupTabLayout();
+
     }
 
     private void checkForTermsAndConditions() {
