@@ -198,7 +198,7 @@ public class VimeoNetworker {
 
             // build the request
             Request request = new Request.Builder()
-                    .url(mApiAddress + "/me" + videoUri)
+                    .url(mApiAddress + "/me" + videoUri + "?" + mPlayableVideoFilter)
                     .addHeader("Authorization", "Bearer " + mAccessToken)
                     .addHeader("Accept", mApiVersion)
                     .build();
