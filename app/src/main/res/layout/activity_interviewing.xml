@@ -44,7 +44,6 @@
             android:id="@+id/interviewee_imageView"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_below="@+id/interviewing_toolbar"
             android:layout_centerInParent="true"
             android:layout_margin="8dp"
             android:visibility="invisible"
