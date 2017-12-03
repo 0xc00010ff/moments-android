@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:hint="@string/note_hint"
+        android:inputType="textCapSentences"
         app:met_floatingLabel="normal"
         app:met_floatingLabelAnimating="true"
         app:met_hideUnderline="true"
