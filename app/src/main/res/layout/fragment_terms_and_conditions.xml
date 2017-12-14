@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <ScrollView
+        android:id="@+id/terms_and_conditions_fragment_content_scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/horizontal_rule_view"
+        android:layout_below="@+id/terms_and_conditions_toolbar">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/terms_and_conditions_fragment_textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="@string/terms_and_conditions_content"
+                android:textColor="@color/text"
+                android:textSize="18sp" />
+        </FrameLayout>
+    </ScrollView>
+
+    <View
+        android:id="@+id/horizontal_rule_view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/terms_and_conditions_fragment_accept_textView"
+        android:background="@color/textLight" />
+
+    <TextView
+        android:id="@+id/terms_and_conditions_fragment_accept_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:text="@string/terms_and_conditions_accept"
+        android:textColor="@color/actionBlue"
+        android:textSize="22sp" />
+
+</RelativeLayout>
