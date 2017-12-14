@@ -312,19 +312,24 @@ public class UploadService extends IntentService {
 
             // execute the call and receive a response
             response = client.newCall(request).execute();
-            ResponseBody responseBody = response.body();
 
-            // transform the response to string for logging and JSON purposes
-            String responseString = responseBody.string();
+            if(response.isSuccessful()) {
 
-            // create a JSONObject and extract the useful fields
-            JSONObject jsonObject = new JSONObject(responseString);
-            mUploadTicketUri = jsonObject.getString("uri");
-            mCompleteUri = jsonObject.getString("complete_uri");
-            mUploadLink = jsonObject.getString("upload_link_secure");
+                ResponseBody responseBody = response.body();
 
-            // operation was successful
-            success = true;
+                // transform the response to string for logging and JSON purposes
+                String responseString = responseBody.string();
+
+                // create a JSONObject and extract the useful fields
+                JSONObject jsonObject = new JSONObject(responseString);
+                mUploadTicketUri = jsonObject.getString("uri");
+                mCompleteUri = jsonObject.getString("complete_uri");
+                mUploadLink = jsonObject.getString("upload_link_secure");
+
+                // operation was successful
+                success = true;
+
+            }
 
         }
 
@@ -419,15 +424,18 @@ public class UploadService extends IntentService {
             // field the response
             response = client.newCall(request).execute();
 
+            if(response.isSuccessful()) {
 
-            // retrieve the final location of the video on Vimeo to return to the Moment
-            mFinalUri = response.header("Location");
+                // retrieve the final location of the video on Vimeo to return to the Moment
+                mFinalUri = response.header("Location");
 
-            // it worked
-            success = true;
+                // it worked
+                success = true;
 
-            // signify that the upload has completed
-            uploaded = true;
+                // signify that the upload has completed
+                uploaded = true;
+
+            }
 
         }
 
@@ -520,19 +528,23 @@ public class UploadService extends IntentService {
                 // receive the response
                 response = client.newCall(request).execute();
 
-                // convert it to a String
-                String responseString = response.body().string();
+                if(response.isSuccessful()) {
 
-                // convert it to JSON
-                JSONObject jsonObject = new JSONObject(responseString);
+                    // convert it to a String
+                    String responseString = response.body().string();
 
-                // grab the status of the video
-                String availability = jsonObject.getString("status");
+                    // convert it to JSON
+                    JSONObject jsonObject = new JSONObject(responseString);
 
-                // if the status == "available" set available to true ---> exit the loop and method
-                if(availability.equals(mVideoAvailable)) {
+                    // grab the status of the video
+                    String availability = jsonObject.getString("status");
 
-                    available = true;
+                    // if the status == "available" set available to true ---> exit the loop and method
+                    if(availability.equals(mVideoAvailable)) {
+
+                        available = true;
+
+                    }
 
                 }
 
