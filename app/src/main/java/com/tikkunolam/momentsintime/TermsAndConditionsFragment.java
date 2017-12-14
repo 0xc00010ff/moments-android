@@ -14,8 +14,6 @@ import com.github.barteksc.pdfviewer.util.FitPolicy;
 
 public class TermsAndConditionsFragment extends Fragment {
 
-    private TermsAndConditionsInteractionListener mListener;
-
     // ui references
     RelativeLayout mMainRelativeLayout;
     PDFView mPDFView;
@@ -48,63 +46,11 @@ public class TermsAndConditionsFragment extends Fragment {
         // Inflate the layout for this fragment
         mMainRelativeLayout = (RelativeLayout) inflater.inflate(R.layout.fragment_terms_and_conditions, container, false);
 
-        mAcceptTextView = (TextView) mMainRelativeLayout.findViewById(R.id.terms_and_conditions_fragment_accept_textView);
-
         mPDFView = (PDFView) mMainRelativeLayout.findViewById(R.id.terms_and_conditions_fragment_pdfView);
 
-        setup();
+        setupPDFView();
 
         return mMainRelativeLayout;
-
-    }
-
-    @Override
-    public void onAttach(Context context) {
-
-        super.onAttach(context);
-
-        if (context instanceof TermsAndConditionsInteractionListener) {
-
-            mListener = (TermsAndConditionsInteractionListener) context;
-
-        }
-
-        else {
-
-            throw new RuntimeException(context.toString()
-                    + " must implement TermsAndConditionsInteractionListener");
-
-        }
-
-    }
-
-    @Override
-    public void onDetach() {
-
-        super.onDetach();
-
-        mListener = null;
-
-    }
-
-    // setup the accept button
-    private void setup() {
-
-        // set an OnClickListener on the accept button
-        mAcceptTextView.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-
-                // alert the Activity that the terms were accepted
-                mListener.onTermsAccept();
-
-            }
-
-        });
-
-        // show the terms and conditions pdf
-        setupPDFView();
 
     }
 
@@ -122,9 +68,4 @@ public class TermsAndConditionsFragment extends Fragment {
 
     }
 
-    public interface TermsAndConditionsInteractionListener {
-
-        void onTermsAccept();
-
-    }
 }

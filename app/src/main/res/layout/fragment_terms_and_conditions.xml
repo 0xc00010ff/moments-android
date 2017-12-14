@@ -8,27 +8,6 @@
     <com.github.barteksc.pdfviewer.PDFView
         android:id="@+id/terms_and_conditions_fragment_pdfView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/horizontal_rule_view"
-        android:layout_below="@+id/terms_and_conditions_toolbar">
-    </com.github.barteksc.pdfviewer.PDFView>
-
-    <View
-        android:id="@+id/horizontal_rule_view"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_above="@+id/terms_and_conditions_fragment_accept_textView"
-        android:background="@color/textLight" />
-
-    <TextView
-        android:id="@+id/terms_and_conditions_fragment_accept_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"
-        android:text="@string/terms_and_conditions_accept"
-        android:textColor="@color/actionBlue"
-        android:textSize="22sp" />
+        android:layout_height="match_parent"/>
 
 </RelativeLayout>

@@ -10,14 +10,14 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
-public class TermsAndConditionsActivity extends AppCompatActivity implements
-        TermsAndConditionsFragment.TermsAndConditionsInteractionListener,
-        PrivacyPolicyFragment.PrivacyPolicyInteractionListener {
+public class TermsAndConditionsActivity extends AppCompatActivity  {
 
     Context mContext = this;
 
@@ -29,7 +29,7 @@ public class TermsAndConditionsActivity extends AppCompatActivity implements
 
     // ui references
     Toolbar mToolbar;
-    FrameLayout mFragmentFrameLayout;
+    FrameLayout mFragmentFrameLayout, mAcceptFrameLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +46,7 @@ public class TermsAndConditionsActivity extends AppCompatActivity implements
         // get the FrameLayout into which Fragments will be loaded
         mFragmentFrameLayout = (FrameLayout) findViewById(R.id.terms_and_conditions_activity_fragment_frameLayout);
 
-        // show the TermsAndConditionsFragment to start
-        showTermsAndConditions();
-
+        setup();
 
     }
 
@@ -63,6 +61,14 @@ public class TermsAndConditionsActivity extends AppCompatActivity implements
         }
 
         // otherwise don't do anything. there is no escape
+
+    }
+
+    private void setup() {
+
+        showTermsAndConditions();
+
+        setupAccept();
 
     }
 
@@ -84,6 +90,35 @@ public class TermsAndConditionsActivity extends AppCompatActivity implements
 
         // commit the transaction
         fragmentTransaction.commit();
+
+    }
+
+    private void setupAccept() {
+
+        // get the accept FrameLayout
+        mAcceptFrameLayout = (FrameLayout) findViewById(R.id.terms_and_conditions_accept_frameLayout);
+
+        // set an OnClickListener on it to respond to 'accept' clicks
+        mAcceptFrameLayout.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                if(mFragment instanceof TermsAndConditionsFragment) {
+
+                    onTermsAccept();
+
+                }
+
+                else if(mFragment instanceof PrivacyPolicyFragment) {
+
+                    onPrivacyPolicyAccept();
+
+                }
+
+            }
+
+        });
 
     }
 
@@ -135,10 +170,8 @@ public class TermsAndConditionsActivity extends AppCompatActivity implements
 
     }
 
-    /** TermsAndConditionsInteractionListener implementation **/
-
     // when a user chose to accept the Terms and Conditions
-    public void onTermsAccept() {
+    private void onTermsAccept() {
 
         // show a dialog asking them to confirm
         MaterialDialog dialog = new MaterialDialog.Builder(mContext)
@@ -163,10 +196,8 @@ public class TermsAndConditionsActivity extends AppCompatActivity implements
 
     }
 
-    /** PrivacyPolicyInteractionListener implementation **/
-
     // when a user chose to accept the Privacy Policy
-    public void onPrivacyPolicyAccept() {
+    private void onPrivacyPolicyAccept() {
 
         // show a dialog asking them to confirm
         MaterialDialog dialog = new MaterialDialog.Builder(mContext)

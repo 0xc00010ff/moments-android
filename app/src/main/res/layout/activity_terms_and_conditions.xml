@@ -16,9 +16,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/terms_and_conditions_toolbar"
+        android:layout_above="@+id/horizontal_rule_view"
         android:id="@+id/terms_and_conditions_activity_fragment_frameLayout">
 
     </FrameLayout>
 
+    <View
+        android:id="@+id/horizontal_rule_view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/terms_and_conditions_accept_frameLayout"
+        android:background="@color/textLight" />
+
+    <FrameLayout
+        android:id="@+id/terms_and_conditions_accept_frameLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true">
+
+        <TextView
+            android:id="@+id/terms_and_conditions_activity_accept_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_gravity="center"
+            android:text="@string/terms_and_conditions_accept"
+            android:textColor="@color/actionBlue"
+            android:textSize="22sp" />
+
+    </FrameLayout>
 
 </RelativeLayout>
