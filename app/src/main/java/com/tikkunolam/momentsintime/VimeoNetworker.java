@@ -131,33 +131,36 @@ public class VimeoNetworker {
             // make the call and receive the response
             response = client.newCall(request).execute();
 
-            // convert the body to a String
-            String responseString = response.body().string();
+            if(response.isSuccessful()) {
 
-            // convert the String to a JSONObject
-            JSONObject jsonResponse = new JSONObject(responseString);
+                // convert the body to a String
+                String responseString = response.body().string();
 
-            // get the JSONObject related to pagination from the response
-            JSONObject paginationObject = jsonResponse.getJSONObject("paging");
+                // convert the String to a JSONObject
+                JSONObject jsonResponse = new JSONObject(responseString);
 
-            // get the String signifying if there is a next page
-            String isNextPage = paginationObject.getString("next");
+                // get the JSONObject related to pagination from the response
+                JSONObject paginationObject = jsonResponse.getJSONObject("paging");
 
-            if(isNextPage.equals("null")) {
+                // get the String signifying if there is a next page
+                String isNextPage = paginationObject.getString("next");
 
-                getMomentsResponse.setNextPageExists(false);
+                if(isNextPage.equals("null")) {
+
+                    getMomentsResponse.setNextPageExists(false);
+
+                }
+
+                else {
+
+                    getMomentsResponse.setNextPageExists(true);
+
+                }
+
+                // pass the JSONObject to the method that creates the Moment list
+                moments = jsonToMomentList(jsonResponse);
 
             }
-
-            else {
-
-                getMomentsResponse.setNextPageExists(true);
-
-            }
-
-            // pass the JSONObject to the method that creates the Moment list
-            moments = jsonToMomentList(jsonResponse);
-
 
         }
 
@@ -206,21 +209,31 @@ public class VimeoNetworker {
             // make the call and receive the response
             response = client.newCall(request).execute();
 
-            // convert the body to a String
-            String responseString = response.body().string();
+            if(response.isSuccessful()) {
 
-            // convert the String to a JSONObject
-            JSONObject jsonResponse = new JSONObject(responseString);
+                // convert the body to a String
+                String responseString = response.body().string();
 
-            // get the video data
-            JSONArray jsonArray = jsonResponse.getJSONArray("files");
+                // convert the String to a JSONObject
+                JSONObject jsonResponse = new JSONObject(responseString);
 
-            // fetch the highest quality video
-            JSONObject jsonVideo = fetchHighestQualityVideo(jsonArray);
+                // get the video data
+                JSONArray jsonArray = jsonResponse.getJSONArray("files");
 
-            String videoUrl = jsonVideo.getString("link");
+                // fetch the highest quality video
+                JSONObject jsonVideo = fetchHighestQualityVideo(jsonArray);
 
-            return videoUrl;
+                String videoUrl = jsonVideo.getString("link");
+
+                return videoUrl;
+
+            }
+
+            else {
+
+                return null;
+
+            }
 
         }
 
