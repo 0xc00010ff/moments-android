@@ -5,12 +5,12 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <WebView
+    <com.github.barteksc.pdfviewer.PDFView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/privacy_policy_fragment_webView"
+        android:id="@+id/privacy_policy_fragment_pdfView"
         android:layout_above="@+id/horizontal_rule_view"
-        android:background="@color/background"></WebView>
+        android:background="@color/background"></com.github.barteksc.pdfviewer.PDFView>
 
     <View
         android:id="@+id/horizontal_rule_view"

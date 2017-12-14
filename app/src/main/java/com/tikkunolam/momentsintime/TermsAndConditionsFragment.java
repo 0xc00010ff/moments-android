@@ -9,12 +9,16 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.util.FitPolicy;
+
 public class TermsAndConditionsFragment extends Fragment {
 
     private TermsAndConditionsInteractionListener mListener;
 
     // ui references
     RelativeLayout mMainRelativeLayout;
+    PDFView mPDFView;
     TextView mAcceptTextView;
 
     public TermsAndConditionsFragment() {
@@ -45,6 +49,8 @@ public class TermsAndConditionsFragment extends Fragment {
         mMainRelativeLayout = (RelativeLayout) inflater.inflate(R.layout.fragment_terms_and_conditions, container, false);
 
         mAcceptTextView = (TextView) mMainRelativeLayout.findViewById(R.id.terms_and_conditions_fragment_accept_textView);
+
+        mPDFView = (PDFView) mMainRelativeLayout.findViewById(R.id.terms_and_conditions_fragment_pdfView);
 
         setup();
 
@@ -96,6 +102,23 @@ public class TermsAndConditionsFragment extends Fragment {
             }
 
         });
+
+        // show the terms and conditions pdf
+        setupPDFView();
+
+    }
+
+    // show the terms and conditions pdf in the PDFView
+    private void setupPDFView() {
+
+        // get the name of the pdf asset from String resources
+        String pdfName = mPDFView.getContext().getString(R.string.terms_and_conditions_name);
+
+        // display it
+        mPDFView.fromAsset(pdfName)
+                .spacing(1) // in dp
+                .pageFitPolicy(FitPolicy.BOTH)
+                .load();
 
     }
 

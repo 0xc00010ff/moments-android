@@ -12,13 +12,17 @@ import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
+import com.github.barteksc.pdfviewer.util.FitPolicy;
+
 public class PrivacyPolicyFragment extends Fragment {
 
     private PrivacyPolicyInteractionListener mListener;
 
     // ui references
     RelativeLayout mMainRelativeLayout;
-    WebView mWebView;
+    PDFView mPDFView;
     TextView mAcceptTextView;
 
     public PrivacyPolicyFragment() {
@@ -48,7 +52,7 @@ public class PrivacyPolicyFragment extends Fragment {
         // Inflate the layout for this fragment
         mMainRelativeLayout = (RelativeLayout) inflater.inflate(R.layout.fragment_privacy_policy, container, false);
 
-        mWebView = (WebView) mMainRelativeLayout.findViewById(R.id.privacy_policy_fragment_webView);
+        mPDFView = (PDFView) mMainRelativeLayout.findViewById(R.id.privacy_policy_fragment_pdfView);
 
         mAcceptTextView = (TextView) mMainRelativeLayout.findViewById(R.id.privacy_policy_fragment_accept_textView);
 
@@ -89,8 +93,6 @@ public class PrivacyPolicyFragment extends Fragment {
 
     private void setup() {
 
-        setupWebView();
-
         setupAccept();
 
         showPrivacyPolicy();
@@ -115,39 +117,17 @@ public class PrivacyPolicyFragment extends Fragment {
 
     }
 
-    // loads the privacy policy in the WebView
+    // loads the privacy policy in the PDFView
     private void showPrivacyPolicy() {
 
-        // get the Privacy Policy's url
-        String policyUrl = mWebView.getContext().getString(R.string.privacy_policy_url);
+        // get the name of the pdf asset from String resources
+        String pdfName = mPDFView.getContext().getString(R.string.privacy_policy_name);
 
-        // load the Privacy Policy
-        mWebView.loadUrl(policyUrl);
-
-    }
-
-    // gets the WebView prepared to load a URL
-    private void setupWebView() {
-
-        // set the webviewclient
-        mWebView.setWebViewClient(new WebViewClient() {
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-
-                return super.shouldOverrideUrlLoading(view, url);
-
-            }
-
-            @Override
-            public void onPageFinished(WebView webView, String url) {
-
-            }
-
-        });
-
-        // set the WebChromeClient
-        mWebView.setWebChromeClient(new WebChromeClient());
+        // display it
+        mPDFView.fromAsset(pdfName)
+                .spacing(1) // in dp
+                .pageFitPolicy(FitPolicy.BOTH)
+                .load();
 
     }
 

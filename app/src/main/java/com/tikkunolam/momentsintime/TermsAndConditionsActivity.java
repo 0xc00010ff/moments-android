@@ -115,7 +115,7 @@ public class TermsAndConditionsActivity extends AppCompatActivity implements
     private void swapToPrivacyPolicy() {
 
         // set the Activity title to Privacy Policy
-        String privacyPolicyTitle = getString(R.string.terms_and_conditions_toolbar_title);
+        String privacyPolicyTitle = getString(R.string.privacy_policy_toolbar_title);
         getSupportActionBar().setTitle(privacyPolicyTitle);
 
         // begin the FragmentTransaction
