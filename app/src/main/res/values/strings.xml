@@ -146,14 +146,9 @@
     <string name="edit_video_camera_roll">Upload new video</string>
 
     <string name="terms_and_conditions_dialog_title">Terms and Conditions</string>
-    <string name="terms_and_conditions_dialog_content">I have read, and agree to the Moments In Time Terms and Conditions</string>
+    <string name="terms_and_conditions_dialog_content">I have read, and agree to the Moments In Time Privacy Policy and Terms and Conditions</string>
     <string name="terms_and_conditions_positive_text">Accept</string>
     <string name="terms_and_conditions_negative_text">Cancel</string>
-
-    <string name="privacy_policy_dialog_title">Privacy Policy</string>
-    <string name="privacy_policy_dialog_content">I have read, and agree to the Moments In Time Privacy Policy</string>
-    <string name="privacy_policy_positive_text">Accept</string>
-    <string name="privacy_policy_negative_text">Cancel</string>
 
     <string name="note_dialog_delete">Delete</string>
 

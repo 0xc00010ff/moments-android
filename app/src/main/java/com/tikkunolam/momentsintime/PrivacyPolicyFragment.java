@@ -1,19 +1,15 @@
 package com.tikkunolam.momentsintime;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.github.barteksc.pdfviewer.PDFView;
-import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
 import com.github.barteksc.pdfviewer.util.FitPolicy;
 
 public class PrivacyPolicyFragment extends Fragment {
@@ -21,15 +17,17 @@ public class PrivacyPolicyFragment extends Fragment {
     // ui references
     RelativeLayout mMainRelativeLayout;
     PDFView mPDFView;
+    Toolbar mToolbar;
+
 
     public PrivacyPolicyFragment() {
         // Required empty public constructor
 
     }
 
-    public static TermsAndConditionsFragment newInstance() {
+    public static PrivacyPolicyFragment newInstance() {
 
-        TermsAndConditionsFragment fragment = new TermsAndConditionsFragment();
+        PrivacyPolicyFragment fragment = new PrivacyPolicyFragment();
 
         return fragment;
 
@@ -48,6 +46,11 @@ public class PrivacyPolicyFragment extends Fragment {
 
         // Inflate the layout for this fragment
         mMainRelativeLayout = (RelativeLayout) inflater.inflate(R.layout.fragment_privacy_policy, container, false);
+
+        // set up the Toolbar
+        mToolbar = (Toolbar) mMainRelativeLayout.findViewById(R.id.privacy_policy_fragment_toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+        mToolbar.setTitle(mToolbar.getContext().getString(R.string.privacy_policy_toolbar_title));
 
         // show the privacy policy in the PDFView
         showPrivacyPolicy();

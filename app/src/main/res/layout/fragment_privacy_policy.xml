@@ -5,11 +5,19 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/privacy_policy_fragment_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/actionBlue"
+        android:layout_alignParentTop="true"></android.support.v7.widget.Toolbar>
+
     <com.github.barteksc.pdfviewer.PDFView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/privacy_policy_fragment_pdfView"
-        android:background="@color/background"></com.github.barteksc.pdfviewer.PDFView>
+        android:background="@color/background"
+        android:layout_below="@+id/privacy_policy_fragment_toolbar"></com.github.barteksc.pdfviewer.PDFView>
 
 
 </RelativeLayout>
