@@ -4,22 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/white">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/terms_and_conditions_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/actionBlue" />
-
-    <FrameLayout
+    <android.support.v4.view.ViewPager
+        android:id="@+id/terms_and_conditions_activity_viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/terms_and_conditions_toolbar"
-        android:layout_above="@+id/horizontal_rule_view"
-        android:id="@+id/terms_and_conditions_activity_fragment_frameLayout">
-
-    </FrameLayout>
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/horizontal_rule_view"></android.support.v4.view.ViewPager>
 
     <View
         android:id="@+id/horizontal_rule_view"
@@ -27,6 +19,19 @@
         android:layout_height="1dp"
         android:layout_above="@+id/terms_and_conditions_accept_frameLayout"
         android:background="@color/textLight" />
+
+    <com.viewpagerindicator.CirclePageIndicator
+        android:id="@+id/terms_and_conditions_pageIndicator"
+        android:padding="10dp"
+        android:layout_margin="16dp"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/horizontal_rule_view"
+        android:layout_centerHorizontal="true"
+        app:radius="4dp"
+        app:fillColor="@color/actionBlue"
+        app:pageColor="@color/background"
+        />
 
     <FrameLayout
         android:id="@+id/terms_and_conditions_accept_frameLayout"

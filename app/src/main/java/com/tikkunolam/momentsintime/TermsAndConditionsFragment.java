@@ -2,7 +2,10 @@ package com.tikkunolam.momentsintime;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +20,7 @@ public class TermsAndConditionsFragment extends Fragment {
     // ui references
     RelativeLayout mMainRelativeLayout;
     PDFView mPDFView;
-    TextView mAcceptTextView;
+    Toolbar mToolbar;
 
     public TermsAndConditionsFragment() {
         // Required empty public constructor
@@ -46,8 +49,13 @@ public class TermsAndConditionsFragment extends Fragment {
         // Inflate the layout for this fragment
         mMainRelativeLayout = (RelativeLayout) inflater.inflate(R.layout.fragment_terms_and_conditions, container, false);
 
-        mPDFView = (PDFView) mMainRelativeLayout.findViewById(R.id.terms_and_conditions_fragment_pdfView);
+        // setup the Toolbar
+        mToolbar = (Toolbar) mMainRelativeLayout.findViewById(R.id.terms_and_conditions_fragment_toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+        mToolbar.setTitle(mToolbar.getContext().getString(R.string.terms_and_conditions_toolbar_title));
 
+        // set up the PDFView
+        mPDFView = (PDFView) mMainRelativeLayout.findViewById(R.id.terms_and_conditions_fragment_pdfView);
         setupPDFView();
 
         return mMainRelativeLayout;
