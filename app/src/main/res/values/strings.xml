@@ -128,7 +128,7 @@
     <string name="dialog_cancel">Cancel</string>
 
     <string name="submit_confirmation_dialog_title">Show the world?</string>
-    <string name="submit_confirmation_dialog_content">By submitting this video you’re allowing Moments In Time to share this video to the public. Is that okay?</string>
+    <string name="submit_confirmation_dialog_content">By submitting this video you’re allowing Moments In Time to publish your video on this app, Vimeo, and Facebook. Is that okay?</string>
     <string name="submit_confirmation_dialog_positive">Yes</string>
     <string name="submit_confirmation_dialog_negative">No</string>
 
