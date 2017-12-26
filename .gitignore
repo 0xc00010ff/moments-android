@@ -17,6 +17,9 @@ bin/
 gen/
 out/
 
+# Information about the OSX directories
+*.DS_STORE
+
 # Gradle files
 .gradle/
 build/
