@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -31,7 +32,8 @@ public class NoteActivity extends AppCompatActivity {
 
     // ui references
     Toolbar mToolbar;
-    MaterialEditText mNoteEditText;
+    EditText mNoteEditText;
+
 
     // "save" menu item
     MenuItem mSaveMenuItem;
@@ -51,7 +53,7 @@ public class NoteActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(mActivityTitle);
 
         // get the MaterialEditText
-        mNoteEditText = (MaterialEditText) findViewById(R.id.note_editText);
+        mNoteEditText = (EditText) findViewById(R.id.note_editText);
 
         // build a TextWatcher and add it to the MaterialEditText to watch for changes and enable/disable save
         TextWatcher mTextWatcher = buildTextWatcher();

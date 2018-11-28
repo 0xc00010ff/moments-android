@@ -92,7 +92,7 @@
 
     <!--strings for the TermsAndConditionsActivity-->
     <string name="terms_and_conditions_toolbar_title">Terms and Conditions</string>
-    <string name="terms_and_conditions_name">terms_and_conditions.pdf</string>
+    <string name="terms_and_conditions_name">terms_of_use.pdf</string>
     <string name="privacy_policy_toolbar_title">Privacy Policy</string>
     <string name="privacy_policy_name">privacy_policy.pdf</string>
 

@@ -251,10 +251,11 @@ public class MakeAMomentActivity extends AppCompatActivity implements HolderInte
     @Override
     public void onBackPressed() {
         // when the user hits back
-        // delete the Moment that was being created if it doesn't have any fields
 
         // call the superclass's method
         super.onBackPressed();
+
+        // delete the Moment that was being created if it doesn't have any fields
 
         if(mMoment.getInterviewee() == null && mMoment.getTitle() == null && mMoment.getDescription() == null && mMoment.getLocalVideoFilePath() == null) {
             // the Moment doesn't have an interviewee, title, description, or video... delete it.
