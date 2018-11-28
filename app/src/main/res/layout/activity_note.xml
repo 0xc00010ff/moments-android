@@ -14,17 +14,16 @@
         android:layout_height="wrap_content"
         android:background="@color/actionBlue" />
 
-    <com.rengwuxian.materialedittext.MaterialEditText
+    <EditText
         android:id="@+id/note_editText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:hint="@string/note_hint"
-        android:inputType="textCapSentences"
-        app:met_floatingLabel="normal"
-        app:met_floatingLabelAnimating="true"
-        app:met_hideUnderline="true"
-        app:met_primaryColor="@color/colorPrimary" />
+        android:inputType="textCapSentences|textMultiLine"
+        android:textColor="@color/text"
+        android:backgroundTint="@color/actionBlue"
+        android:textCursorDrawable="@null" />/>
 
 
 </LinearLayout>
